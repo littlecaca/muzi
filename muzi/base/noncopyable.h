@@ -5,6 +5,7 @@ namespace muzi {
 
 /**
  * This class can only be inherited.
+ * [status] : done
  */
 class noncopyable
 {

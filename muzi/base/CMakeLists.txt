@@ -7,7 +7,7 @@ add_library(muzi_base ${BASE_SRCS})
 target_include_directories(muzi_base
                         INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-# add the interface compiler flags
+# # add the interface compiler flags
 target_link_libraries(muzi_base PRIVATE muzi_compiler_flags)
-# # add the system pthread lib
+# # # add the system pthread lib
 target_link_libraries(muzi_base PRIVATE pthread)

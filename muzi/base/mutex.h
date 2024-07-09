@@ -5,8 +5,7 @@
 
 #include <pthread.h>
 
-#include "muzi/base/noncopyable.h"
-#include "muzi/debug.h"
+#include "noncopyable.h"
 
 // Indicate that "the dead lock will not be examined"
 #define MUTEX_LOCK_ATTR PTHREAD_MUTEX_NORMAL

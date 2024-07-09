@@ -1,4 +1,4 @@
-#include "muzi/base/mutex.h"
+#include "mutex.h"
 
 using namespace muzi;
 
@@ -20,7 +20,7 @@ public:
 
 MutexLock::MutexAttr  MutexLock::mutex_attr_;
 
-MutexLock::MutexLock()
+MutexLock::MutexLock() : holder_(0)
 {
     pthread_mutex_init(&mutex_, &mutex_attr_.mutex_attr);
 }

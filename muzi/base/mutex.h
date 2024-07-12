@@ -1,3 +1,8 @@
+/**
+ * MutexLock
+ * [status] done
+ * Implementing the RAII(Resourse Acquisition Is Initialization) style mutex lock.
+ */
 #ifndef MUZI_BASE_MUTEX_H_
 #define MUZI_BASE_MUTEX_H_
 
@@ -14,10 +19,6 @@
 
 namespace muzi {
 
-/**
- * MutexLock
- * [status] working
- */
 class MutexLock : noncopyable
 {
     friend class MutexLockGuard;

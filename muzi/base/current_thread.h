@@ -1,3 +1,7 @@
+/**
+ * current_thread
+ * [status] working
+ */
 #ifndef MUZI_BASE_CURRENTTHREAD_H_
 #define MUZI_BASE_CURRENTTHREAD_H_
 
@@ -7,10 +11,6 @@
 #include "config.h"
 
 namespace muzi {
-/**
- * current_thread
- * [status] working
- */
 namespace current_thread
 {
 

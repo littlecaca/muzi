@@ -1,3 +1,7 @@
+/**
+ * Singleton
+ * [status] done
+ */
 #ifndef MUZI_BASE_SINGLETON_H_
 #define MUZI_BASE_SINGLETON_H_
 
@@ -8,10 +12,6 @@
 #include "noncopyable.h"
 
 namespace muzi {
-/**
- * Singleton
- * [status] done
- */
 template <typename T>
 class Singleton : noncopyable
 {

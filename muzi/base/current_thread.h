@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <string>
 
-#include "config.h"
+#include "macros.h"
 
 namespace muzi {
 namespace current_thread

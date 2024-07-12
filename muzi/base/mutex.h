@@ -11,7 +11,7 @@
 #include <pthread.h>
 
 #include "current_thread.h"
-#include "debug.h"
+#include "macros.h"
 #include "noncopyable.h"
 
 // Indicate that "the dead lock will not be examined"
@@ -27,7 +27,7 @@ public:
     ~MutexLock()
     {
         assert(holder_ == 0);
-        pthread_mutex_destroy(&mutex_);
+        ISZERO(pthread_mutex_destroy(&mutex_));
     }
 
     bool IsLockedByThisThread() const { return holder_ == current_thread::tid(); }
@@ -41,14 +41,14 @@ private:
     // RAII: lock() and unlock() should only be not called by user code
     void Lock()
     {
-        pthread_mutex_lock(&mutex_);
+        ISZERO(pthread_mutex_lock(&mutex_));
         holder_ = current_thread::tid();
     }
 
     void Unlock()
     {
         holder_ = 0;
-        pthread_mutex_unlock(&mutex_);
+        ISZERO(pthread_mutex_unlock(&mutex_));
     }
 
     pthread_mutex_t *GetPthreadMutex()
@@ -87,12 +87,12 @@ class MutexLock::MutexAttr
 public:
     MutexAttr()
     {
-        pthread_mutexattr_init(&mutex_attr);
-        pthread_mutexattr_settype(&mutex_attr, MUTEX_LOCK_ATTR);
+        ISZERO(pthread_mutexattr_init(&mutex_attr));
+        ISZERO(pthread_mutexattr_settype(&mutex_attr, MUTEX_LOCK_ATTR));
     }
     ~MutexAttr()
     {
-        pthread_mutexattr_destroy(&mutex_attr);
+        ISZERO(pthread_mutexattr_destroy(&mutex_attr));
     }
 
     pthread_mutexattr_t mutex_attr;
@@ -100,7 +100,7 @@ public:
 
 inline MutexLock::MutexLock() : holder_(0)
 {
-    pthread_mutex_init(&mutex_, &mutex_attr_.mutex_attr);
+    ISZERO(pthread_mutex_init(&mutex_, &mutex_attr_.mutex_attr));
 }
 
 }   // namespace muzi

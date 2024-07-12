@@ -1,5 +1,9 @@
+#include <fcntl.h>
+#include <unistd.h>
+
 #include "mutex.h"
 #include "debug.h"
+#include "singleton.h"
 
 class Foo : muzi::noncopyable
 {
@@ -8,7 +12,13 @@ class Foo : muzi::noncopyable
 
 int main(int argc, char const *argv[])
 {
-    PRINT("main");
-    muzi::MutexLock lock1, lock2;
+    print("main Test start...");
+
+    int &i = muzi::Singleton<int>::getInstance();
+    // i = 12;
+    // int &i2 = muzi::Singleton<int>::instance();
+    // print(i);
+    // print(i2);
+    print("main Test end...");
     return 0;
 }

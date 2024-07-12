@@ -1,0 +1,50 @@
+#ifndef MUZI_BASE_CURRENTTHREAD_H_
+#define MUZI_BASE_CURRENTTHREAD_H_
+
+#include <stdint.h>
+#include <string>
+
+#include "config.h"
+
+namespace muzi {
+/**
+ * current_thread
+ * [status] working
+ */
+namespace current_thread
+{
+namespace
+{
+// thread local storage
+extern thread_local pid_t t_tid;
+extern thread_local std::string t_tid_string;
+extern thread_local std::string t_thread_name;
+void CachedTid();
+}   // internal linkage
+
+bool IsMainThread();
+void SleepUsec(int64_t usec);
+
+inline pid_t tid()
+{
+    if (LIKELY(t_tid == 0))
+    {
+        CachedTid();
+    }
+    return t_tid;
+}
+
+inline const std::string &tid_string()
+{
+    return t_tid_string;
+}
+
+inline const std::string &thread_name()
+{
+    return t_thread_name;
+}
+
+}   // namespace current_thread
+}   // namespace muzi
+
+#endif  // MUZI_BASE_CURRENTTHREAD_H_

@@ -1,5 +1,7 @@
 set(BASE_SRCS
-    mutex.cpp
+    mutex.cc
+    thread.cc
+    current_thread.cc
 )
 
 add_library(muzi_base ${BASE_SRCS})

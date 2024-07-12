@@ -1,6 +1,8 @@
 #ifndef MUZI_BASE_SINGLETON_H_
 #define MUZI_BASE_SINGLETON_H_
 
+#include <stdlib.h> // atexit
+
 #include <pthread.h>
 
 #include "noncopyable.h"
@@ -14,19 +16,26 @@ template <typename T>
 class Singleton : noncopyable
 {
 public:
-    static T &instance()
+    static T &getInstance()
     {
-        pthread_once(&ponce_, &init);
+        pthread_once(&ponce_, init);
         return *pobj_;
-    }
-
-    static void init()
-    {
-        pobj_ = new T();
     }
 
     Singleton() = delete;
     ~Singleton() = delete;
+
+private:
+    static void init()
+    {
+        atexit(&clear);
+        pobj_ = new T();
+    }
+    
+    static void clear()
+    {
+        delete pobj_;
+    }
 
 private:
     static pthread_once_t ponce_;

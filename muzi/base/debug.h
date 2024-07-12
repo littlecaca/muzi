@@ -1,3 +1,6 @@
 #include <iostream>
 
-#define PRINT(msg) std::cout << msg << std::endl
+/**
+ * 
+ */
+#define print(msg) std::cout << "[debug]:" << msg << std::endl

@@ -13,15 +13,14 @@ namespace muzi {
  */
 namespace current_thread
 {
-namespace
-{
+
 // thread local storage
 extern thread_local pid_t t_tid;
 extern thread_local std::string t_tid_string;
+extern thread_local int t_tid_length;
 extern thread_local std::string t_thread_name;
-void CachedTid();
-}   // internal linkage
 
+void CachedTid();
 bool IsMainThread();
 void SleepUsec(int64_t usec);
 
@@ -37,6 +36,11 @@ inline pid_t tid()
 inline const std::string &tid_string()
 {
     return t_tid_string;
+}
+
+inline int tid_length()
+{
+    return t_tid_length;
 }
 
 inline const std::string &thread_name()

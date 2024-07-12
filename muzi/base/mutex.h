@@ -5,8 +5,9 @@
 
 #include <pthread.h>
 
-#include "noncopyable.h"
+#include "current_thread.h"
 #include "debug.h"
+#include "noncopyable.h"
 
 // Indicate that "the dead lock will not be examined"
 #define MUTEX_LOCK_ATTR PTHREAD_MUTEX_NORMAL
@@ -17,8 +18,9 @@ namespace muzi {
  * MutexLock
  * [status] working
  */
-class MutexLock : muzi::noncopyable
+class MutexLock : noncopyable
 {
+    friend class MutexLockGuard;
 public:
     MutexLock();
     ~MutexLock()
@@ -27,7 +29,31 @@ public:
         pthread_mutex_destroy(&mutex_);
     }
 
-    // bool isLockedByThisThread() { return holder_ == }
+    bool IsLockedByThisThread() const { return holder_ == current_thread::tid(); }
+
+    void AssertLocked() const
+    {
+        assert(IsLockedByThisThread());
+    }
+
+private:
+    // RAII: lock() and unlock() should only be not called by user code
+    void Lock()
+    {
+        pthread_mutex_lock(&mutex_);
+        holder_ = current_thread::tid();
+    }
+
+    void Unlock()
+    {
+        holder_ = 0;
+        pthread_mutex_unlock(&mutex_);
+    }
+
+    pthread_mutex_t *GetPthreadMutex()
+    {
+        return &mutex_;
+    }
 
 private:
     pthread_mutex_t mutex_;
@@ -36,6 +62,25 @@ private:
     static MutexAttr mutex_attr_;
 };
 
+class MutexLockGuard : noncopyable
+{
+public:
+    explicit MutexLockGuard(MutexLock &mutex) : mutex_lock_(mutex)
+    {
+        mutex_lock_.Lock();
+    }
+
+    ~MutexLockGuard()
+    {
+        mutex_lock_.Unlock();
+    }
+
+private:
+    MutexLock &mutex_lock_;
+};
+
+
+// A inter class of MutexLock to save the static pthread_mutexattr_t
 class MutexLock::MutexAttr
 {
 public:

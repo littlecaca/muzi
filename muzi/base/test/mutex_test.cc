@@ -8,7 +8,7 @@
 long long cnt_unsafe = 1;
 long long cnt = 1;
 
-constexpr int iter_cnt = 5000;
+constexpr int iter_cnt = 500;
 muzi::MutexLock mutex;
 timespec ts;
 

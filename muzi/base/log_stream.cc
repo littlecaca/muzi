@@ -1,30 +1,30 @@
+#include <algorithm>
+
 #include "log_stream.h"
 
 namespace muzi
 {
-namespace 
+
+const char *LogStream::kDigits = "9876543210123456789";
+const char *LogStream::kZero = kDigits + 9;
+const char *LogStream::kDigitsHex = "0123456789ABCDEF";
+
+size_t LogStream::ConvertHex(char *buf, uintptr_t val)
 {
-const char kDigits[] = "9876543210123456789";
-const char *kZero = kDigits + 9;
-const char kDigitsHex[] = "0123456789ABCDEF";
+    char *cur = buf;
+    uintptr_t i = val;
 
-}   // internal linkage
+    do
+    {
+        *cur++ = kDigitsHex[i % 16];
+        i /= 16;
+    } while (i != 0);
 
-template <typename T>
-void LogStream::ConvertIneger(char *buf, T val)
-{
-    
-}
+    *cur++ = 'x';
+    *cur++ = '0';
+    std::reverse(buf, cur);
 
-template <typename T>
-void LogStream::ConvertFloat(char *buf, T val)
-{
-    
-}
-
-void LogStream::ConvertHex(char *buf, uintptr_t val)
-{
-
+    return static_cast<size_t>(cur - buf);
 }
 
 } // namespace muzi

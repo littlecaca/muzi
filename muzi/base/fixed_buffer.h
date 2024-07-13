@@ -44,7 +44,7 @@ public:
     }
 
     // Clear the buffer
-    void Clear()
+    void clear()
     {
         end_ = buffer_;
     }

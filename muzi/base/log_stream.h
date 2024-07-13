@@ -24,7 +24,7 @@ public:
     {
         if (buffer_.GetAvail() >= kMaxNumericSize)
         {
-            ConvertIneger(buffer_.end(), val);
+            buffer_.Add(ConvertIneger(buffer_.end(), val));
         }
         return *this;
     }
@@ -35,7 +35,7 @@ public:
     {
         if (buffer_.GetAvail() >= kMaxNumericSize)
         {
-            ConvertFloat(buffer_.end(), val);
+            buffer_.Add(ConvertFloat(buffer_.end(), static_cast<double>(val)));
         }
         return *this;
     }
@@ -77,28 +77,52 @@ public:
     {
         if (buffer_.GetAvail() >= kMaxHexSize)
         {
-            ConvertHex(buffer_.end(), *reinterpret_cast<const uintptr_t *>(hex));
+            buffer_.Add(ConvertHex(buffer_.end(), *reinterpret_cast<const uintptr_t *>(hex)));
         }
     }
 
 private:
     // Write integer type
     template <typename T>
-    void ConvertIneger(char *buf, T val);
+    size_t ConvertIneger(char *buf, T val);
 
     // Write float type
-    template <typename T>
-    void ConvertFloat(char *buf, T val);
+    size_t ConvertFloat(char *buf, double val)
+    {
+        return static_cast<size_t>(snprintf(buf, kMaxNumericSize, "%.12g", val));
+    }
 
     // Write void * type as hex val
-    void ConvertHex(char *buf, uintptr_t val);
+    size_t ConvertHex(char *buf, uintptr_t val);
 
 private:
     Buffer buffer_;
 
-    const int kMaxNumericSize = 48;
-    const int kMaxHexSize = 8;
+    static const int kMaxNumericSize = 48;
+    static const int kMaxHexSize = 8;
+    static const char *kDigits;
+    static const char *kZero;
+    static const char *kDigitsHex;
 };
+
+template <typename T>
+size_t LogStream::ConvertIneger(char *buf, T val)
+{
+    char *cur = buf;
+    int i = val;
+
+    do
+    {
+        *cur++ = kZero[i % 10];
+        i /= 10;
+    } while (i != 0);
+
+    if (val < 0)
+        *cur++ = '-';
+    std::reverse(buf, cur);
+
+    return static_cast<size_t>(cur - buf);
+}
 
 }   // namespace muzi
 

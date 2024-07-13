@@ -11,10 +11,7 @@ int main(int argc, char const *argv[])
     std::cout << "tid_length: " << muzi::current_thread::tid_length() << std::endl;
     std::cout << "thread_name: " << muzi::current_thread::thread_name() << std::endl;
 
-    if (IsMainThread())
-        std::cout << "it is main thread" << std::endl;
-    else
-        std::cout << "It is not main thread" << std::endl;
+    assert(IsMainThread());
 
     SleepUsec(1000);
     

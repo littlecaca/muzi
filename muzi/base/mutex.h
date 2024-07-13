@@ -22,6 +22,7 @@ namespace muzi {
 class MutexLock : noncopyable
 {
     friend class MutexLockGuard;
+    friend class Condition;
 public:
     MutexLock();
     ~MutexLock()
@@ -38,22 +39,52 @@ public:
     }
 
 private:
-    // RAII: lock() and unlock() should only be not called by user code
+    // RAII: lock() and unlock() should only be called by MutexLockGuard
     void Lock()
     {
         ISZERO(pthread_mutex_lock(&mutex_));
-        holder_ = current_thread::tid();
+        AssignHolder();
     }
 
     void Unlock()
     {
-        holder_ = 0;
+        UnassignHolder();
         ISZERO(pthread_mutex_unlock(&mutex_));
     }
 
+    // Should only be called by Condition
     pthread_mutex_t *GetPthreadMutex()
     {
         return &mutex_;
+    }
+
+    // RAII: assign and unassign holder_
+    // Should only be called by Condition
+    class HolderGuard : noncopyable
+    {
+    public:
+        explicit HolderGuard(MutexLock &owner) : owner_(owner)
+        {
+            owner_.UnassignHolder();
+        }
+
+        ~HolderGuard()
+        {
+            owner_.AssignHolder();
+        }
+
+    private:
+        MutexLock &owner_;
+    };
+
+    void AssignHolder()
+    {
+        holder_ = current_thread::tid();
+    }
+
+    void UnassignHolder()
+    {
+        holder_ = 0;
     }
 
 private:
@@ -80,20 +111,12 @@ private:
     MutexLock &mutex_lock_;
 };
 
-
 // A inter class of MutexLock to save the static pthread_mutexattr_t
 class MutexLock::MutexAttr
 {
 public:
-    MutexAttr()
-    {
-        ISZERO(pthread_mutexattr_init(&mutex_attr));
-        ISZERO(pthread_mutexattr_settype(&mutex_attr, MUTEX_LOCK_ATTR));
-    }
-    ~MutexAttr()
-    {
-        ISZERO(pthread_mutexattr_destroy(&mutex_attr));
-    }
+    MutexAttr();
+    ~MutexAttr();
 
     pthread_mutexattr_t mutex_attr;
 };

@@ -75,6 +75,8 @@ int main(int argc, char const *argv[])
 
     std::cout << "cnt_unsafe: " << cnt_unsafe << "\n";
     std::cout << "cnt: " << cnt << std::endl;
+
+    assert(cnt == 1);
      
     return 0;
 }

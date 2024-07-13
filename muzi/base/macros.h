@@ -1,5 +1,5 @@
-#ifndef MUZI_CONFIG_H_
-#define MUZI_CONFIG_H_
+#ifndef MUZI_BASE_CONFIG_H_
+#define MUZI_BASE_CONFIG_H_
 
 #include <assert.h>
 #include <stdio.h>
@@ -16,8 +16,7 @@
 
 // Assert the system function is 0
 #define ISZERO(ret) ({ decltype(ret) errnum = (ret); \
-                       if (UNLIKELY(errnum == 0)) assert(errnum == 0);   \
+                       if (UNLIKELY(errnum != 0)) assert(errnum == 0);   \
                        (errnum);})
 
-
-#endif
+#endif  // MUZI_BASE_CONFIG_H_

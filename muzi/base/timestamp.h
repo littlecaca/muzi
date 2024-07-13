@@ -18,9 +18,11 @@ public:
         ts.tv_nsec = static_cast<long>(usec % kMicrosecondsPerSecond * 1000);
         return ts;
     }
-
-private:
+    
+    static constexpr int kMillisecondsPerSecond = 1000;
     static constexpr int kMicrosecondsPerSecond = 1000 * 1000;
+    static constexpr int kNanosecondsPerSecond = 1000 * 1000 * 1000;
+
 };
     
 }

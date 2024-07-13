@@ -1,6 +1,5 @@
 /**
  * Singleton
- * [status] done
  */
 #ifndef MUZI_BASE_SINGLETON_H_
 #define MUZI_BASE_SINGLETON_H_

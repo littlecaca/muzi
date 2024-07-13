@@ -1,6 +1,5 @@
 /**
  * MutexLock
- * [status] done
  * Implementing the RAII(Resourse Acquisition Is Initialization) style mutex lock.
  */
 #ifndef MUZI_BASE_MUTEX_H_

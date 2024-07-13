@@ -1,6 +1,5 @@
 /**
- * current_thread
- * [status] working
+ * current_thread is a namespace storing four TLS objects
  */
 #ifndef MUZI_BASE_CURRENTTHREAD_H_
 #define MUZI_BASE_CURRENTTHREAD_H_

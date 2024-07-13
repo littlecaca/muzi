@@ -1,0 +1,7 @@
+#ifndef MUZI_BASE_LOG_STREAM_H_
+#define MUZI_BASE_LOG_STREAM_H_
+
+
+
+
+#endif  // MUZI_BASE_LOG_STREAM_H_

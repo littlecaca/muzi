@@ -25,6 +25,7 @@ int main(int argc, char const *argv[])
     char buf[2];
     std::string s(buf, 1);
     // std::type_info<int>::
+    std::cout << (int)-43ULL << std::endl;
     print("main Test end...");
     return 0;
 }

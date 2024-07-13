@@ -27,15 +27,11 @@ public:
         return static_cast<size_t>(storage_end_ - end() - 1);
     }
     
-    char *end() const
-    {
-        return end_;
-    }
+    char *end() const { return end_; }
 
-    const char *begin() const
-    {
-        return static_cast<const char *>(buffer_);
-    }
+    const char *begin() const { return buffer_; }
+
+    const char *data() const { return buffer_; }
 
     // Update the end_ pointer to the first idle byte
     void Add(size_t len)
@@ -61,10 +57,7 @@ public:
         memset(buffer_, 0, sizeof buffer_);
     }
 
-    bool empty() const
-    {
-        return end_ == buffer_;
-    }
+    bool empty() const { return end_ == buffer_; }
 
     // Maybe used by gdb
     const char *DebugStr()

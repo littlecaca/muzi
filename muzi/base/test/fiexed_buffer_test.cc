@@ -1,5 +1,7 @@
 #include <assert.h>
+#include <string.h>
 #include <iostream>
+
 
 #include "fixed_buffer.h"
 
@@ -12,11 +14,11 @@ int main(int argc, char const *argv[])
     assert(buffer.empty());
 
     char msg[] = "test...test...";
-    int len = sizeof msg;
+    int len = strlen(msg);
 
 
     for (int i = 0; i < 3000; ++i)
-        buffer.Append(msg, len - 1);
+        buffer.Append(msg, len);
 
     assert(buffer.size() == 4095);
     assert(!buffer.empty());

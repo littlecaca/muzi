@@ -2,6 +2,7 @@
 #define MUZI_BASE_LOG_STREAM_H_
 
 #include <stdint.h>
+#include <algorithm>
 #include <string>
 #include <type_traits>
 
@@ -16,10 +17,25 @@ class LogStream : noncopyable
 {
 public:
     typedef FixedBuffer<config::kSmallBuffSize> Buffer;
-    
+
+    void ResetBuffer()
+    {
+        buffer_.clear();
+    }
+
+    const Buffer &GetBuffer() const { return buffer_; }
+
+    void Append(const char *msg, size_t len) 
+    { 
+        buffer_.Append(msg, len); 
+    }
+
+public:
+    // Operator<< overloads
+
     // Utilizing the SFINAE feature of C++ template
     // For integral type val
-    template <typename T, typename std::enable_if<std::is_integral<T>::value, int> = 0>
+    template <typename T, typename std::enable_if<std::is_integral<T>::value, int>::type = 0>
     LogStream &operator<<(T val)
     {
         if (buffer_.GetAvail() >= kMaxNumericSize)
@@ -30,7 +46,7 @@ public:
     }
 
     // For float type val
-    template <typename T, typename std::enable_if<std::is_floating_point<T>::value, int> = 0>
+    template <typename T, typename std::enable_if<std::is_floating_point<T>::value, int>::type = 0>
     LogStream &operator<<(T val)
     {
         if (buffer_.GetAvail() >= kMaxNumericSize)
@@ -79,6 +95,7 @@ public:
         {
             buffer_.Add(ConvertHex(buffer_.end(), *reinterpret_cast<const uintptr_t *>(hex)));
         }
+        return *this;
     }
 
 private:
@@ -109,8 +126,8 @@ template <typename T>
 size_t LogStream::ConvertIneger(char *buf, T val)
 {
     char *cur = buf;
-    int i = val;
-
+    T i = val;
+    
     do
     {
         *cur++ = kZero[i % 10];

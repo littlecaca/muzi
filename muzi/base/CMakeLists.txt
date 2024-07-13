@@ -3,6 +3,7 @@ set(BASE_SRCS
     thread.cc
     current_thread.cc
     condition.cc
+    log_stream.cc
 )
 
 add_library(muzi_base ${BASE_SRCS})

@@ -1,3 +1,5 @@
+#include <string>
+
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -20,7 +22,9 @@ int main(int argc, char const *argv[])
     // print(i);
     // print(i2);
     // std::cout << ({1;2;}) << std::endl;
-    
+    char buf[2];
+    std::string s(buf, 1);
+    // std::type_info<int>::
     print("main Test end...");
     return 0;
 }

@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
 {
     FixedBuffer<4096> buffer;
 
-    assert(buffer.IsEmpty());
+    assert(buffer.empty());
 
     char msg[] = "test...test...";
     int len = sizeof msg;
@@ -19,7 +19,7 @@ int main(int argc, char const *argv[])
         buffer.Append(msg, len - 1);
 
     assert(buffer.size() == 4095);
-    assert(!buffer.IsEmpty());
+    assert(!buffer.empty());
     assert(buffer.GetAvail() == 0);
 
     std::cout << buffer.DebugStr() << std::endl;

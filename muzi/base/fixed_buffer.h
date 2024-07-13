@@ -59,7 +59,7 @@ public:
         memset(buffer_, 0, sizeof buffer_);
     }
 
-    bool IsEmpty() const
+    bool empty() const
     {
         return end_ == buffer_;
     }
@@ -72,7 +72,7 @@ public:
     }
 
     // Maybe used by unit test
-    std::string ToString() const { return string(buffer_, end()); }
+    std::string ToString() const { return std::string(buffer_, size()); }
 
 private:
     char buffer_[SIZE];

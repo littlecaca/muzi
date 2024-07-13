@@ -5,6 +5,7 @@
 #include <string.h>
 #include <string>
 
+#include "string_proxy.h"
 #include "noncopyable.h"
 
 namespace muzi
@@ -22,6 +23,7 @@ public:
 
     size_t GetAvail() const
     {
+        // Here -1 is to keep the '\0' in the end which is needed to generate DebugStr
         return static_cast<size_t>(storage_end_ - end() - 1);
     }
     
@@ -74,6 +76,8 @@ public:
     // Maybe used by unit test
     std::string ToString() const { return std::string(buffer_, size()); }
 
+    StringProxy ToStringProxy() const { return StringProxy(buffer_, size()); }
+    
 private:
     char buffer_[SIZE];
     char *end_;

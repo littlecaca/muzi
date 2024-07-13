@@ -31,6 +31,8 @@ public:
         return length_ == 0;
     }
 
+    size_t size() const { return length_; }
+
     const char *begin() const
     {
         return ptr_;

@@ -1,6 +1,7 @@
 #ifndef MUZI_BASE_LOG_STREAM_H_
 #define MUZI_BASE_LOG_STREAM_H_
 
+#include <stdint.h>
 #include <string>
 #include <type_traits>
 
@@ -59,11 +60,25 @@ public:
         return *this;
     }
 
+    LogStream &operator<<(const StringProxy &str)
+    {
+        buffer_.Append(str.data(), str.size());
+        return *this;
+    }   
+
     LogStream &operator<<(const Buffer &buf)
     {
-        // In case the buf is buffer_
-        *this << buf.ToString();
+        *this << buf.ToStringProxy();
         return *this;
+    }
+
+    // Accept a restirct void * binary val
+    LogStream &operator<<(const void *hex)
+    {
+        if (buffer_.GetAvail() >= kMaxHexSize)
+        {
+            ConvertHex(buffer_.end(), *reinterpret_cast<const uintptr_t *>(hex));
+        }
     }
 
 private:
@@ -75,14 +90,16 @@ private:
     template <typename T>
     void ConvertFloat(char *buf, T val);
 
+    // Write void * type as hex val
+    void ConvertHex(char *buf, uintptr_t val);
+
 private:
     Buffer buffer_;
 
     const int kMaxNumericSize = 48;
+    const int kMaxHexSize = 8;
 };
+
 }   // namespace muzi
-
-
-
 
 #endif  // MUZI_BASE_LOG_STREAM_H_

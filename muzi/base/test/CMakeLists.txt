@@ -17,3 +17,7 @@ add_test(NAME fiexed_buffer_test COMMAND fiexed_buffer_test)
 add_executable(log_stream_test log_stream_test.cc)
 target_link_libraries(log_stream_test PRIVATE muzi_base)
 add_test(NAME log_stream_test COMMAND log_stream_test)
+
+add_executable(timestamp_test timestamp_test.cc)
+target_link_libraries(timestamp_test PRIVATE muzi_base)
+add_test(NAME timestamp_test COMMAND timestamp_test)

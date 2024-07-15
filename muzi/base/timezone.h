@@ -13,16 +13,22 @@ namespace muzi
 class TimeZone : noncopyable
 {
 public:
-    virtual void Convert(struct timeval *tv) const = 0;
+    virtual void Convert(std::time_t time, std::tm *time_buf) const = 0;
+    virtual std::time_t Convert(std::time_t time) const = 0;
     virtual const char *GetTzName() const = 0;
 };
 
 class LocalTimeZone : public TimeZone
 {
 public:
-    void Convert(struct timeval *tv) const override
+    std::time_t Convert(std::time_t time) const
     {
-        // Do nothing
+        return time;
+    }
+
+    void Convert(std::time_t time, std::tm *time_buf) const override
+    {
+        localtime_r(&time, time_buf);
     }
 
     const char *GetTzName() const override
@@ -34,9 +40,14 @@ public:
 class UtcTimeZone : public TimeZone
 {
 public:
-    virtual void Convert(struct timeval *tv) const override 
+    std::time_t Convert(std::time_t time) const
     {
-        tv->tv_sec -= timezone;
+        return time - timezone;
+    }
+
+    void Convert(std::time_t time, std::tm *time_buf) const override
+    {
+        gmtime_r(&time, time_buf);
     }
 
     const char *GetTzName() const override

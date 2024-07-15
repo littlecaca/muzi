@@ -3,7 +3,7 @@
 namespace muzi
 {
 const TimeZone &kLocalTimeZone = LocalTimeZone();
-const TimeZone &kUtcTimeZ = UtcTimeZone();
+const TimeZone &kUtcTimeZone = UtcTimeZone();
 
 
 }   // namespace muzi

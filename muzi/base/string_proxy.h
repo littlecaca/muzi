@@ -2,6 +2,7 @@
 #define MUZI_BASE_STRING_PROXY_H_
 
 #include <string.h>
+#include <iostream>
 #include <string>
 
 namespace muzi
@@ -21,6 +22,8 @@ public:
     StringProxy(const std::string &str) 
         : ptr_(str.data()), length_(str.size()) {}
 
+    // Be careful, it is not a C style string,
+    // which means it maybe don't end with '\0'
     const char *data() const
     {
         return ptr_;
@@ -108,8 +111,6 @@ public:
     COMPARE_OPERATOR(>=, >)                    
 
     #undef COMPARE_OPERATOR
-    
-
 
     std::string ToString() const
     {
@@ -127,6 +128,10 @@ private:
     size_t length_;
 };
 
+inline std::ostream &operator<<(std::ostream &os, const StringProxy &str)
+{
+    return os << str.ToString();
+}
 
 }   // namespace muzi
 

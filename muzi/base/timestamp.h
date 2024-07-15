@@ -30,7 +30,6 @@ public:
         : zone_validtor_(zone_validtor)
     {
         gettimeofday(&time_val_, nullptr);
-        zone_validtor_.Convert(&time_val_);
     }
     // Default using utc timezone
     TimeStamp() : TimeStamp(kUtcTimeZone) {}
@@ -39,7 +38,6 @@ public:
     {
         time_val_.tv_sec = time;
         time_val_.tv_usec = 0;
-        zone_validtor_.Convert(&time_val_);
     }
     
     explicit TimeStamp(std::time_t time) : TimeStamp(time, kUtcTimeZone) {}
@@ -48,7 +46,18 @@ public:
     // So be careful
     StringProxy ToFormatString() const;
 
+    std::time_t ToLocalTime() const
+    {
+        return kLocalTimeZone.Convert(time_val_.tv_sec);
+    }
+
+    std::time_t ToUtcTime() const
+    {
+        return kUtcTimeZone.Convert(time_val_.tv_sec);
+    }
+
 private:
+    // Always points to local time
     struct timeval time_val_ = {0};
     const TimeZone &zone_validtor_;
 };

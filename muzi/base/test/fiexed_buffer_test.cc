@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
     assert(!buffer.empty());
     assert(buffer.GetAvail() == 0);
 
-    std::cout << buffer.DebugStr() << std::endl;
+    std::cout << buffer.ToCStr() << std::endl;
 
     
     return 0;

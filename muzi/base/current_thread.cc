@@ -36,7 +36,8 @@ bool IsMainThread()
 
 void SleepUsec(int64_t usec)
 {
-    struct timespec ts = TimeStamp::ToTimeSpec(usec);
+    timespec ts = {0, 0};
+    TimeStamp::ToTimeSpec(usec, ts);
     ::nanosleep(&ts, NULL);
 }
 

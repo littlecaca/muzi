@@ -2,6 +2,9 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
+#include <ctime>
+#include <iomanip>
 
 #include "mutex.h"
 #include "debug.h"
@@ -15,17 +18,24 @@ class Foo : muzi::noncopyable
 int main(int argc, char const *argv[])
 {
     print("main Test start...");
+    std::time_t t = std::time(nullptr);
+    
+    // Get the local time
+    std::tm local_tm = *std::localtime(&t);
+    
+    // Get the UTC time
+    std::tm utc_tm = *std::gmtime(&t);
+    
+    // Calculate the timezone offset in seconds
+    std::time_t local_time = std::mktime(&local_tm);
+    std::time_t utc_time = std::mktime(&utc_tm);
+    int timezone_offset = static_cast<int>(std::difftime(local_time, utc_time));
+    
+    // Print the local time and timezone offset
+    std::cout << "Local time: " << std::put_time(&local_tm, "%Y-%m-%d %H:%M:%S") << '\n';
+    std::cout << "UTC time: " << std::put_time(&utc_tm, "%Y-%m-%d %H:%M:%S") << '\n';
+    std::cout << "Timezone offset: " << (timezone_offset / 3600) << " hours" << '\n';
 
-    int &i = muzi::Singleton<int>::getInstance();
-    // i = 12;
-    // int &i2 = muzi::Singleton<int>::instance();
-    // print(i);
-    // print(i2);
-    // std::cout << ({1;2;}) << std::endl;
-    char buf[2];
-    std::string s(buf, 1);
-    // std::type_info<int>::
-    std::cout << (int)-43ULL << std::endl;
     print("main Test end...");
     return 0;
 }

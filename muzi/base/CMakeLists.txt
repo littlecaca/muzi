@@ -4,6 +4,7 @@ set(BASE_SRCS
     current_thread.cc
     condition.cc
     log_stream.cc
+    logger.cc
 )
 
 add_library(muzi_base ${BASE_SRCS})

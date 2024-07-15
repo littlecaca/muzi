@@ -59,14 +59,14 @@ public:
 
     bool empty() const { return end_ == buffer_; }
 
-    // Maybe used by gdb
-    const char *DebugStr()
+    // Return C style string
+    const char *ToCStr()
     {
         *end_ = '\0';
         return buffer_;
     }
 
-    // Maybe used by unit test
+    // Return C++ style string
     std::string ToString() const { return std::string(buffer_, size()); }
 
     StringProxy ToStringProxy() const { return StringProxy(buffer_, size()); }

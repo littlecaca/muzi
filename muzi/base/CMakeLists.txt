@@ -5,6 +5,8 @@ set(BASE_SRCS
     condition.cc
     log_stream.cc
     logger.cc
+    timezone.cc
+    timestamp.cc
 )
 
 add_library(muzi_base ${BASE_SRCS})

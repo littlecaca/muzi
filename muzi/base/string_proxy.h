@@ -19,7 +19,7 @@ public:
     StringProxy(const char *ptr, int len) 
         : ptr_(ptr), length_(len) {}
     StringProxy(const std::string &str) 
-        : ptr_(str.data()), length_(static_cast<size_t>(str.size())) {}
+        : ptr_(str.data()), length_(str.size()) {}
 
     const char *data() const
     {

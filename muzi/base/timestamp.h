@@ -3,14 +3,14 @@
 
 #include <stdint.h>
 #include <ctime>
+#include <sys/time.h>
 
 #include "noncopyable.h"
+#include "string_proxy.h"
 #include "timezone.h"
 
 namespace muzi
 {
-
-
 
 class TimeStamp : noncopyable
 {
@@ -26,16 +26,33 @@ public:
     static constexpr int kMicrosecondsPerSecond = 1000 * 1000;
     static constexpr int kNanosecondsPerSecond = 1000 * 1000 * 1000;
 
-    TimeStamp() : time_(std::time(nullptr)) {}
-    TimeStamp(std::time_t time) : time_(time) {}
+    explicit TimeStamp(const TimeZone &zone_validtor) 
+        : zone_validtor_(zone_validtor)
+    {
+        gettimeofday(&time_val_, nullptr);
+        zone_validtor_.Convert(&time_val_);
+    }
+    // Default using utc timezone
+    TimeStamp() : TimeStamp(kUtcTimeZone) {}
+    // Set other time
+    TimeStamp(std::time_t time, const TimeZone &zone_validtor) : zone_validtor_(zone_validtor)
+    {
+        time_val_.tv_sec = time;
+        time_val_.tv_usec = 0;
+        zone_validtor_.Convert(&time_val_);
+    }
+    
+    explicit TimeStamp(std::time_t time) : TimeStamp(time, kUtcTimeZone) {}
 
-
-   
+    // The returned string uses TLS, but it won't stop overwritting
+    // So be careful
+    StringProxy ToFormatString() const;
 
 private:
-    std::time_t time_;
+    struct timeval time_val_ = {0};
+    const TimeZone &zone_validtor_;
 };
-    
+
 }
 
 

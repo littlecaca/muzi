@@ -2,6 +2,7 @@
 #define MUZI_BASE_OUTPUTER_H_
 
 #include <iostream>
+#include <stdio.h>
 
 #include "noncopyable.h"
 #include "fixed_buffer.h"
@@ -16,12 +17,12 @@ public:
 
     virtual void Output(const Buffer &buf)
     {
-        std::cout << buf.ToCStr() << "\n";
+        fwrite(buf.data(), 1, buf.size(), stdout);
     }
 
     virtual void Flush()
     {
-        std::cout << std::flush;
+        fflush(stdout);
     }
 };
 

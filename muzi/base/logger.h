@@ -83,7 +83,7 @@ public:
     StackWritter(const Logger &logger, const SourceFile &file, int line, LogLevel level, const char *func) 
         : StackWritter(logger, file, line, level, 0)
     {
-       log_stream_ << func << " ";
+       log_stream_ << func << ": ";
     }
 
     StackWritter(const Logger &logger, const SourceFile &file, int line, bool to_abort)
@@ -146,7 +146,7 @@ using Writter = StackWritter;
 // Template implementation
 
 template <int N>
-SourceFile::SourceFile(const char (&file)[N]) : data_(file), size_(N)
+SourceFile::SourceFile(const char (&file)[N]) : data_(file), size_(N - 1)
 {
     const char *right = &file[N - 2];
     while (right >= file)
@@ -160,7 +160,6 @@ SourceFile::SourceFile(const char (&file)[N]) : data_(file), size_(N)
     {
         data_ = right;
         size_ -= right - file;
-
     }
 }
 }   //  namespace muzi

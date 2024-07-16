@@ -24,27 +24,28 @@ Logger &gDefaultLogger = DefaultLogger;
 
 const char * const kLogLevelName[LogLevel::kLogLevelNum] = 
 {
-    "Trace ",
-    "Debug ",
-    "Info  ",
-    "Warn  ",
-    "Error ",
-    "Fatal ",
+    "Trace",
+    "Debug",
+    "Info ",
+    "Warn ",
+    "Error",
+    "Fatal",
 };
 
 StackWritter::StackWritter(const Logger &logger, const SourceFile &file, int line,
     LogLevel level, error_t errcode) : logger_(logger), level_(level), file_(file), line_(line)
 {
     current_thread::CachedTid();
+    log_stream_ << "[";
     log_stream_ << TimeStamp().ToFormatString() << " ";
     log_stream_ << current_thread::t_tid_string << " ";
-    
-    log_stream_ << StringProxy(kLogLevelName[level_], 6);
+    log_stream_ << StringProxy(kLogLevelName[level_], 5);
 
     if (errcode != 0)
     {
-        log_stream_ << GetError(errcode) << " (errno = " << errcode << ") ";
+        log_stream_ << GetError(errcode) << " (errno = " << errcode << ")";
     }
+    log_stream_ << "] ";
 }
 
 void StackWritter::Finish()

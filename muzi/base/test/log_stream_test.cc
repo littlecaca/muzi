@@ -12,7 +12,8 @@ int main(int argc, char const *argv[])
 {
     muzi::LogStream ls;
     char msg[] = "This is a message";
-
+    char *p = msg;
+    ls << p << "\n";
     ls << "int 32: " << 32 << "\n";
     ls << "int 211321: " << 211321 << "\n";
     ls << muzi::StringProxy("unsigned long long 32: ") << 32ULL << "\n";

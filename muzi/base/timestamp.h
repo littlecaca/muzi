@@ -64,5 +64,4 @@ private:
 
 }
 
-
 #endif  // MUZI_TIMESTAMP_H_

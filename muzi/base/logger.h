@@ -3,6 +3,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include <utility>
 
 #include "log_stream.h"
 #include "noncopyable.h"
@@ -12,34 +13,16 @@
 
 namespace muzi
 {
-class Logger
+enum class LogLevel
 {
-public:
-    enum LogLevel
-    {
-        kTrace,
-        kDebug,
-        kInfo,
-        kWarn,
-        kError,
-        kFatal,
-        kLogLevelNum,
-    };
-
-    virtual const char *GetLogFile() const = 0;
-    virtual LogLevel GetLogLevel() const = 0;
-    virtual void SetLogLevel() = 0;
-
-protected:
-    LogLevel log_level_;
-
-    
+    kTrace,
+    kDebug,
+    kInfo,
+    kWarn,
+    kError,
+    kFatal,
+    kLogLevelNum,
 };
-
-
-// Default and static logger for quick and easy to use log system
-extern const Logger &global_logger;
-
 
 // Get the source file's basename
 class SourceFile
@@ -58,18 +41,27 @@ private:
 // RAII style
 class StackWritter : noncopyable
 {
+    friend class Logger;
 public:
+    template <typename T>
+    StackWritter &operator<<(T &&msg)
+    {
+        log_stream_ << std::forward<T>(msg);
+        return *this;
+    }
+
     StackWritter(SourceFile file, int line) 
-        : StackWritter(file, line, Logger::kInfo, 0) {}
-    StackWritter(SourceFile file, int line, Logger::LogLevel level)
+        : StackWritter(file, line, LogLevel::kInfo, 0) {}
+    StackWritter(SourceFile file, int line, LogLevel level)
         : StackWritter(file, line, level, 0) {}
-    StackWritter(SourceFile file, int line, Logger::LogLevel level, const char *func) 
+    StackWritter(SourceFile file, int line, LogLevel level, const char *func) 
         : StackWritter(file, line, level, 0)
     {
         log_stream_ << func << ' ';
     }
-    StackWritter(const SourceFile &file, int line, Logger::LogLevel level, error_t errcode);
-    
+    StackWritter(const SourceFile &file, int line, LogLevel level, error_t errcode);
+    StackWritter(const StringProxy &str);
+
     ~StackWritter();
 
 private:
@@ -78,7 +70,43 @@ private:
 };
 
 // Set StackWriter as the default Writter
-using Writter = StackWritter;
+class Logger
+{
+public:
+    using Writter = StackWritter;
+
+    // Expecting the copy ellision to provide performance
+    template <typename ...T>
+    Writter Log(T &&...args)
+    {
+        return Writter(std::forward<T>(args)...);
+    }
+    
+    LogLevel GetLogLevel() const { return log_level_; }
+    Outputer *GetOutputer() const { return outputer_; }
+
+    void SetLogLevel(LogLevel level)
+    {
+        log_level_ = level;
+    }
+
+    void SetOutputer(Outputer *outputer)
+    {
+        outputer_ = outputer;
+    }
+
+protected:
+    LogLevel log_level_;
+    Outputer *outputer_;
+};
+
+
+// Default and static logger for quick and easy to use log system
+extern Logger &global_logger;
+
+
+
+
 
 
 #define LOG_TRACE global_logger.Trace()

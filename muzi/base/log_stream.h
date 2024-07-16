@@ -57,7 +57,9 @@ public:
     }
     
     // For other type using function overloading
-    LogStream &operator<<(const char *msg)
+    template <typename T, typename std::enable_if_t<!std::is_array_v<T> && 
+        (std::is_same_v<T, const char *> || std::is_same_v<T, char *>), int> = 0>
+    LogStream &operator<<(const T &msg)
     {
         if (msg)
         {
@@ -67,6 +69,13 @@ public:
         {
             buffer_.Append("(null)", 6);
         }
+        return *this;
+    }
+
+    template <size_t N>
+    LogStream &operator<<(const char (&msg)[N])
+    {
+        buffer_.Append(msg, N - 1);
         return *this;
     }
     

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <iostream>
 #include <string>
+#include <type_traits>
 
 namespace muzi
 {
@@ -15,12 +16,20 @@ class StringProxy
 {
 public:
     StringProxy() : ptr_(NULL), length_(0) {}
-    StringProxy(const char *ptr) 
+
+    template <typename T, typename std::enable_if_t<!std::is_array_v<T> && 
+        (std::is_same_v<T, const char *> || std::is_same_v<T, char *>), int> = 0>
+    StringProxy(const T &ptr)
         : ptr_(ptr), length_(strlen(ptr)) {}
+
+    template <size_t N>
+    StringProxy(const char (&msg)[N]) : ptr_(msg), length_(N) {}
+
     StringProxy(const char *ptr, int len) 
         : ptr_(ptr), length_(len) {}
     StringProxy(const std::string &str) 
         : ptr_(str.data()), length_(str.size()) {}
+    
 
     // Be careful, it is not a C style string,
     // which means it maybe don't end with '\0'

@@ -12,7 +12,7 @@
 
 namespace muzi
 {
-enum class LogLevel
+enum LogLevel
 {
     kTrace,
     kDebug,
@@ -30,11 +30,8 @@ public:
     template <int N>
     SourceFile(const char (&file)[N]);
 
-
-private:
     const char *data_;
     int size_;
-
 };
 
 // RAII style
@@ -66,6 +63,7 @@ public:
 
     ~StackWritter()
     {
+        Finish();
         outputer_->Output(log_stream_.GetBuffer());
         if (level_ == LogLevel::kFatal)
         {
@@ -77,11 +75,14 @@ public:
 private:
     StackWritter(Outputer *outputer, const SourceFile &file, int line, LogLevel level, error_t errcode);
 
+    void Finish();
+
 private:
-    TimeStamp time_;
     LogStream log_stream_;
     Outputer *outputer_;
     LogLevel level_;
+    SourceFile file_;
+    int line_;
 };
 
 // Set StackWriter as the default Writter

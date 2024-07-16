@@ -81,7 +81,7 @@ public:
     
     LogStream &operator<<(const std::string &msg)
     {
-        buffer_.Append(msg.c_str(), msg.size());
+        buffer_.Append(msg.data(), msg.size());
         return *this;
     }
 

@@ -25,6 +25,8 @@ public:
     }
 };
 
+extern Outputer *gDefaultOutputer;
+
 }   // namespace muzi
 
 

@@ -28,8 +28,8 @@ const char * const kLogLevelName[LogLevel::kLogLevelNum] =
     "Fatal ",
 };
 
-StackWritter::StackWritter(Outputer *outputer, const SourceFile &file, int line,
-    LogLevel level, error_t errcode) : outputer_(outputer), level_(level), file_(file), line_(line)
+StackWritter::StackWritter(const Logger &logger, const SourceFile &file, int line,
+    LogLevel level, error_t errcode) : logger_(logger), level_(level), file_(file), line_(line)
 {
     current_thread::CachedTid();
     log_stream_ << current_thread::t_tid_string << " ";

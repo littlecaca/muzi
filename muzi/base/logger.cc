@@ -1,13 +1,14 @@
 #include "logger.h"
 
+// #include "current_thread.h"
+
 namespace muzi
 {
-// StackWritter::StackWritter(const SourceFile &file, int line,
-//     Logger::LogLevel level, error_t errcode)
-// {
-
-
-// }
+StackWritter::StackWritter(Outputer *outputer, const SourceFile &file, int line,
+    LogLevel level, error_t errcode) : outputer_(outputer), level_(level)
+{
+    
+}
 
 
 }   // namespace muzi

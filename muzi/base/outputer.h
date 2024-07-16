@@ -13,9 +13,15 @@ class Outputer : noncopyable
 {
 public:
     typedef FixedBuffer<config::kSmallBuffSize> Buffer;
-    virtual void Output(Buffer &buf)
+
+    virtual void Output(const Buffer &buf)
     {
-        std::cout << buf.ToCStr() << std::endl;
+        std::cout << buf.ToCStr() << "\n";
+    }
+
+    virtual void Flush()
+    {
+        std::cout << std::flush;
     }
 };
 

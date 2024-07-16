@@ -1,5 +1,5 @@
-#ifndef MUZI_BASE_CONFIG_H_
-#define MUZI_BASE_CONFIG_H_
+#ifndef MUZI_BASE_MACRO_H_
+#define MUZI_BASE_MACRO_H_
 
 #include <assert.h>
 #include <stdio.h>
@@ -19,4 +19,4 @@
                        if (UNLIKELY(errnum != 0)) assert(errnum == 0);   \
                        (errnum);})
 
-#endif  // MUZI_BASE_CONFIG_H_
+#endif  // MUZI_BASE_MACRO_H_

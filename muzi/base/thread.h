@@ -1,5 +1,5 @@
-#ifndef MUZI_THREAD_H_
-#define MUZI_THREAD_H_
+#ifndef MUZI_BASE_THREAD_H_
+#define MUZI_BASE_THREAD_H_
 
 #include <pthread.h>
 #include <sys/syscall.h>
@@ -17,4 +17,4 @@ inline pid_t GetTid()
 }   // namespace muzi
 
 
-#endif
+#endif  // MUZI_BASE_THREAD_H_

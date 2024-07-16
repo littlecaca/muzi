@@ -60,7 +60,7 @@ public:
     bool empty() const { return end_ == buffer_; }
 
     // Return C style string
-    const char *ToCStr()
+    const char *ToCStr() const
     {
         *end_ = '\0';
         return buffer_;
@@ -76,6 +76,7 @@ private:
     char *end_;
     const char *storage_end_;
 };
+
 
 }   // namespace muzi
 

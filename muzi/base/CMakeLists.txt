@@ -7,6 +7,7 @@ set(BASE_SRCS
     logger.cc
     timezone.cc
     timestamp.cc
+    config.cc
 )
 
 add_library(muzi_base ${BASE_SRCS})

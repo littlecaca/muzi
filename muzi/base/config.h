@@ -4,13 +4,19 @@
 
 namespace muzi
 {
-namespace config
+struct config
 {
     // Used by LogStream
-    constexpr int kSmallBuffSize = 4096;
+    static const int kSmallBuffSize = 4096;
     // Used by AsyncLogging
-    constexpr int kLargeBuffSize = 4096 * 1000;
-}
-}
+    static const int kLargeBuffSize = 4096 * 1000;
+    // Logfile path
+    static const char *kLogPath;
+    // Roll size
+    static const int kRollSize = 32;
+};   // namespace config
+
+}    // namespace muzi
+
 
 #endif  // MUZI_BASE_CONFIG_H_

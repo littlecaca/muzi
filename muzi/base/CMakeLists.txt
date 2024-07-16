@@ -8,6 +8,7 @@ set(BASE_SRCS
     timezone.cc
     timestamp.cc
     config.cc
+    outputer.cc
 )
 
 add_library(muzi_base ${BASE_SRCS})

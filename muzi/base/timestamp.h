@@ -26,21 +26,18 @@ public:
     static constexpr int kMicrosecondsPerSecond = 1000 * 1000;
     static constexpr int kNanosecondsPerSecond = 1000 * 1000 * 1000;
 
-    explicit TimeStamp(const TimeZone &zone_validtor) 
-        : zone_validtor_(zone_validtor)
+    // Default using now
+    TimeStamp() 
     {
         gettimeofday(&time_val_, nullptr);
     }
-    // Default using utc timezone
-    TimeStamp() : TimeStamp(kUtcTimeZone) {}
+
     // Set other time
-    TimeStamp(std::time_t time, const TimeZone &zone_validtor) : zone_validtor_(zone_validtor)
+    TimeStamp(std::time_t time)
     {
         time_val_.tv_sec = time;
         time_val_.tv_usec = 0;
     }
-    
-    explicit TimeStamp(std::time_t time) : TimeStamp(time, kUtcTimeZone) {}
 
     // The returned string uses TLS, but it won't stop overwritting
     // So be careful
@@ -56,10 +53,20 @@ public:
         return kUtcTimeZone.Convert(time_val_.tv_sec);
     }
 
+    // Be careful! it is not thread safe
+    static void SetTimeZone(const TimeZone *zone)
+    {
+        zone_validtor_ = zone;
+    }
+
+    static const TimeZone *GetTimeZone() { return zone_validtor_; }
+
 private:
     // Always points to local time
     struct timeval time_val_ = {0};
-    const TimeZone &zone_validtor_;
+
+private:
+    const static TimeZone *zone_validtor_;
 };
 
 }

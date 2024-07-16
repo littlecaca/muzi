@@ -21,3 +21,7 @@ add_test(NAME log_stream_test COMMAND log_stream_test)
 add_executable(timestamp_test timestamp_test.cc)
 target_link_libraries(timestamp_test PRIVATE muzi_base)
 add_test(NAME timestamp_test COMMAND timestamp_test)
+
+add_executable(logger_test logger_test.cc)
+target_link_libraries(logger_test PRIVATE muzi_base)
+add_test(NAME logger_test COMMAND logger_test)

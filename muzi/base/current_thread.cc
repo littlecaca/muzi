@@ -3,8 +3,8 @@
 #include <time.h>
 
 #include <unistd.h>
-#include <thread>
 
+#include "thread.h"
 #include "timestamp.h"
 
 namespace muzi::current_thread
@@ -20,6 +20,7 @@ void CachedTid()
 {
     if (t_tid == 0)
     {
+        t_tid = thread::GetTid();
         t_tid_string = std::to_string(t_tid);
         t_tid_length = t_tid_string.size();
     }

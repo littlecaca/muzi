@@ -26,7 +26,9 @@ enum LogLevel
 class Logger
 {
 public:
-    Logger() : outputer_(gDefaultOutputer), log_level_(LogLevel::kTrace) {}
+    Logger(Outputer *outputer = gDefaultOutputer, LogLevel log_level = LogLevel::kTrace) 
+        : outputer_(outputer), log_level_(log_level) {}
+    Logger(LogLevel log_level) : Logger(gDefaultOutputer, log_level) {}
 
     LogLevel GetLogLevel() const { return log_level_; }
     Outputer *GetOutputer() const { return outputer_; }
@@ -42,8 +44,8 @@ public:
     }
 
 private:
-    LogLevel log_level_;
     Outputer *outputer_;
+    LogLevel log_level_;
 };
 
 // Default and static logger for quick and easy to use log system
@@ -78,10 +80,10 @@ public:
     StackWritter(const Logger &logger, const SourceFile &file, int line, LogLevel level)
         : StackWritter(logger, file, line, level, 0) {}
 
-    StackWritter(const Logger &logger, const SourceFile &file, int line, LogLevel level, const char &func) 
+    StackWritter(const Logger &logger, const SourceFile &file, int line, LogLevel level, const char *func) 
         : StackWritter(logger, file, line, level, 0)
     {
-       log_stream_ << func << ' ';
+       log_stream_ << func << " ";
     }
 
     StackWritter(const Logger &logger, const SourceFile &file, int line, bool to_abort)
@@ -117,35 +119,36 @@ private:
 // Set StackWritter as the default Writter
 using Writter = StackWritter;
 
-// Interface
-#define LOG_TRACE_U(logger) if (logger.log_level <= LogLevel::kTrace) \
-    Writter(logger, __file__, __line__, LogLevel::kTrace, __func__).GetStream()
-#define LOG_DEBUG_U(logger) if (logger.log_level <= LogLevel::kDebug) \
-    Writter(logger, __file__, __line__, LogLevel::kDebug, __func__).GetStream()
-#define LOG_INFO_U(logger)  if (logger.log_level <= LogLevel::kInfo) \
-    Writter(logger, __file__, __line__).GetStream()
-#define LOG_WARN_U(logger)  if (logger.log_level <= LogLevel::kWarn) \
-    Writter(logger, __file__, __line__, LogLevel::kWarn).GetStream()
-#define LOG_ERROR_U(logger)  Writter(logger, __file__, __line__, LogLevel::kError).GetStream()
-#define LOG_FATAL_U(logger)  Writter(logger, __file__, __line__, LogLevel::kFatal).GetStream()
-#define LOG_SYSERR_U(logger) Writter(logger, __file__, __line__, false).GetStream()
-#define Log_SYSFAT_U(logger) Writter(logger, __file__, __line__, true).GetStream()
 
-#define LOG_TRACE   LOG_TRACE_U(gDefaultLogger)
-#define LOG_DEBUG   LOG_DEBUG_U(gDefaultLogger)
-#define LOG_INFO    LOG_INFO_U(gDefaultLogger)
-#define LOG_WARN    LOG_WARN_U(gDefaultLogger)
-#define LOG_ERROR   LOG_ERROR_U(gDefaultLogger)
-#define LOG_FATAL   LOG_FATAL_U(gDefaultLogger)
-#define LOG_SYSERR  LOG_SYSERR_U(gDefaultLogger)
-#define Log_SYSFAT  Log_SYSFAT_U(gDefaultLogger)
+#define LOG_TRACE_U(logger) if (logger.GetLogLevel() <= muzi::LogLevel::kTrace) \
+    muzi::Writter(logger, __FILE__, __LINE__, muzi::LogLevel::kTrace, __func__).GetStream()
+#define LOG_DEBUG_U(logger) if (logger.GetLogLevel() <= muzi::LogLevel::kDebug) \
+    muzi::Writter(logger, __FILE__, __LINE__, muzi::LogLevel::kDebug, __func__).GetStream()
+#define LOG_INFO_U(logger)  if (logger.GetLogLevel() <= muzi::LogLevel::kInfo) \
+    muzi::Writter(logger, __FILE__, __LINE__).GetStream()
+#define LOG_WARN_U(logger)  if (logger.GetLogLevel() <= muzi::LogLevel::kWarn) \
+    muzi::Writter(logger, __FILE__, __LINE__, muzi::LogLevel::kWarn).GetStream()
+#define LOG_ERROR_U(logger)  muzi::Writter(logger, __FILE__, __LINE__, muzi::LogLevel::kError).GetStream()
+#define LOG_FATAL_U(logger)  muzi::Writter(logger, __FILE__, __LINE__, muzi::LogLevel::kFatal).GetStream()
+#define LOG_SYSERR_U(logger) muzi::Writter(logger, __FILE__, __LINE__, false).GetStream()
+#define Log_SYSFAT_U(logger) muzi::Writter(logger, __FILE__, __LINE__, true).GetStream()
+
+// Interface
+#define LOG_TRACE   LOG_TRACE_U(muzi::gDefaultLogger)
+#define LOG_DEBUG   LOG_DEBUG_U(muzi::gDefaultLogger)
+#define LOG_INFO    LOG_INFO_U(muzi::gDefaultLogger)
+#define LOG_WARN    LOG_WARN_U(muzi::gDefaultLogger)
+#define LOG_ERROR   LOG_ERROR_U(muzi::gDefaultLogger)
+#define LOG_FATAL   LOG_FATAL_U(muzi::gDefaultLogger)
+#define LOG_SYSERR  LOG_SYSERR_U(muzi::gDefaultLogger)
+#define Log_SYSFAT  Log_SYSFAT_U(muzi::gDefaultLogger)
 
 // Template implementation
 
 template <int N>
 SourceFile::SourceFile(const char (&file)[N]) : data_(file), size_(N)
 {
-    const char *right = file[N - 2];
+    const char *right = &file[N - 2];
     while (right >= file)
     {
         if (*right-- == '/')
@@ -160,9 +163,6 @@ SourceFile::SourceFile(const char (&file)[N]) : data_(file), size_(N)
 
     }
 }
-
-
 }   //  namespace muzi
-
 
 #endif  // MUZI_BASE_LOGGER_H_

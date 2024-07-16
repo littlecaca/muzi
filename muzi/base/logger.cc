@@ -16,7 +16,11 @@ const char *GetError(error_t errcode)
 {
     return strerror_r(errcode, t_errno_buf, sizeof t_errno_buf);
 }
+
+Logger DefaultLogger;
 }   // internal linkage
+
+Logger &gDefaultLogger = DefaultLogger;
 
 const char * const kLogLevelName[LogLevel::kLogLevelNum] = 
 {
@@ -32,6 +36,7 @@ StackWritter::StackWritter(const Logger &logger, const SourceFile &file, int lin
     LogLevel level, error_t errcode) : logger_(logger), level_(level), file_(file), line_(line)
 {
     current_thread::CachedTid();
+    log_stream_ << TimeStamp().ToFormatString() << " ";
     log_stream_ << current_thread::t_tid_string << " ";
     
     log_stream_ << StringProxy(kLogLevelName[level_], 6);
@@ -44,7 +49,7 @@ StackWritter::StackWritter(const Logger &logger, const SourceFile &file, int lin
 
 void StackWritter::Finish()
 {
-    log_stream_ << StringProxy(file_.data_, file_.size_) << " : " << line_ << "\n";
+    log_stream_ << " " << StringProxy(file_.data_, file_.size_) << " : " << line_ << "\n";
 }
 
 

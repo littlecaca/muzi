@@ -23,7 +23,7 @@ public:
         : ptr_(ptr), length_(strlen(ptr)) {}
 
     template <size_t N>
-    StringProxy(const char (&msg)[N]) : ptr_(msg), length_(N) {}
+    StringProxy(const char (&msg)[N]) : ptr_(msg), length_(N - 1) {}
 
     StringProxy(const char *ptr, int len) 
         : ptr_(ptr), length_(len) {}
@@ -32,7 +32,7 @@ public:
     
 
     // Be careful, it is not a C style string,
-    // which means it maybe don't end with '\0'
+    // which means it doesn't end with '\0'
     const char *data() const
     {
         return ptr_;

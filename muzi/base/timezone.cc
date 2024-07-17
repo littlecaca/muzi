@@ -2,8 +2,8 @@
 
 namespace muzi
 {
-const TimeZone &kLocalTimeZone = LocalTimeZone();
-const TimeZone &kUtcTimeZone = UtcTimeZone();
+const LocalTimeZone kLocalTimeZone;
+const UtcTimeZone kUtcTimeZone;
 
 
 }   // namespace muzi

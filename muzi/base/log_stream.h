@@ -13,10 +13,17 @@
 
 namespace muzi
 {
+// extern thread_local FixedBuffer<config::kSmallBuffSize> t_LogStreamBuffer;
+
 class LogStream : noncopyable
 {
 public:
     typedef FixedBuffer<config::kSmallBuffSize> Buffer;
+
+    ~LogStream()
+    {
+        ResetBuffer();
+    }
 
     void ResetBuffer()
     {

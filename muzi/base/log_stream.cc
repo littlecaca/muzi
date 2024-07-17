@@ -9,6 +9,8 @@ const char *LogStream::kDigits = "9876543210123456789";
 const char *LogStream::kZero = kDigits + 9;
 const char *LogStream::kDigitsHex = "0123456789ABCDEF";
 
+// thread_local LogStream::Buffer t_LogStreamBuffer;
+
 size_t LogStream::ConvertHex(char *buf, uintptr_t val)
 {
     char *cur = buf;

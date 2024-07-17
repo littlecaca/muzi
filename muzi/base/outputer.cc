@@ -2,9 +2,5 @@
 
 namespace muzi
 {
-namespace
-{
-Outputer DefaultOutputer;
-}   // internal linkage
-Outputer *gDefaultOutputer = &DefaultOutputer;
+Outputer gDefaultOutputer;
 }   // namespace muzi

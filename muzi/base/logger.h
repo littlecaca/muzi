@@ -26,9 +26,9 @@ enum LogLevel
 class Logger
 {
 public:
-    Logger(Outputer *outputer = gDefaultOutputer, LogLevel log_level = LogLevel::kTrace) 
+    Logger(Outputer *outputer = &gDefaultOutputer, LogLevel log_level = LogLevel::kTrace) 
         : outputer_(outputer), log_level_(log_level) {}
-    Logger(LogLevel log_level) : Logger(gDefaultOutputer, log_level) {}
+    Logger(LogLevel log_level) : Logger(&gDefaultOutputer, log_level) {}
 
     LogLevel GetLogLevel() const { return log_level_; }
     Outputer *GetOutputer() const { return outputer_; }

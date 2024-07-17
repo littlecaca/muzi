@@ -57,8 +57,8 @@ public:
 };
 
 // Always be used as const static object
-extern const TimeZone &kLocalTimeZone;
-extern const TimeZone &kUtcTimeZone;
+extern const LocalTimeZone kLocalTimeZone;
+extern const UtcTimeZone kUtcTimeZone;
 
 }   // namespace muzi
 

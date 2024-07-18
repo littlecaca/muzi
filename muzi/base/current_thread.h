@@ -17,7 +17,7 @@ namespace current_thread
 extern thread_local pid_t t_tid;
 extern thread_local std::string t_tid_string;
 extern thread_local int t_tid_length;
-extern thread_local std::string t_thread_name;
+extern thread_local const char *t_thread_name;
 
 void CachedTid();
 bool IsMainThread();

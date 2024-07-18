@@ -14,7 +14,7 @@ namespace muzi::current_thread
 thread_local pid_t t_tid = 0;
 thread_local std::string t_tid_string;
 thread_local int t_tid_length;
-thread_local std::string t_thread_name = "default";
+thread_local const char *t_thread_name = "default";
 
 void CachedTid()
 {

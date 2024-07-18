@@ -9,6 +9,8 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 
+#include "countdown_latch.h"
+
 namespace muzi
 {
 namespace thread
@@ -17,13 +19,37 @@ inline pid_t GetTid()
 {
     return static_cast<pid_t>(::syscall(SYS_gettid));
 }
+}   // namespace thread
 
 class Thread
 {
 public:
     typedef std::function<void()> ThreadFunc;
 
-    void start();
+    Thread(ThreadFunc func, const std::string &name = "");
+
+    ~Thread()
+    {
+        if (started_ && !joined_)
+            pthread_detach(pthread_id_);
+    }
+
+    void Start();
+
+    void Join();
+
+    bool IsStarted() const { return started_; }
+
+    bool IsJoined() const { return joined_; }
+
+    pthread_t GetPthreadId() const { return pthread_id_; }
+
+    pid_t GetTid() const { return tid_; }
+    
+    std::string GetName() const { return name_; }
+    
+private:
+    void SetDefaultName();
 
 private:
     ThreadFunc func_;
@@ -32,12 +58,8 @@ private:
     pthread_t pthread_id_;
     pid_t tid_;
     std::string name_;
-
+    CountdownLatch latch_;
 };
-
-
-}   // namespace thread
 }   // namespace muzi
-
 
 #endif  // MUZI_BASE_THREAD_H_

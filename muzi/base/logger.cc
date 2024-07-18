@@ -17,10 +17,10 @@ const char *GetError(error_t errcode)
     return strerror_r(errcode, t_errno_buf, sizeof t_errno_buf);
 }
 
-Logger DefaultLogger;
 }   // internal linkage
 
-Logger &gDefaultLogger = DefaultLogger;
+Logger gDefaultLogger;
+Logger gStdioLogger;
 
 const char * const kLogLevelName[LogLevel::kLogLevelNum] = 
 {

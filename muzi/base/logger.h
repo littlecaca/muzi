@@ -49,7 +49,8 @@ private:
 };
 
 // Default and static logger for quick and easy to use log system
-extern Logger &gDefaultLogger;
+extern Logger gDefaultLogger;
+extern Logger gStdioLogger;
 
 
 // Get the source file's basename

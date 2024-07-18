@@ -110,6 +110,8 @@ private:
     MutexLock &mutex_lock_;
 };
 
+#define MutexLockGuard(x) [Wrong Usage of MutexLockGuard)
+
 // A inter class of MutexLock to save the static pthread_mutexattr_t
 class MutexLock::MutexAttr
 {
@@ -126,5 +128,17 @@ inline MutexLock::MutexLock() : holder_(0)
 }
 
 }   // namespace muzi
+// Macro annotations which just for clang and tipping programer
+#if defined(__clang__) && !defined(SWIG)
+#define THREAD_ANNOTATION_ATTRIBUTE__(x) __attribute__((x))
+#else
+#define THREAD_ANNOTATION_ATTRIBUTE__(x)
+#endif
+
+#define CAPABILITY(x)   \
+    THREAD_ANNOTATION_ATTRIBUTE__(capability(x))
+
+#define GUARDED_BY(x)   \
+    THREAD_ANNOTATION_ATTRIBUTE__(guarded_by(x))
 
 #endif // MUZI_BASE_MUTEX_H_

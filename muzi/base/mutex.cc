@@ -14,6 +14,6 @@ MutexLock::MutexAttr::~MutexAttr()
     ISZERO(pthread_mutexattr_destroy(&mutex_attr));
 }
 
-MutexLock::MutexAttr  MutexLock::mutex_attr_;
+MutexLock::MutexAttr MutexLock::mutex_attr_;
 
 }   // namespace muzi

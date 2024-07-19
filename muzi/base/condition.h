@@ -38,6 +38,8 @@ public:
         ISZERO(pthread_cond_broadcast(&cond_));
     }
 
+    bool WaitForSeconds(double seconds);
+
 private:
     MutexLock &lock_;
     pthread_cond_t cond_;

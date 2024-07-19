@@ -26,7 +26,11 @@ class Thread
 public:
     typedef std::function<void()> ThreadFunc;
 
-    Thread(ThreadFunc func, const std::string &name = "");
+    Thread(ThreadFunc func, const std::string &name) : func_(func), started_(false),
+        joined_(false), name_(name), latch_(1) 
+    {
+        SetDefaultName();   
+    }
 
     ~Thread()
     {

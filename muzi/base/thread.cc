@@ -26,12 +26,6 @@ std::atomic<int> thread_num = 0;
 
 }   // internal linkage
 
-Thread::Thread(ThreadFunc func, const std::string &name) : func_(func), started_(false),
-        joined_(false), name_(name), latch_(1) 
-{
-    SetDefaultName();   
-}
-
 void Thread::SetDefaultName()
 {
     int num = thread_num.fetch_add(1);

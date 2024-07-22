@@ -51,6 +51,7 @@ private:
 // Default and static logger for quick and easy to use log system
 extern Logger gDefaultLogger;
 extern Logger gStdioLogger;
+extern Logger gStderrLogger;
 
 
 // Get the source file's basename
@@ -132,7 +133,7 @@ using Writter = StackWritter;
 #define LOG_ERROR_U(logger)  muzi::Writter(logger, __FILE__, __LINE__, muzi::LogLevel::kError).GetStream()
 #define LOG_FATAL_U(logger)  muzi::Writter(logger, __FILE__, __LINE__, muzi::LogLevel::kFatal).GetStream()
 #define LOG_SYSERR_U(logger) muzi::Writter(logger, __FILE__, __LINE__, false).GetStream()
-#define Log_SYSFAT_U(logger) muzi::Writter(logger, __FILE__, __LINE__, true).GetStream()
+#define LOG_SYSFAT_U(logger) muzi::Writter(logger, __FILE__, __LINE__, true).GetStream()
 
 // Interface
 #define LOG_TRACE   LOG_TRACE_U(muzi::gDefaultLogger)
@@ -142,7 +143,7 @@ using Writter = StackWritter;
 #define LOG_ERROR   LOG_ERROR_U(muzi::gDefaultLogger)
 #define LOG_FATAL   LOG_FATAL_U(muzi::gDefaultLogger)
 #define LOG_SYSERR  LOG_SYSERR_U(muzi::gDefaultLogger)
-#define Log_SYSFAT  Log_SYSFAT_U(muzi::gDefaultLogger)
+#define LOG_SYSFAT  LOG_SYSFAT_U(muzi::gDefaultLogger)
 
 // Template implementation
 

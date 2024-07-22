@@ -42,7 +42,7 @@ inline int tid_length()
     return t_tid_length;
 }
 
-inline const std::string &thread_name()
+inline const char *thread_name()
 {
     return t_thread_name;
 }

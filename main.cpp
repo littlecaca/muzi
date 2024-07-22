@@ -12,6 +12,6 @@ int main(int argc, char const *argv[])
 
     std::ofstream file("dsa");
     std::ifstream ifile("dsa");
-    
+    auto bu = file.rdbuf();
     return 0;
 }

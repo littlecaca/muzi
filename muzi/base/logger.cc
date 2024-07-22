@@ -21,6 +21,7 @@ const char *GetError(error_t errcode)
 
 Logger gDefaultLogger;
 Logger gStdioLogger;
+Logger gStderrLogger(&gStderrOutputer);
 
 const char * const kLogLevelName[LogLevel::kLogLevelNum] = 
 {

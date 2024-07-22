@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include <ctime>
+#include <sstream>
+
 #include <sys/time.h>
 
 #include "noncopyable.h"
@@ -39,16 +41,36 @@ public:
         time_val_.tv_usec = 0;
     }
 
-    // The returned string uses TLS, but it won't stop overwritting
-    // So be careful
+    TimeStamp(const struct timeval &tv)
+        : time_val_(tv)
+    { }
+
+    // not thread safe, read it out immediately
     StringProxy ToFormatString() const;
 
-    std::time_t ToLocalTime() const
+    std::string GetOriginalString() const
+    {
+        std::ostringstream os;
+        os << "timeval(" << time_val_.tv_sec << ", " << time_val_.tv_usec << ")";
+        return os.str();
+    }
+
+    suseconds_t GetUsecs() const
+    {
+        return time_val_.tv_sec * kMicrosecondsPerSecond + time_val_.tv_usec;
+    }
+
+    std::time_t GetSecs() const
+    {
+        return time_val_.tv_sec;
+    }
+
+    std::time_t GetLocalTime() const
     {
         return kLocalTimeZone.Convert(time_val_.tv_sec);
     }
 
-    std::time_t ToUtcTime() const
+    std::time_t GetUtcTime() const
     {
         return kUtcTimeZone.Convert(time_val_.tv_sec);
     }
@@ -59,7 +81,15 @@ public:
         zone_validtor_ = zone;
     }
 
+    struct timeval GetTimeval() const { return time_val_; }
+
     static const TimeZone *GetTimeZone() { return zone_validtor_; }
+    
+    TimeStamp operator-(const TimeStamp &rhs) const
+    {
+        return timeval{time_val_.tv_sec - rhs.GetTimeval().tv_sec, 
+                time_val_.tv_usec - rhs.GetTimeval().tv_usec};
+    }
 
 private:
     // Always points to local time

@@ -11,6 +11,7 @@ set(BASE_SRCS
     outputer.cc
     async_outputer.cc
     countdown_latch.cc
+    process_info.cc
 )
 
 add_library(muzi_base ${BASE_SRCS})

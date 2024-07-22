@@ -25,3 +25,11 @@ add_test(NAME timestamp_test COMMAND timestamp_test)
 add_executable(logger_test logger_test.cc)
 target_link_libraries(logger_test PRIVATE muzi_base)
 add_test(NAME logger_test COMMAND logger_test)
+
+add_executable(async_ouputer_test async_ouputer_test.cc)
+target_link_libraries(async_ouputer_test PRIVATE muzi_base)
+add_test(NAME async_ouputer_test COMMAND async_ouputer_test)
+
+add_executable(thread_test thread_test.cc)
+target_link_libraries(thread_test PRIVATE muzi_base)
+add_test(NAME thread_test COMMAND thread_test)

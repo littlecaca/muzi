@@ -3,4 +3,6 @@
 namespace muzi
 {
 Outputer gDefaultOutputer;
+StderrOuputer gStderrOutputer;
+
 }   // namespace muzi

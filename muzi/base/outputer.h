@@ -24,9 +24,34 @@ public:
     {
         fflush(stdout);
     }
+
+    virtual ~Outputer()
+    {
+        fflush(stdout);
+    }
+};
+
+class StderrOuputer : public Outputer
+{
+public:
+    void Output(const Buffer &buf) override
+    {
+        fwrite(buf.data(), 1, buf.size(), stderr);
+    }
+
+    virtual void Flush()
+    {
+        fflush(stderr);
+    }
+
+    virtual ~StderrOuputer()
+    {
+        fflush(stderr);
+    }
 };
 
 extern Outputer gDefaultOutputer;
+extern StderrOuputer gStderrOutputer;
 
 }   // namespace muzi
 

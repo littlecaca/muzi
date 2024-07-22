@@ -1,11 +1,13 @@
 #ifndef MUZI_BASE_CONFIG_H_
 #define MUZI_BASE_CONFIG_H_
 
+#include <string>
 
 namespace muzi
 {
-struct config
+class config
 {
+public:
     // Used by LogStream
     static const int kSmallBuffSize = 4096;
     // Used by AsyncLogging
@@ -13,7 +15,10 @@ struct config
     // Logfile path
     static const char *kLogPath;
     // Roll size
-    static const int kRollSize = 32;
+    static const off_t kRollSize = 32;
+
+public:
+    config();
 };   // namespace config
 
 }    // namespace muzi

@@ -14,14 +14,14 @@ thread_local std::tm t_time_buf;
 thread_local time_t last_second = 0;
 }   // internal linkage
 
-const TimeZone *TimeStamp::zone_validtor_ = &kUtcTimeZone;
+const TimeZone *TimeStamp::zone_validator_ = &kUtcTimeZone;
 
 StringProxy TimeStamp::ToFormatString() const 
 {
     // For good performance
     if (time_val_.tv_sec != last_second)
     {
-        zone_validtor_->Convert(time_val_.tv_sec, &t_time_buf);
+        zone_validator_->Convert(time_val_.tv_sec, &t_time_buf);
         last_second = time_val_.tv_sec;
     }
     

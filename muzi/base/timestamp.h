@@ -78,12 +78,12 @@ public:
     // Be careful! it is not thread safe
     static void SetTimeZone(const TimeZone *zone)
     {
-        zone_validtor_ = zone;
+        zone_validator_ = zone;
     }
 
     struct timeval GetTimeval() const { return time_val_; }
 
-    static const TimeZone *GetTimeZone() { return zone_validtor_; }
+    static const TimeZone *GetTimeZone() { return zone_validator_; }
     
     TimeStamp operator-(const TimeStamp &rhs) const
     {
@@ -96,7 +96,7 @@ private:
     struct timeval time_val_ = {0};
 
 private:
-    const static TimeZone *zone_validtor_;
+    const static TimeZone *zone_validator_;
 };
 
 }

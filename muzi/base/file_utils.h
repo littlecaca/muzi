@@ -46,14 +46,12 @@ public:
     {
         return fp == NULL;
     }
-
+    
 private:
     FILE *fp;
 };
 
 }
-
-
 }   // namespace muzi
 
 

@@ -1,6 +1,5 @@
 set(NET_SRCS
-    EventLoop.cc
-
+    event_loop.cc
 )
 
 add_library(muzi_net ${NET_SRCS})
@@ -8,7 +7,7 @@ add_library(muzi_net ${NET_SRCS})
 target_include_directories(muzi_net 
                         INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(muzi_net PRIVARE muzi_compiler_flags)
+target_link_libraries(muzi_net muzi_compiler_flags)
 
 if (MUZI_BUILD_TEST)
     add_subdirectory(test)

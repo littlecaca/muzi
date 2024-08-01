@@ -64,6 +64,7 @@ public:
     }
     
     // For other type using function overloading
+    
     template <typename T, typename std::enable_if_t<!std::is_array_v<T> && 
         (std::is_same_v<T, const char *> || std::is_same_v<T, char *>), int> = 0>
     LogStream &operator<<(const T &msg)

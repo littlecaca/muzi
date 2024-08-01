@@ -12,9 +12,8 @@ target_compile_features(muzi_compiler_flags INTERFACE cxx_std_14)
 
 add_subdirectory(muzi/base)
 link_libraries(muzi_base)
-
 add_subdirectory(muzi/net)
 link_libraries(muzi_net)
 
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cc)

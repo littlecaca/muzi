@@ -1,0 +1,8 @@
+add_executable(event_loop_test event_loop_test.cc)
+target_link_libraries(event_loop_test PRIVATE muzi_net)
+add_test(NAME event_loop_test COMMAND event_loop_test)
+
+add_executable(event_loop_test2 event_loop_test2.cc)
+target_link_libraries(event_loop_test2 PRIVATE muzi_net)
+add_test(NAME event_loop_test2 COMMAND event_loop_test2)
+set_tests_properties(event_loop_test2 PROPERTIES WILL_FAIL TRUE)

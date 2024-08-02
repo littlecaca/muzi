@@ -15,7 +15,7 @@ public:
     EventLoop();
     ~EventLoop();
 
-    void loop();
+    void Loop();
 
     void AssertInLoopThread()
     {

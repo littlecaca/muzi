@@ -11,7 +11,7 @@ void ThreadFunc()
     printf("ThreadFunc(): pid = %d, tid = %d\n",
         ::getpid(), muzi::current_thread::tid());
     muzi::EventLoop loop;
-    loop.loop();
+    loop.Loop();
 }
 
 int main(int argc, char const *argv[])

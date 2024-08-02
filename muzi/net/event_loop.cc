@@ -34,7 +34,7 @@ EventLoop::~EventLoop()
     t_loop_in_this_thread = nullptr;
 }
 
-void EventLoop::loop()
+void EventLoop::Loop()
 {
     assert(!looping_);
     AssertInLoopThread();

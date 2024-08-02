@@ -1,5 +1,6 @@
 set(NET_SRCS
     event_loop.cc
+    channel.cc
 )
 
 add_library(muzi_net ${NET_SRCS})

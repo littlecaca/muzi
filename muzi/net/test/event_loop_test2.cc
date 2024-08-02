@@ -17,7 +17,7 @@ void ThreadFunc()
         ::getpid(), muzi::current_thread::tid());
     auto loop = new muzi::EventLoop;
     g_loop = loop;
-    loop->loop();
+    loop->Loop();
 }
 
 int main(int argc, char const *argv[])
@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
     muzi::Thread t1(ThreadFunc, "t1");
     t1.Start();
     t1.Join();
-    g_loop->loop();
+    g_loop->Loop();
 
     delete g_loop;
 

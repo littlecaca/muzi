@@ -4,11 +4,11 @@
 #include <functional>
 #include <sys/poll.h>
 
+#include "event_loop.h"
 #include "noncopyable.h"
 
 namespace muzi
 {
-class EventLoop;
 
 // Channel class is responsible for dipathing IO events to handle funcs.
 // It must belong to only one thread.
@@ -66,7 +66,7 @@ private:
     const int fd_;
     int events_;    // targeted events
     int revents_;   // active events
-    int index_;
+    int index_;     // index in the poller pollfds_
 
     EventCallback read_callback_;
     EventCallback write_callback_;

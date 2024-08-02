@@ -1,5 +1,5 @@
 #include "channel.h"
-#include "event_loop.h"
+
 #include "logger.h"
 
 namespace muzi

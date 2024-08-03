@@ -46,6 +46,12 @@ public:
 
     int GetEvents() const { return events_; }
 
+    // Get the index of the correponding poller's fds
+    int GetIndex() const { return index_; }
+
+    void SetIndex(int index) { index_ = index; }
+
+    // Set active(received) events
     void SetREvents(int revts) { revents_ = revts; }
 
     bool IsNoneEvent() const { return events_ == kNoneEvent; }
@@ -64,9 +70,9 @@ private:
 private:
     EventLoop *loop_;
     const int fd_;
-    int events_;    // targeted events
-    int revents_;   // active events
-    int index_;     // index in the poller pollfds_
+    int events_;    // allowed targeted events
+    int revents_;   // received active events
+    int index_;     // index in the poller's fds
 
     EventCallback read_callback_;
     EventCallback write_callback_;

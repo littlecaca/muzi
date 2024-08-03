@@ -2,7 +2,7 @@
 #define MUZI_NET_POLLER_H_
 
 #include <sys/poll.h>
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 #include "channel.h"
@@ -34,12 +34,12 @@ public:
 
     virtual bool HasChannel(Channel *channel) const;
 
-    virtual Poller *NewPoller(EventLoop *loop) const = 0;
+    static Poller *NewDefaultPoller(EventLoop *loop);
 
     void AssertInLoopThread() const { ower_loop_->AssertInLoopThread(); }
 
 protected:
-    typedef std::map<int, Channel *> ChannelMap;
+    typedef std::unordered_map<int, Channel *> ChannelMap;
     ChannelMap channels_;
 
 private:

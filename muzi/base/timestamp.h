@@ -14,7 +14,7 @@
 namespace muzi
 {
 
-class TimeStamp : noncopyable
+class TimeStamp
 {
 public:
     static std::timespec ToTimeSpec(int64_t usec, std::timespec &ts)

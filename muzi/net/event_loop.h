@@ -1,6 +1,7 @@
 #ifndef MUZI_NET_EVENTLOOP_H_
 #define MUZI_NET_EVENTLOOP_H_
 
+#include <atomic>
 #include <pthread.h>
 
 #include "current_thread.h"
@@ -8,6 +9,8 @@
 
 namespace muzi
 {
+class Poller;
+
 // Implementing "One loop per thread"
 class EventLoop : noncopyable
 {

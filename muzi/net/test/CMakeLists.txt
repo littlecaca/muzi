@@ -4,7 +4,9 @@ function(do_test target arg)
     add_test(NAME ${target} COMMAND ${target} ${arg})
 endfunction(do_test)
 
-do_test(event_loop_test "")
+do_test(event_loop_test1 "")
 
 do_test(event_loop_test2 "")
 set_tests_properties(event_loop_test2 PROPERTIES WILL_FAIL TRUE)
+
+do_test(epoll_poller_test "")

@@ -12,6 +12,7 @@ namespace muzi
 
 // Channel class is responsible for dipathing IO events to handle funcs.
 // It must belong to only one thread.
+// Channel dose not own file descriptor.
 class Channel : noncopyable
 {
 public:
@@ -27,19 +28,19 @@ public:
 
     void HandleEvent();
 
-    void SetReadCallback(const EventCallback &cb)
+    void SetReadCallback(EventCallback cb)
     {
-        read_callback_ = cb;
+        read_callback_ = std::move(cb);
     }
 
-    void SetWriteCallback(const EventCallback &cb)
+    void SetWriteCallback(EventCallback cb)
     {
-        write_callback_ = cb;
+        write_callback_ = std::move(cb);
     }
 
-    void SetErrorCallback(const EventCallback &cb)
+    void SetErrorCallback(EventCallback cb)
     {
-        error_callback_ = cb;
+        error_callback_ = std::move(cb);
     }
 
     int Getfd() const { return fd_; }
@@ -48,6 +49,8 @@ public:
 
     // Get the index of the correponding poller's fds
     int GetIndex() const { return index_; }
+
+    EventLoop *GetOwnerLoop() const { return loop_; }
 
     void SetIndex(int index) { index_ = index; }
 

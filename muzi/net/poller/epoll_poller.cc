@@ -18,7 +18,7 @@ namespace
 // Mark fd status in epoll
 enum FdStatus
 {
-    kNew,
+    kNew = -1,
     kAdded,
     kDeleted
 };
@@ -33,6 +33,21 @@ const char *ToOperationStr(int operation)
         return "MOD";
     case EPOLL_CTL_DEL:
         return "DEL";
+    default:
+        return "UNKNOWN";
+    }
+}
+
+const char *ToStatusStr(int index)
+{
+    switch (index)
+    {
+    case kNew:
+        return "NEW";
+    case kAdded:
+        return "Added";
+    case kDeleted:
+        return "Deleted";
     default:
         return "UNKNOWN";
     }
@@ -62,7 +77,7 @@ TimeStamp EpollPoller::Poll(int timeout_ms, ChannelList *active_channels)
     
     if (event_num > 0)
     {
-        LOG_TRACE << event_num << "events happened";
+        LOG_TRACE << event_num << " events happened";
         FillActiveChannels(event_num, active_channels);
 
         // Extend the event buffer if needed
@@ -92,7 +107,7 @@ void EpollPoller::UpdateChannel(Channel *channel)
     int fd = channel->Getfd();
     auto it = channels_.find(fd);   
 
-    LOG_TRACE << ToOperationStr(index) << " fd " << fd << " in EpollPoller " << epfd_
+    LOG_TRACE << ToStatusStr(index) << " fd " << fd << " in EpollPoller " << epfd_
               << " with events " << channel->GetEvents();
 
     if (index == kNew || index == kDeleted)
@@ -160,7 +175,7 @@ void EpollPoller::RemoveChannel(Channel *channel)
     }
     else
     {
-        LOG_ERROR << "Op " << ToOperationStr(index) << " fd " << fd;
+        LOG_ERROR << "Wrong " << ToStatusStr(index) << " Channel with fd " << fd;
     }
 }
 
@@ -176,7 +191,7 @@ void EpollPoller::FillActiveChannels(int event_num, ChannelList *active_channels
 }
 
 void EpollPoller::Update(int operation, Channel *channel)
-{
+{   
     memset(&event_, 0, sizeof event_);
     event_.events = static_cast<uint32_t>(channel->GetEvents());
     int fd = channel->Getfd();

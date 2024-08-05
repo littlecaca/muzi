@@ -21,7 +21,7 @@ public:
 
     Poller(EventLoop *loop) : ower_loop_(loop) {}
 
-    ~Poller() {}
+    virtual ~Poller() {}
 
     // Must be called in loop thread
     virtual TimeStamp Poll(int timeout_ms, ChannelList *active_channels) = 0;

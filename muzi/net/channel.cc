@@ -29,7 +29,7 @@ void Channel::HandleEvent()
 
 void Channel::Update()
 {
-    // loop_->UpdateChannel(this);
+    loop_->UpdateChannel(this);
 }
 
 

@@ -44,6 +44,9 @@ public:
         : time_val_(tv.tv_sec * kMicrosecondsPerSecond + tv.tv_usec)
     { }
 
+    TimeStamp(const TimeStamp &ts) : time_val_(ts.time_val_)
+    { }
+
     // not thread safe, read it out immediately
     StringProxy ToFormatString() const;
 
@@ -86,11 +89,31 @@ public:
         return {time_val_ / kMicrosecondsPerSecond, time_val_ % kMicrosecondsPerSecond}; 
     }
 
+    
+    int64_t ToUsecs() const { return time_val_; }
+
     static const TimeZone *GetTimeZone() { return zone_validator_; }
     
+    TimeStamp &operator-=(const TimeStamp &rhs)
+    {
+        time_val_ -= rhs.time_val_;
+        return *this;
+    }
+
     TimeStamp operator-(const TimeStamp &rhs) const
     {
-        return TimeStamp(time_val_ - rhs.time_val_);
+        return TimeStamp(*this) -= rhs;
+    }
+
+    TimeStamp &operator+=(const TimeStamp &rhs)
+    {
+        time_val_ += rhs.time_val_;
+        return *this;
+    }
+
+    TimeStamp operator+(const TimeStamp &rhs)
+    {
+        return TimeStamp(*this) += rhs;
     }
 
     bool operator<(const TimeStamp &rhs) const
@@ -98,14 +121,14 @@ public:
         return time_val_ < rhs.time_val_;
     }
 
+    bool operator>(const TimeStamp &rhs) const
+    {
+        return time_val_ > rhs.time_val_;
+    }
+
     bool operator==(const TimeStamp &rhs) const
     {
         return time_val_ == rhs.time_val_;
-    }
-
-    void operator+=(const TimeStamp &rhs)
-    {
-        time_val_ += rhs.time_val_;
     }
 
     void AddTime(double interval_secs);

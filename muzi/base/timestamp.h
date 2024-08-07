@@ -31,18 +31,17 @@ public:
     // Default using now
     TimeStamp() 
     {
-        gettimeofday(&time_val_, nullptr);
+        struct timeval tv;
+        gettimeofday(&tv, nullptr);
+        time_val_ = tv.tv_sec * kMicrosecondsPerSecond + tv.tv_usec;
     }
 
     // Set other time
-    TimeStamp(std::time_t time)
-    {
-        time_val_.tv_sec = time;
-        time_val_.tv_usec = 0;
-    }
+    explicit TimeStamp(int64_t time) : time_val_(time)
+    { }
 
     TimeStamp(const struct timeval &tv)
-        : time_val_(tv)
+        : time_val_(tv.tv_sec * kMicrosecondsPerSecond + tv.tv_usec)
     { }
 
     // not thread safe, read it out immediately
@@ -51,28 +50,29 @@ public:
     std::string GetOriginalString() const
     {
         std::ostringstream os;
-        os << "timeval(" << time_val_.tv_sec << ", " << time_val_.tv_usec << ")";
+        os << "timeval(" << time_val_ / kMicrosecondsPerSecond << ", " 
+           << time_val_ % kMicrosecondsPerSecond << ")";
         return os.str();
     }
 
     suseconds_t GetUsecs() const
     {
-        return time_val_.tv_sec * kMicrosecondsPerSecond + time_val_.tv_usec;
+        return time_val_ % kMicrosecondsPerSecond;
     }
 
     std::time_t GetSecs() const
     {
-        return time_val_.tv_sec;
+        return time_val_ / kMicrosecondsPerSecond;
     }
 
     std::time_t GetLocalTime() const
     {
-        return kLocalTimeZone.Convert(time_val_.tv_sec);
+        return kLocalTimeZone.Convert(time_val_ / kMicrosecondsPerSecond);
     }
 
     std::time_t GetUtcTime() const
     {
-        return kUtcTimeZone.Convert(time_val_.tv_sec);
+        return kUtcTimeZone.Convert(time_val_ / kMicrosecondsPerSecond);
     }
 
     // Be careful! it is not thread safe
@@ -81,19 +81,45 @@ public:
         zone_validator_ = zone;
     }
 
-    struct timeval GetTimeval() const { return time_val_; }
+    struct timeval GetTimeval() const 
+    { 
+        return {time_val_ / kMicrosecondsPerSecond, time_val_ % kMicrosecondsPerSecond}; 
+    }
 
     static const TimeZone *GetTimeZone() { return zone_validator_; }
     
     TimeStamp operator-(const TimeStamp &rhs) const
     {
-        return timeval{time_val_.tv_sec - rhs.GetTimeval().tv_sec, 
-                time_val_.tv_usec - rhs.GetTimeval().tv_usec};
+        return TimeStamp(time_val_ - rhs.time_val_);
     }
+
+    bool operator<(const TimeStamp &rhs) const
+    {   
+        return time_val_ < rhs.time_val_;
+    }
+
+    bool operator==(const TimeStamp &rhs) const
+    {
+        return time_val_ == rhs.time_val_;
+    }
+
+    void operator+=(const TimeStamp &rhs)
+    {
+        time_val_ += rhs.time_val_;
+    }
+
+    void AddTime(double interval_secs);
+
+    void SetValid()
+    {
+        time_val_ = -1;
+    }
+
+    bool IsValid() const { return time_val_ > 0; }
 
 private:
     // Always points to local time
-    struct timeval time_val_ = {0};
+    int64_t time_val_;
 
 private:
     const static TimeZone *zone_validator_;

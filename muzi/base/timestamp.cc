@@ -19,16 +19,22 @@ const TimeZone *TimeStamp::zone_validator_ = &kUtcTimeZone;
 StringProxy TimeStamp::ToFormatString() const 
 {
     // For good performance
-    if (time_val_.tv_sec != last_second)
+    std::time_t sec = GetSecs();
+    if (sec != last_second)
     {
-        zone_validator_->Convert(time_val_.tv_sec, &t_time_buf);
-        last_second = time_val_.tv_sec;
+        zone_validator_->Convert(sec, &t_time_buf);
+        last_second = sec;
     }
     
     snprintf(t_fmt_buf, sizeof t_fmt_buf, "%4d%02d%02d %02d:%02d:%02d.%06ld", 
         t_time_buf.tm_year + 1900, t_time_buf.tm_mon + 1, t_time_buf.tm_mday, t_time_buf.tm_hour,
-        t_time_buf.tm_min, t_time_buf.tm_sec, static_cast<long>(time_val_.tv_usec));
+        t_time_buf.tm_min, t_time_buf.tm_sec, static_cast<long>(GetUsecs()));
     return {t_fmt_buf, 24};
+}
+
+void TimeStamp::AddTime(double interval_secs)
+{
+    time_val_ += static_cast<int64_t>(interval_secs * kMicrosecondsPerSecond);
 }
 
 }   // namespace muzi

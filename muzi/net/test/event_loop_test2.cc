@@ -6,28 +6,32 @@
 #include "current_thread.h"
 #include "event_loop.h"
 #include "thread.h"
+#include "countdown_latch.h"
 
 muzi::EventLoop *g_loop;
 
-// This is a negative test
+/// @brief Test calling Loop in other threads
+/// @return This test is expected to abort
 
-void ThreadFunc()
+void ThreadFunc(muzi::CountdownLatch *latch)
 {
     printf("ThreadFunc(): pid = %d, tid = %d\n",
         ::getpid(), muzi::current_thread::tid());
+    ::fflush(stdout);
     auto loop = new muzi::EventLoop;
     g_loop = loop;
-    loop->Loop();
+    latch->CountDown();
 }
 
 int main(int argc, char const *argv[])
 {
-    muzi::Thread t1(ThreadFunc, "t1");
+    muzi::CountdownLatch latch(1);
+    muzi::Thread t1(std::bind(ThreadFunc, &latch), "t1");
     t1.Start();
-    t1.Join();
+    latch.Wait();
+    
     g_loop->Loop();
 
     delete g_loop;
-
     return 0;
 }

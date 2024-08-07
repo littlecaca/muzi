@@ -8,7 +8,7 @@
 
 #include "event_loop.h"
 #include "noncopyable.h"
-#include "timer.h";
+#include "timer.h"
 #include "timestamp.h"
 
 

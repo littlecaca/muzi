@@ -3,6 +3,21 @@ cmake_minimum_required(VERSION 3.5)
 project(muzi_go)
 
 enable_testing()
+set(TEST_SCRIPT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/scripts/test)
+
+# Functions to create test quickly
+function(do_test lib target arg)
+    add_executable(${target} ${target}.cc)
+    target_link_libraries(${target} PRIVATE ${lib})
+    add_test(NAME ${target} COMMAND ${target} ${arg})
+endfunction(do_test)
+
+function(do_bad_test lib target arg)
+    add_executable(${target} ${target}.cc)
+    target_link_libraries(${target} PRIVATE ${lib})
+    add_test(NAME ${target} COMMAND ${CMAKE_COMMAND} -E env $<TARGET_FILE:${target}> ${arg})
+    set_property(TEST ${target} PROPERTY WILL_FAIL true)
+endfunction(do_bad_test)
 
 option(MUZI_BUILD_TEST "build test program" ON)
 

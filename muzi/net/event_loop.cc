@@ -35,7 +35,7 @@ EventLoop::EventLoop()
       wakeup_channel_(new Channel(this, wakeup_fd_)),
       poller_(Poller::NewDefaultPoller(this))
 {
-    LOG_TRACE << "EventLoop created " << this << " in thread " << tid_;
+    LOG_TRACE << "Created " << this << " in thread " << tid_;
     if (t_loop_in_this_thread)
     {
         LOG_FATAL << "Another EventLoop " << t_loop_in_this_thread

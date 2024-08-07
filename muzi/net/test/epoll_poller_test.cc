@@ -1,4 +1,5 @@
 #include <sys/timerfd.h>
+#include <unistd.h>
 
 #include "channel.h"
 #include "event_loop.h"
@@ -31,6 +32,8 @@ int main(int argc, char const *argv[])
     ::timerfd_settime(timer_fd, 0, &howlong, NULL);
 
     loop.Loop();
+
+    ::close(timer_fd);
 
     return 0;
 }

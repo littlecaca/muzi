@@ -14,7 +14,7 @@
 namespace muzi
 {
 
-class TimeStamp
+class Timestamp
 {
 public:
     static std::timespec ToTimeSpec(int64_t usec, std::timespec &ts)
@@ -29,7 +29,7 @@ public:
     static constexpr int kNanosecondsPerSecond = 1000 * 1000 * 1000;
 
     // Default using now
-    TimeStamp() 
+    Timestamp() 
     {
         struct timeval tv;
         gettimeofday(&tv, nullptr);
@@ -37,14 +37,14 @@ public:
     }
 
     // Set other time
-    explicit TimeStamp(int64_t time) : time_val_(time)
+    explicit Timestamp(int64_t time) : time_val_(time)
     { }
 
-    TimeStamp(const struct timeval &tv)
+    Timestamp(const struct timeval &tv)
         : time_val_(tv.tv_sec * kMicrosecondsPerSecond + tv.tv_usec)
     { }
 
-    TimeStamp(const TimeStamp &ts) : time_val_(ts.time_val_)
+    Timestamp(const Timestamp &ts) : time_val_(ts.time_val_)
     { }
 
     // not thread safe, read it out immediately
@@ -94,39 +94,39 @@ public:
 
     static const TimeZone *GetTimeZone() { return zone_validator_; }
     
-    TimeStamp &operator-=(const TimeStamp &rhs)
+    Timestamp &operator-=(const Timestamp &rhs)
     {
         time_val_ -= rhs.time_val_;
         return *this;
     }
 
-    TimeStamp operator-(const TimeStamp &rhs) const
+    Timestamp operator-(const Timestamp &rhs) const
     {
-        return TimeStamp(*this) -= rhs;
+        return Timestamp(*this) -= rhs;
     }
 
-    TimeStamp &operator+=(const TimeStamp &rhs)
+    Timestamp &operator+=(const Timestamp &rhs)
     {
         time_val_ += rhs.time_val_;
         return *this;
     }
 
-    TimeStamp operator+(const TimeStamp &rhs)
+    Timestamp operator+(const Timestamp &rhs)
     {
-        return TimeStamp(*this) += rhs;
+        return Timestamp(*this) += rhs;
     }
 
-    bool operator<(const TimeStamp &rhs) const
+    bool operator<(const Timestamp &rhs) const
     {   
         return time_val_ < rhs.time_val_;
     }
 
-    bool operator>(const TimeStamp &rhs) const
+    bool operator>(const Timestamp &rhs) const
     {
         return time_val_ > rhs.time_val_;
     }
 
-    bool operator==(const TimeStamp &rhs) const
+    bool operator==(const Timestamp &rhs) const
     {
         return time_val_ == rhs.time_val_;
     }

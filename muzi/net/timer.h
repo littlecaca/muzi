@@ -9,11 +9,13 @@
 
 namespace muzi
 {
+typedef int64_t TimerId;
+typedef std::function<void()> TimerCallback;
+
 class Timer : noncopyable
 {
 public:
-    typedef std::function<void()> TimerCallback;
-    Timer(TimerCallback callback, TimeStamp when, double interval)
+    Timer(TimerCallback callback, Timestamp when, double interval)
         : cb_(std::move(callback)),
           expiration_(when),
           interval_(interval),
@@ -27,26 +29,28 @@ public:
         cb_();
     }
 
-    TimeStamp GetExpiration() const { return expiration_; }
+    Timestamp GetExpiration() const { return expiration_; }
     double GetInterval() const { return interval_; }
     bool IsRepeated() const { return repeated_; }
-    int64_t GetSequence() const { return sequence_; }
+    TimerId GetSequence() const { return sequence_; }
 
-    void Restart(TimeStamp now);
+    void Restart(Timestamp now);
 
     void Refresh();
 
-    static int64_t GetNumCreated() { return s_num_created_; }
+    static TimerId GetNumCreated() { return s_num_created_; }
 
 private:
     TimerCallback cb_;
-    TimeStamp expiration_;
+    Timestamp expiration_;
     const double interval_;
     const bool repeated_;
-    const int64_t sequence_;
+    const TimerId sequence_;
 
     static std::atomic_int64_t s_num_created_;
 };
+
+
 }   // namespace muzi
 
 #endif // MUZI_NET_TIMER_H_

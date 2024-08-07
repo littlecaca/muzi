@@ -14,7 +14,7 @@ bool Condition::WaitForSeconds(double seconds)
 
     ts.tv_sec += static_cast<int>(seconds);
     ts.tv_nsec += static_cast<int>((seconds - static_cast<int>(seconds)) 
-        * TimeStamp::kNanosecondsPerSecond);
+        * Timestamp::kNanosecondsPerSecond);
     
     MutexLock::HolderGuard holder(lock_);
     return ETIMEDOUT == pthread_cond_timedwait(&cond_, lock_.GetPthreadMutex(), &ts);

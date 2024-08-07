@@ -80,7 +80,7 @@ void AsyncOutputer::Run()
         // Drop if there is too much data to write
         if (buffers_to_write.size() > 25)
         {
-            std::cerr << "Dropped log message at " << TimeStamp().ToFormatString() << ", "
+            std::cerr << "Dropped log message at " << Timestamp().ToFormatString() << ", "
                 << buffers_to_write.size() - 2 << " large buffers" << std::endl;
             buffers_to_write.erase(buffers_to_write.begin() + 2, buffers_to_write.end());
         }

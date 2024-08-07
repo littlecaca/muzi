@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
     int cnt = 30;
     while (cnt--)
     {
-        muzi::TimeStamp start;
+        muzi::Timestamp start;
         LOG_INFO << "Hello logging system";
         for (int i = 0; i < 100; ++i)
         {
@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
             LOG_INFO << "HELLO my log system" << "GO!!";
         }
 
-        muzi::TimeStamp end;
+        muzi::Timestamp end;
         LOG_INFO_U(muzi::gStdioLogger) << (end - start).GetOriginalString();
     }
 

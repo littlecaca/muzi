@@ -14,9 +14,9 @@ thread_local std::tm t_time_buf;
 thread_local time_t last_second = 0;
 }   // internal linkage
 
-const TimeZone *TimeStamp::zone_validator_ = &kUtcTimeZone;
+const TimeZone *Timestamp::zone_validator_ = &kUtcTimeZone;
 
-StringProxy TimeStamp::ToFormatString() const 
+StringProxy Timestamp::ToFormatString() const 
 {
     // For good performance
     std::time_t sec = GetSecs();
@@ -32,7 +32,7 @@ StringProxy TimeStamp::ToFormatString() const
     return {t_fmt_buf, 24};
 }
 
-void TimeStamp::AddTime(double interval_secs)
+void Timestamp::AddTime(double interval_secs)
 {
     time_val_ += static_cast<int64_t>(interval_secs * kMicrosecondsPerSecond);
 }

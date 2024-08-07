@@ -12,7 +12,7 @@ void DoTest()
 
 int main(int argc, char const *argv[])
 {
-    muzi::TimeStamp::SetTimeZone(&muzi::kLocalTimeZone);
+    muzi::Timestamp::SetTimeZone(&muzi::kLocalTimeZone);
     LOG_ERROR << "Error!";
     LOG_INFO << "Success!!!";
     LOG_TRACE << "trace msh";

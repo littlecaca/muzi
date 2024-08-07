@@ -38,7 +38,7 @@ StackWritter::StackWritter(const Logger &logger, const SourceFile &file, int lin
 {
     current_thread::CachedTid();
     log_stream_ << "[";
-    log_stream_ << TimeStamp().ToFormatString() << " ";
+    log_stream_ << Timestamp().ToFormatString() << " ";
     log_stream_ << current_thread::t_tid_string << " ";
     log_stream_ << StringProxy(kLogLevelName[level_], 5);
 

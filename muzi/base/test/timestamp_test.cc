@@ -11,19 +11,19 @@
 
 int main(int argc, char const *argv[])
 {
-    muzi::TimeStamp sum(0);
+    muzi::Timestamp sum(0);
 
     for (int k = 0; k < 200; ++k)
     {
-        muzi::TimeStamp start;
+        muzi::Timestamp start;
 
-        std::cout << muzi::TimeStamp().ToFormatString() << std::endl;
-        muzi::TimeStamp::SetTimeZone(&muzi::kLocalTimeZone);
-        std::cout << muzi::TimeStamp().ToFormatString() << std::endl;
+        std::cout << muzi::Timestamp().ToFormatString() << std::endl;
+        muzi::Timestamp::SetTimeZone(&muzi::kLocalTimeZone);
+        std::cout << muzi::Timestamp().ToFormatString() << std::endl;
         
-        std::cout << muzi::TimeStamp(12345).ToFormatString() << std::endl;
+        std::cout << muzi::Timestamp(12345).ToFormatString() << std::endl;
         
-        std::vector<muzi::TimeStamp> tsv;
+        std::vector<muzi::Timestamp> tsv;
         for (int i = 0; i < 1000; ++i)
         {
             tsv.emplace_back();
@@ -38,7 +38,7 @@ int main(int argc, char const *argv[])
 
         sort(tsv.begin(), tsv.end());
 
-        muzi::TimeStamp end;
+        muzi::Timestamp end;
         sum += (end - start);
     }
     

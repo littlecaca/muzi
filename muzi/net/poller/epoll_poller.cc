@@ -65,14 +65,14 @@ EpollPoller::EpollPoller(EventLoop *loop)
     }
 }
 
-TimeStamp EpollPoller::Poll(int timeout_ms, ChannelList *active_channels)
+Timestamp EpollPoller::Poll(int timeout_ms, ChannelList *active_channels)
 {
     AssertInLoopThread();
 
     int event_num = ::epoll_wait(epfd_, ep_events_.data(), 
         static_cast<int>(ep_events_.size()), timeout_ms);
 
-    TimeStamp now;
+    Timestamp now;
     int saved_errno = errno;
     
     if (event_num > 0)

@@ -24,7 +24,7 @@ public:
     virtual ~Poller() {}
 
     // Must be called in loop thread
-    virtual TimeStamp Poll(int timeout_ms, ChannelList *active_channels) = 0;
+    virtual Timestamp Poll(int timeout_ms, ChannelList *active_channels) = 0;
 
     // Must be called in loop thread
     virtual void UpdateChannel(Channel *channel) = 0;

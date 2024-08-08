@@ -67,6 +67,9 @@ public:
 
     void DisableAll() { events_ = kNoneEvent; Update(); }
 
+    // Remove this channel from its EventLoop
+    void Remove() { loop_->RemoveChannel(this); }
+
 private:
     void Update();
 

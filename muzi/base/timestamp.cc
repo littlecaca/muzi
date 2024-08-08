@@ -32,9 +32,10 @@ StringProxy Timestamp::ToFormatString() const
     return {t_fmt_buf, 24};
 }
 
-void Timestamp::AddTime(double interval_secs)
+Timestamp &Timestamp::AddTime(double interval_secs)
 {
     time_val_ += static_cast<int64_t>(interval_secs * kMicrosecondsPerSecond);
+    return *this;
 }
 
 }   // namespace muzi

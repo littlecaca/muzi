@@ -3,6 +3,7 @@
 #include <sys/eventfd.h>
 #include <sys/poll.h>
 
+#include "timer_queue.h"
 #include "poller.h"
 #include "logger.h"
 
@@ -32,8 +33,10 @@ EventLoop::EventLoop()
       quit_(false),
       iteration_(0),
       wakeup_fd_(CreateEventFd()),
+      calling_functors_(false),
       wakeup_channel_(new Channel(this, wakeup_fd_)),
-      poller_(Poller::NewDefaultPoller(this))
+      poller_(Poller::NewDefaultPoller(this)),
+      timer_queue_(new TimerQueue(this))
 {
     LOG_TRACE << "Created " << this << " in thread " << tid_;
     if (t_loop_in_this_thread)
@@ -76,6 +79,7 @@ void EventLoop::Loop()
             channel->HandleEvent();
         }
 
+        ExecuteFunctors();
     }
 
     LOG_TRACE << "EventLoop " << this << " stop looping";
@@ -100,6 +104,18 @@ void EventLoop::AbortNotInLoopThread()
     }
 }
 
+void EventLoop::UpdateChannel(Channel *channel)
+{
+    assert(channel->GetOwnerLoop() == this);
+    poller_->UpdateChannel(channel);
+}
+
+void EventLoop::RemoveChannel(Channel *channel)
+{
+    assert(channel->GetOwnerLoop() == this);
+    poller_->RemoveChannel(channel);
+}
+
 void EventLoop::WakeUp()
 {
     eventfd_t val = 1;
@@ -116,17 +132,69 @@ void EventLoop::HandleWakeupRead()
     eventfd_read(wakeup_fd_, &val);
 }
 
-void EventLoop::UpdateChannel(Channel *channel)
+void EventLoop::QueueInLoop(const Functor &cb)
 {
-    AssertInLoopThread();
-    assert(channel->GetOwnerLoop() == this);
+    {
+        MutexLockGuard guard(lock_);
+        functors_.push_back(cb);
+    }
+    
+    if (!IsInLoopThread() || calling_functors_)
+    {
+        WakeUp();
+    }
+}
 
-    poller_->UpdateChannel(channel);
+// Guaranteed in loop thread
+// Only be called in Loop()
+void EventLoop::ExecuteFunctors()
+{
+    FunctorList cur_functors;
+    calling_functors_ = true;
+
+    {
+        MutexLockGuard guard(lock_);
+        cur_functors.swap(functors_);
+    }
+
+    for (const Functor &func : cur_functors)
+    {
+        func();
+
+    }
+    calling_functors_ = false;
 }
 
 EventLoop *EventLoop::GetLoopOfCurrentThread()
 {
     return t_loop_in_this_thread;
+}
+
+TimerId EventLoop::RunAt(Timestamp when, const TimerCallback &cb)
+{
+    return timer_queue_->AddTimer(cb, when, 0.0);
+}
+
+TimerId EventLoop::RunAfter(double delay, const TimerCallback &cb)
+{
+    return timer_queue_->AddTimer(cb, Timestamp().AddTime(delay), 0.0);
+}
+
+TimerId EventLoop::RunEvery(Timestamp when, const TimerCallback &cb, double interval)
+{
+    return timer_queue_->AddTimer(cb, when, interval);
+}
+
+void EventLoop::RunInLoop(const Functor &cb)
+{
+    if (IsInLoopThread())
+    {
+        cb();
+    }
+    else
+    {
+        QueueInLoop(cb);
+    }
 }
 
 }   // namespace muzi

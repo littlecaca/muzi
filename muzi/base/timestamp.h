@@ -131,7 +131,7 @@ public:
         return time_val_ == rhs.time_val_;
     }
 
-    void AddTime(double interval_secs);
+    Timestamp &AddTime(double interval_secs);
 
     void SetValid()
     {
@@ -140,6 +140,8 @@ public:
 
     bool IsValid() const { return time_val_ > 0; }
 
+    static Timestamp GetInvalid() { return Timestamp(-1); }
+    
 private:
     // Always points to local time
     int64_t time_val_;

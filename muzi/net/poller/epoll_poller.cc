@@ -1,6 +1,7 @@
 #include "epoll_poller.h"
 
 #include <errno.h>
+#include <unistd.h>
 
 #include "logger.h"
 
@@ -63,6 +64,11 @@ EpollPoller::EpollPoller(EventLoop *loop)
     {
         LOG_SYSFAT << "EpollPoller::EpollPoller: epoll_create1() fails";
     }
+}
+
+EpollPoller::~EpollPoller()
+{
+    ::close(epfd_);
 }
 
 Timestamp EpollPoller::Poll(int timeout_ms, ChannelList *active_channels)
@@ -155,7 +161,7 @@ void EpollPoller::RemoveChannel(Channel *channel)
     AssertInLoopThread();
 
     int fd = channel->Getfd();
-    LOG_TRACE << "Remove fd " << fd << "from EpollPoller " << epfd_;
+    LOG_TRACE << "Remove fd " << fd << " from EpollPoller " << epfd_;
 
     auto it = channels_.find(fd);
     assert(it != channels_.end());

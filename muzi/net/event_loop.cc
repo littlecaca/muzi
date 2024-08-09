@@ -1,5 +1,6 @@
 #include "event_loop.h"
 
+#include <unistd.h>
 #include <sys/eventfd.h>
 #include <sys/poll.h>
 
@@ -56,6 +57,9 @@ EventLoop::EventLoop()
 EventLoop::~EventLoop()
 {
     assert(!looping_);
+    wakeup_channel_->DisableAll();
+    wakeup_channel_->Remove();
+    ::close(wakeup_fd_);
     t_loop_in_this_thread = nullptr;
 }
 
@@ -122,7 +126,7 @@ void EventLoop::WakeUp()
     int n = ::eventfd_write(wakeup_fd_, val);
     if (n != sizeof val)
     {
-        LOG_ERROR << "eventfd_write writes " << n << "bytes rather than " << sizeof val << "bytes";
+        LOG_ERROR << "eventfd_write writes " << n << " bytes rather than " << sizeof val << "bytes";
     }
 }
 

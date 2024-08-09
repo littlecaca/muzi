@@ -59,6 +59,8 @@ public:
     /// @attention Can be called in other threads
     void RunInLoop(const Functor &cb);
 
+    
+
 private:
     // Used by friend class Channel
 

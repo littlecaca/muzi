@@ -21,9 +21,16 @@ void ResetTimerFd(int timer_fd, Timestamp time)
 {   
     struct itimerspec new_value;
     memset(&new_value, 0, sizeof new_value);
+    time -= Timestamp();
+    // If the timer has already expired or invalid
+    // then better trigger it right now
+    if (!time.IsValid())
+        time = Timestamp(10);
+
     new_value.it_value.tv_sec = time.GetSecs();
-    new_value.it_value.tv_nsec = time.GetUsecs() * 1000;
-    if (::timerfd_settime(timer_fd, TFD_TIMER_ABSTIME, &new_value, NULL))
+    new_value.it_value.tv_nsec = static_cast<long>(time.GetUsecs() * 1000);
+
+    if (::timerfd_settime(timer_fd, 0, &new_value, NULL))
     {
         LOG_SYSERR << "::timerfd_settime() fails";
     }
@@ -146,11 +153,13 @@ void TimerQueue::GetExpired(Timestamp now)
     assert(expired_timers_.empty());
     for (auto it = timers_.begin(); it != end; ++it)
     {
+        // Attend the order
+        active_timers_.erase((*it)->GetId());
+
         // The key itertor in all associative containers is const T &
         // So here we use const_cast to move it. It's OK as long as
-        // we erase it after that.
+        // we erase it immediately.
         expired_timers_.push_back(std::move(const_cast<Entry &>(*it)));
-        active_timers_.erase((*it)->GetId());
     }
     timers_.erase(timers_.begin(), end);
     assert(timers_.size() == active_timers_.size());
@@ -161,26 +170,26 @@ void TimerQueue::ResetTimer(Timestamp now)
     // Reset repeated timer
     for (Entry &timer : expired_timers_)
     {
-        if (timer->IsRepeated() 
+        if (timer->IsRepeated()
             && canceling_timers_.find(timer->GetId()) == canceling_timers_.end())
         {
             timer->Restart(now);
+            // Transfer ownership of Timer
+            Insert(timer.get());
+            timer.release();
         }
     }
 
     expired_timers_.clear();
 
     // Reset timer_fd_
-    Timestamp next_expired;
-
     if (!timers_.empty())
     {
-        next_expired = (*timers_.begin())->GetExpiration();
-    }
-   
-    if (next_expired.IsValid())
-    {
-        ResetTimerFd(timer_fd_, next_expired);
+        Timestamp next_expired = (*timers_.begin())->GetExpiration();
+        if (next_expired.IsValid())
+        {
+            ResetTimerFd(timer_fd_, next_expired);
+        }
     }
 }
 

@@ -124,9 +124,9 @@ void EventLoop::WakeUp()
 {
     eventfd_t val = 1;
     int n = ::eventfd_write(wakeup_fd_, val);
-    if (n != sizeof val)
+    if (n != 0)
     {
-        LOG_ERROR << "eventfd_write writes " << n << " bytes rather than " << sizeof val << "bytes";
+        LOG_ERROR << "eventfd_write fails";
     }
 }
 

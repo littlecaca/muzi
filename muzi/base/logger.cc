@@ -44,7 +44,7 @@ StackWritter::StackWritter(const Logger &logger, const SourceFile &file, int lin
 
     if (errcode != 0)
     {
-        log_stream_ << GetError(errcode) << " (errno = " << errcode << ")";
+        log_stream_ << " " << GetError(errcode) << " (errno = " << errcode << ")";
     }
     log_stream_ << "] ";
 }

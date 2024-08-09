@@ -16,7 +16,7 @@ void ThreadFunc(muzi::CountdownLatch *latch)
     g_loop = &loop;
     latch->CountDown();
 
-    g_loop->Loop();
+    loop.Loop();
 }
 
 void print(const std::string &msg)
@@ -43,7 +43,6 @@ int main(int argc, char const *argv[])
     g_loop->RunAt(muzi::Timestamp().AddTime(0.6), std::bind(print, "RunAt"));
 
     sleep(2);
-    g_loop->Quit();
-    t.Join();
+    
     return 0;
 }

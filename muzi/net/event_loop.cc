@@ -39,7 +39,7 @@ EventLoop::EventLoop()
       poller_(Poller::NewDefaultPoller(this)),
       timer_queue_(new TimerQueue(this))
 {
-    LOG_TRACE << "Created " << this << " in thread " << tid_;
+    LOG_TRACE << "Created EventLoop " << this << " in thread " << tid_;
     if (t_loop_in_this_thread)
     {
         LOG_FATAL << "Another EventLoop " << t_loop_in_this_thread

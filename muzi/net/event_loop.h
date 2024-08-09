@@ -59,11 +59,9 @@ public:
     /// @attention Can be called in other threads
     void RunInLoop(const Functor &cb);
 
-    
-
 private:
     // Used by friend class Channel
-
+    
     void UpdateChannel(Channel *channel);
     void RemoveChannel(Channel *channel);
 
@@ -92,7 +90,7 @@ private:
 
     MutexLock lock_;
     
-    /// @brief Used by RunInLoop and QueueInLoop to store tasks
+    // Used by RunInLoop and QueueInLoop to store tasks
     FunctorList functors_ GUARDED_BY(lock_);
     ChannelList active_channels_;
 };

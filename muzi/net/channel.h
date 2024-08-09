@@ -12,7 +12,7 @@ namespace muzi
 
 // Channel class is responsible for dipathing IO events to handle funcs.
 // It must belong to only one thread.
-// Channel dose not own file descriptor.
+// Channel dose not own the file descriptor.
 class Channel : noncopyable
 {
 public:

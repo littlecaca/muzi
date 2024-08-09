@@ -34,7 +34,18 @@ void ResetTimerFd(int timer_fd, Timestamp time)
     {
         LOG_SYSERR << "::timerfd_settime() fails";
     }
-}   
+}
+
+void ReadTimerFd(int timer_fd, Timestamp time)
+{
+    uint64_t how_many;
+    ssize_t n = ::read(timer_fd, &how_many, sizeof how_many);
+    LOG_TRACE << "TimerQueue::HandleRead() has handled " << how_many << " at " << time.ToFormatString();
+    if (n != sizeof how_many)
+    {
+        LOG_ERROR << "ReadTimerFd() reads " << n << " bytes instead of " << sizeof how_many;
+    }
+}
 
 }   // internal linkage
 
@@ -127,8 +138,9 @@ void TimerQueue::HandleRead()
     loop_->AssertInLoopThread();
 
     Timestamp now;
+    // Must read timerfd to stop busy loop in "Level Trigger" mode
+    ReadTimerFd(timer_fd_, now);
     GetExpired(now);
-
     // Run timer callback
     is_executing_timers_ = true;
     for (Entry &timer : expired_timers_)

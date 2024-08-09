@@ -6,6 +6,7 @@ set(NET_SRCS
     poller/epoll_poller.cc
     timer_queue.cc
     timer.cc
+    event_loop_thread.cc
 )
 
 add_library(muzi_net ${NET_SRCS})

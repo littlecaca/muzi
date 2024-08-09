@@ -70,10 +70,10 @@ void *RunThread(void *args)
 void Thread::Start()
 {
     assert(!started_);
-    started_ =  true;
+    started_ = true;
     
     ThreadData *data = new ThreadData{func_, &tid_, &latch_, name_};
-    if (pthread_create(&pthread_id_, NULL, RunThread, data))
+    if (::pthread_create(&pthread_id_, NULL, RunThread, data))
     {
         // pthread_create() fails
         started_ = false;

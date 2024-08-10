@@ -2,6 +2,7 @@
 #define MUZI_NET_CHANNEL_H_
 
 #include <functional>
+
 #include <sys/poll.h>
 
 #include "event_loop.h"

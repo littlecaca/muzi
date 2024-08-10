@@ -1,9 +1,10 @@
 #ifndef MUZI_NET_POLLER_H_
 #define MUZI_NET_POLLER_H_
 
-#include <sys/poll.h>
 #include <unordered_map>
 #include <vector>
+
+#include <sys/poll.h>
 
 #include "channel.h"
 #include "event_loop.h"

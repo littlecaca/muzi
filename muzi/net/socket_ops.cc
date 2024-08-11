@@ -178,11 +178,12 @@ int Accept(int sock_fd, sockaddr *addr)
         switch (errno)
         {
         case EMFILE:    // too may open files
-        case ENFILE:    // file table overflow
         case EAGAIN:    // try again
+        case EINTR:     // Interrupted system call
+        case ECONNABORTED:  // Software caused connection abort
             break;
         default:
-            LOG_FATAL << "::accept4() fails";
+            LOG_FATAL << "Unexpeted error ::accept4() fails";
             break;
         }
     }

@@ -1,6 +1,7 @@
 #include "socket_ops.h"
 
 #include <assert.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -161,13 +162,29 @@ bool Listen(int sock_fd)
     return true;
 }
 
-int AcceptOrDie(int sock_fd, sockaddr *addr)
+int Accept(int sock_fd, sockaddr *addr)
 {
     socklen_t addr_len = static_cast<socklen_t>(sizeof *addr);
     int sock = ::accept4(sock_fd, addr, &addr_len, O_NONBLOCK | O_CLOEXEC);
+
+    // The special problem of accept()ing when you can't
+    // Refer to this:
+    // http://pod.tst.eu/http://cvs.schmorp.de/libev/ev.pod#The_special_problem_of_accept_ing_wh
+    // 
+    // Here we allow ENFILE and EMFILE error to pass to guide the upper users
+    // to cope with it further.
     if (sock < 0)
     {
-        LOG_SYSFAT << "::accept4() fails";
+        switch (errno)
+        {
+        case EMFILE:    // too may open files
+        case ENFILE:    // file table overflow
+        case EAGAIN:    // try again
+            break;
+        default:
+            LOG_FATAL << "::accept4() fails";
+            break;
+        }
     }
 
     return sock;

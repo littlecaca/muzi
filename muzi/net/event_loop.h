@@ -18,7 +18,6 @@ class Poller;
 class Channel;
 class TimerQueue;
 
-/// @brief Implementing "One loop per thread"
 class EventLoop : noncopyable
 {
     friend class Channel;

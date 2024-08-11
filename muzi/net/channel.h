@@ -11,9 +11,9 @@
 namespace muzi
 {
 
-// Channel class is responsible for dipathing IO events to handle funcs.
-// It must belong to only one thread.
-// Channel dose not own the file descriptor.
+/// @brief Channel class is responsible for dipathing IO events to handle funcs.
+/// It must belong to only one thread.
+/// Channel dose not own the file descriptor.
 class Channel : noncopyable
 {
 public:
@@ -48,27 +48,32 @@ public:
 
     int GetEvents() const { return events_; }
 
-    // Get the index of the correponding poller's fds
+    /// @brief Get the index of the correponding poller's fds
     int GetIndex() const { return index_; }
 
     EventLoop *GetOwnerLoop() const { return loop_; }
 
     void SetIndex(int index) { index_ = index; }
 
-    // Set active(received) events
+    /// @brief Set active(received) events
     void SetREvents(int revts) { revents_ = revts; }
 
     bool IsNoneEvent() const { return events_ == kNoneEvent; }
 
+    /// @attention In loop.
     void EnableReading() { events_ |= kReadEvent; Update(); }
 
+    /// @attention In loop.
     void EnableWritting() { events_ |= kWriteEvent; Update(); }
 
+    /// @attention In loop.
     void DisableWritting() { events_ &= ~kWriteEvent; Update(); }
 
+    /// @attention In loop.
     void DisableAll() { events_ = kNoneEvent; Update(); }
 
-    // Remove this channel from its EventLoop
+    /// @brief Remove this channel from its EventLoop
+    /// @attention In loop.
     void Remove() { loop_->RemoveChannel(this); }
 
 private:

@@ -2,11 +2,13 @@
 
 namespace muzi
 {
-EventLoopThread::EventLoopThread(const std::string &name) 
+EventLoopThread::EventLoopThread(const ThreadInitCallBack &init_cb, const std::string &name)
     : thread_(std::bind(&EventLoopThread::ThreadFunc, this), name),
       cond_(lock_),
-      loop_(nullptr)
-{ }
+      loop_(nullptr),
+      init_cb_(init_cb)
+{
+}
 
 EventLoopThread::~EventLoopThread()
 {
@@ -59,6 +61,11 @@ void EventLoopThread::ThreadFunc()
         MutexLockGuard guard(lock_);
         loop_ = &loop;
         cond_.Notify();
+    }
+
+    if (init_cb_)
+    {
+        init_cb_(&loop);
     }
 
     loop.Loop();

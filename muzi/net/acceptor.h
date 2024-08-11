@@ -30,6 +30,7 @@ public:
 
     bool IsListening() const { return listening_; }
 
+    /// @attention In loop.
     void Listen();
 
 private:

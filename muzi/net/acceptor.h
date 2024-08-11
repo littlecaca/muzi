@@ -21,6 +21,12 @@ public:
     Acceptor(EventLoop *loop, const InetAddress &listen_addr, 
         bool reuse_port = false, const NewConnectionCallBack &cb = nullptr);
 
+    Acceptor(EventLoop *loop, const InetAddress &listen_addr,
+        const NewConnectionCallBack &cb) 
+        : Acceptor(loop, listen_addr, false, cb)
+    {
+    }
+
     ~Acceptor();
 
     void SetNewConnectionCallBack(const NewConnectionCallBack &cb)

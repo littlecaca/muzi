@@ -2,6 +2,7 @@
 #define MUZI_NET_SOCKET_OPS_H_
 
 #include <arpa/inet.h>
+#include <netinet/tcp.h>
 
 
 namespace muzi
@@ -13,6 +14,11 @@ namespace socket
 inline const struct sockaddr *SockAddrCast(const struct sockaddr_in6 *addr6)
 {
     return reinterpret_cast<const struct sockaddr *>(addr6);
+}
+
+inline struct sockaddr *SockAddrCast(struct sockaddr_in6 *addr6)
+{
+    return reinterpret_cast<struct sockaddr *>(addr6);
 }
 
 inline const struct sockaddr_in *SockAddrInCast(const struct sockaddr *addr)
@@ -41,6 +47,22 @@ void ToIp(char *buf, int buf_len, const struct sockaddr *addr);
 
 /// @brief Write port presentation to buf.
 void ToPort(char *buf, int buf_len, const struct sockaddr *addr);
+
+void Close(int fd);
+
+bool GetTcpInfo(int sock_fd, tcp_info *info);
+
+bool GetTcpInfoString(int sock_fd, char *buf, int len);
+
+bool BindAddress(int sock_fd, const struct sockaddr *addr);
+
+bool Listen(int sock_fd);
+
+int Accept(int sock_fd, struct sockaddr *addr);
+
+bool ShutDownOnWrite(int sock_fd);
+
+bool SetSockOpt(int sock_fd, int level, int opt, bool on);
 
 }   // namespace socket
 }   // namespace muzi

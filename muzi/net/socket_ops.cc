@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <unistd.h>
+#include <fcntl.h>
+
 #include "endian_transform.h"
 #include "logger.h"
 
@@ -91,6 +94,105 @@ void ToPort(char *buf, int buf_len, const sockaddr *addr)
     }
     uint16_t port = endian::NetToHost16(port_net);
     snprintf(buf, buf_len, "%hu", port);
+}
+
+void Close(int fd)
+{
+    if (::close(fd) < 0)
+    {
+        LOG_SYSERR << "::close() fails";
+    }
+}
+
+bool GetTcpInfo(int sock_fd, tcp_info *info)
+{
+    socklen_t len = sizeof(*info);
+    memset(info, 0, len);
+    if (::getsockopt(sock_fd, SOL_TCP, TCP_INFO, info, &len))
+    {
+        LOG_SYSERR << "::getsockopt() fails";
+        return false;
+    }
+    return true;
+}
+
+bool GetTcpInfoString(int sock_fd, char *buf, int len)
+{
+    tcp_info info;
+    if (!GetTcpInfo(sock_fd, &info))
+        return false;
+    snprintf(buf, len, "unrecovered=%u "
+        "rto=%u ato=%u snd_mss=%u rcv_mss=%u "
+        "lost=%u retrans=%u rtt=%u rttvar=%u "
+        "snd_ssthresh=%u snd_cwnd=%u total_retrans=%u",
+        info.tcpi_retransmits,
+        info.tcpi_rto,
+        info.tcpi_ato,
+        info.tcpi_snd_mss,
+        info.tcpi_rcv_mss,
+        info.tcpi_lost,
+        info.tcpi_retrans,
+        info.tcpi_rtt,
+        info.tcpi_rttvar,
+        info.tcpi_snd_ssthresh,
+        info.tcpi_snd_cwnd,
+        info.tcpi_total_retrans);
+    
+    return true;
+}
+
+bool BindAddress(int sock_fd, const sockaddr *addr)
+{
+    if (::bind(sock_fd, addr, static_cast<socklen_t>(sizeof (sockaddr_in6))) < 0)
+    {
+        LOG_SYSERR << "::bind() fails";
+        return false;
+    }
+    return true;
+}
+
+bool Listen(int sock_fd)
+{
+    if (::listen(sock_fd, SOMAXCONN) < 0)
+    {
+        LOG_SYSERR << "::listen() fails";
+        return false;
+    }
+    return true;
+}
+
+int Accept(int sock_fd, sockaddr *addr)
+{
+    socklen_t addr_len = static_cast<socklen_t>(sizeof *addr);
+    int sock = ::accept4(sock_fd, addr, &addr_len, O_NONBLOCK | O_CLOEXEC);
+    if (sock < 0)
+    {
+        LOG_SYSFAT << "::accept4() fails";
+    }
+
+    return sock;
+}
+
+bool ShutDownOnWrite(int sock_fd)
+{
+    if (::shutdown(sock_fd, SHUT_WR) < 0)
+    {
+        LOG_SYSERR << "::shutdown() fails";
+        return false;
+    }
+    return true;
+}
+
+bool SetSockOpt(int sock_fd, int level, int opt, bool on)
+{
+    int option = on;
+    if (::setsockopt(sock_fd, level, opt, 
+        &option, static_cast<socklen_t>(sizeof option)) < 0)
+    {
+        LOG_SYSERR << "::setsockopt() fails";
+        return false;
+    }
+    return true;
 }
 
 }   // namespace socket

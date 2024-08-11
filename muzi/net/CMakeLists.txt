@@ -7,6 +7,10 @@ set(NET_SRCS
     timer_queue.cc
     timer.cc
     event_loop_thread.cc
+    acceptor.cc
+    inet_address.cc
+    socket_ops.cc
+    socket.cc
 )
 
 add_library(muzi_net ${NET_SRCS})

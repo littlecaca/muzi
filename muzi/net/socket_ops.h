@@ -1,0 +1,48 @@
+#ifndef MUZI_NET_SOCKET_OPS_H_
+#define MUZI_NET_SOCKET_OPS_H_
+
+#include <arpa/inet.h>
+
+
+namespace muzi
+{
+namespace socket
+{
+// Very low level operations used by the implementations of other modules
+
+inline const struct sockaddr *SockAddrCast(const struct sockaddr_in6 *addr6)
+{
+    return reinterpret_cast<const struct sockaddr *>(addr6);
+}
+
+inline const struct sockaddr_in *SockAddrInCast(const struct sockaddr *addr)
+{
+    return reinterpret_cast<const struct sockaddr_in *>(addr);
+}
+
+inline const struct sockaddr_in6 *SockAddrIn6Cast(const struct sockaddr *addr)
+{
+    return reinterpret_cast<const struct sockaddr_in6 *>(addr);
+}
+
+void AbortNotInterNet(const struct sockaddr *addr);
+
+/// @brief Convert and write ip, port to binary netwrok form.
+void FromIpPort(const char *ip, uint16_t port, struct sockaddr_in *addr);
+
+/// @brief Convert and write ip, port to binary netwrok form.
+void FromIpPort(const char *ip, uint16_t port, struct sockaddr_in6 *addr6);
+
+/// @brief Write ip:port presentation to buf.
+void ToIpPort(char *buf, int buf_len, const struct sockaddr *addr);
+
+/// @brief Write ip presentation to buf.
+void ToIp(char *buf, int buf_len, const struct sockaddr *addr);
+
+/// @brief Write port presentation to buf.
+void ToPort(char *buf, int buf_len, const struct sockaddr *addr);
+
+}   // namespace socket
+}   // namespace muzi
+
+#endif  // MUZI_NET_SOCKET_OPS_H_

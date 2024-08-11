@@ -213,15 +213,26 @@ bool SetSockOpt(int sock_fd, int level, int opt, bool on)
     return true;
 }
 
-int CreateNonBlockingSockOrDie()
+int CreateBlockingSockOrDie()
 {
-    int sock = ::socket(PF_INET, SOCK_STREAM, 0);
+    int sock = ::socket(PF_INET, SOCK_STREAM | O_CLOEXEC, 0);
     if (sock < 0)
     {
         LOG_SYSFAT << "::socket() fails";
     }
     return sock;
 }
+
+int CreateNonBlockingSockOrDie()
+{
+    int sock = ::socket(PF_INET, SOCK_STREAM | O_CLOEXEC | O_NONBLOCK, 0);
+    if (sock < 0)
+    {
+        LOG_SYSFAT << "::socket() fails";
+    }
+    return sock;
+}
+
 
 }   // namespace socket
 }   // namespace muzi

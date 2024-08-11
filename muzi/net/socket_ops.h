@@ -64,6 +64,8 @@ bool ShutDownOnWrite(int sock_fd);
 
 bool SetSockOpt(int sock_fd, int level, int opt, bool on);
 
+int CreateBlockingSockOrDie();
+
 int CreateNonBlockingSockOrDie();
 
 }   // namespace socket

@@ -58,11 +58,13 @@ bool BindAddress(int sock_fd, const struct sockaddr *addr);
 
 bool Listen(int sock_fd);
 
-int Accept(int sock_fd, struct sockaddr *addr);
+int AcceptOrDie(int sock_fd, struct sockaddr *addr);
 
 bool ShutDownOnWrite(int sock_fd);
 
 bool SetSockOpt(int sock_fd, int level, int opt, bool on);
+
+int CreateNonBlockingSockOrDie();
 
 }   // namespace socket
 }   // namespace muzi

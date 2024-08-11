@@ -161,7 +161,7 @@ bool Listen(int sock_fd)
     return true;
 }
 
-int Accept(int sock_fd, sockaddr *addr)
+int AcceptOrDie(int sock_fd, sockaddr *addr)
 {
     socklen_t addr_len = static_cast<socklen_t>(sizeof *addr);
     int sock = ::accept4(sock_fd, addr, &addr_len, O_NONBLOCK | O_CLOEXEC);
@@ -193,6 +193,16 @@ bool SetSockOpt(int sock_fd, int level, int opt, bool on)
         return false;
     }
     return true;
+}
+
+int CreateNonBlockingSockOrDie()
+{
+    int sock = ::socket(PF_INET, SOCK_STREAM, 0);
+    if (sock < 0)
+    {
+        LOG_SYSFAT << "::socket() fails";
+    }
+    return sock;
 }
 
 }   // namespace socket

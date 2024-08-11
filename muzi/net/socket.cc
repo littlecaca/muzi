@@ -36,7 +36,7 @@ void Socket::Listen()
 
 int Socket::Accept(InetAddress &client_addr)
 {
-    return socket::Accept(sock_fd_, client_addr.GetAddr());
+    return socket::AcceptOrDie(sock_fd_, client_addr.GetAddr());
 }
 
 void Socket::ShutDownOnWrite()

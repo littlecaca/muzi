@@ -58,6 +58,8 @@ bool BindAddress(int sock_fd, const struct sockaddr *addr);
 
 bool Listen(int sock_fd);
 
+bool Connect(int sock_fd, const struct sockaddr *addr);
+
 int Accept(int sock_fd, struct sockaddr *addr);
 
 bool ShutDownOnWrite(int sock_fd);

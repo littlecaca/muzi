@@ -30,6 +30,9 @@ public:
     /// @brief A wrapper of ::listen().
     void Listen();
 
+    /// @brief A wrapper of ::connect().
+    void Connect(const InetAddress &addr);
+
     /// @brief A wrapper of ::accept().
     /// @attention The new socket will be set NONBLOCK and CLOEXEC
     /// @return sock_fd for new connection if success, -1 otherwise.

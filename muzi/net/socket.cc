@@ -34,6 +34,14 @@ void Socket::Listen()
     }
 }
 
+void Socket::Connect(const InetAddress &addr)
+{
+    if (!socket::Connect(sock_fd_, addr.GetAddr()))
+    {
+        LOG_FATAL << "socket::Connect() fails";
+    }
+}
+
 int Socket::Accept(InetAddress &client_addr)
 {
     return socket::Accept(sock_fd_, client_addr.GetAddr());

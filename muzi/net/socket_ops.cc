@@ -162,6 +162,16 @@ bool Listen(int sock_fd)
     return true;
 }
 
+bool Connect(int sock_fd, const sockaddr *addr)
+{
+    if (::connect(sock_fd, addr, sizeof (sockaddr_in6)) < 0)
+    {
+        LOG_SYSERR << "::connect() fails";
+        return false;
+    }
+    return true;
+}
+
 int Accept(int sock_fd, sockaddr *addr)
 {
     socklen_t addr_len = static_cast<socklen_t>(sizeof *addr);

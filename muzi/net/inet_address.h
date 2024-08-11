@@ -29,7 +29,7 @@ public:
     explicit InetAddress(const struct sockaddr_in6 &addr_6)
         : addr6_(addr_6)
     { }
-    
+
     std::string GetIpStr() const;
 
     std::string GetIpPortStr() const;
@@ -42,6 +42,8 @@ public:
     uint16_t GetPortNetEndian() const { return addr_.sin_port; }
 
     const struct sockaddr *GetAddr() const { return socket::SockAddrCast(&addr6_);}
+
+    struct sockaddr *GetAddr() { return socket::SockAddrCast(&addr6_); }
 
     void SetSockAddr(const struct sockaddr_in &addr) { addr_ = addr; }
 

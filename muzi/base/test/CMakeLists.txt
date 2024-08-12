@@ -33,3 +33,5 @@ add_test(NAME async_ouputer_test COMMAND async_ouputer_test)
 add_executable(thread_test thread_test.cc)
 target_link_libraries(thread_test PRIVATE muzi_base)
 add_test(NAME thread_test COMMAND thread_test)
+
+do_test(muzi_base stacktrace_test "")

@@ -12,6 +12,7 @@ set(BASE_SRCS
     async_outputer.cc
     countdown_latch.cc
     process_info.cc
+    stacktrace.cc
 )
 
 add_library(muzi_base ${BASE_SRCS})
@@ -21,6 +22,7 @@ target_include_directories(muzi_base
 
 # add the interface compiler flags
 target_link_libraries(muzi_base muzi_compiler_flags)
+target_link_libraries(muzi_base pthread rt)
 
 # build test
 if (MUZI_BUILD_TEST)

@@ -74,7 +74,7 @@ public:
 
     /// @brief Remove this channel from its EventLoop
     /// @attention In loop.
-    void Remove() { loop_->RemoveChannel(this); }
+    void Remove();
 
 private:
     void Update();
@@ -89,6 +89,7 @@ private:
     EventCallback read_callback_;
     EventCallback write_callback_;
     EventCallback error_callback_;
+    EventCallback close_callback_;
 
     static const int kNoneEvent = 0;
     static const int kReadEvent = POLLIN | POLLPRI;

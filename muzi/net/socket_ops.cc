@@ -17,7 +17,7 @@ namespace socket
 {
 void AbortNotInterNet(const sockaddr *addr)
 {
-    if (addr->sa_family != AF_INET || addr->sa_family != AF_INET6)
+    if (addr->sa_family != AF_INET && addr->sa_family != AF_INET6)
     {
         LOG_FATAL << "Only allow AF_INET and AF_INET6 address family";
     }

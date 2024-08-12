@@ -193,6 +193,7 @@ void TimerQueue::ResetTimer(Timestamp now)
     }
 
     expired_timers_.clear();
+    canceling_timers_.clear();
 
     // Reset timer_fd_
     if (!timers_.empty())

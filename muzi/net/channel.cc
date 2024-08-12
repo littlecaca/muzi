@@ -8,7 +8,7 @@ void Channel::HandleEvent()
 {
     if (revents_ & POLLNVAL)
     {
-        LOG_WARN << "Channel::handle_event() POLLNVAL";
+        LOG_WARN << "Channel::HandleEvent() POLLNVAL";
     }
 
     if (revents_ & (POLLERR | POLLNVAL))
@@ -25,13 +25,25 @@ void Channel::HandleEvent()
     {
         if (write_callback_) write_callback_();
     }
+
+    if (revents_ & POLLHUP && !(revents_ & POLLIN))
+    {
+        LOG_WARN << "Channel::HandleEvent() POLLHUP";
+        if (close_callback_) close_callback_();
+    }
+}
+
+void Channel::Remove()
+{
+    if (!IsNoneEvent())
+    {
+        DisableAll();
+    }
+    loop_->RemoveChannel(this);
 }
 
 void Channel::Update()
 {
     loop_->UpdateChannel(this);
 }
-
-
-
 }   // namespace muzi

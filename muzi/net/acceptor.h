@@ -19,14 +19,9 @@ public:
         const InetAddress &addr)> NewConnectionCallBack;
     
     Acceptor(EventLoop *loop, const InetAddress &listen_addr, 
-        bool reuse_port = false, const NewConnectionCallBack &cb = nullptr);
+        bool reuse_port = false);
 
-    Acceptor(EventLoop *loop, const InetAddress &listen_addr,
-        const NewConnectionCallBack &cb) 
-        : Acceptor(loop, listen_addr, false, cb)
-    {
-    }
-
+    /// @attention In loop.
     ~Acceptor();
 
     void SetNewConnectionCallBack(const NewConnectionCallBack &cb)

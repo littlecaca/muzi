@@ -3,6 +3,7 @@
 #include "errno.h"
 
 #include "current_thread.h"
+#include "stacktrace.h"
 #include "string_proxy.h"
 
 namespace muzi
@@ -48,6 +49,22 @@ StackWritter::StackWritter(const Logger &logger, const SourceFile &file, int lin
     }
     log_stream_ << "] ";
 }
+
+StackWritter::~StackWritter()
+{
+    Finish();
+    if (level_ == kFatal)
+    {
+        log_stream_ << StackTrace();
+    }
+    logger_.GetOutputer()->Output(log_stream_.GetBuffer());
+    if (level_ == LogLevel::kFatal)
+    {
+        logger_.GetOutputer()->Flush();
+        abort();
+    }
+}
+
 
 void StackWritter::Finish()
 {

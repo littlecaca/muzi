@@ -91,16 +91,7 @@ public:
     StackWritter(const Logger &logger, const SourceFile &file, int line, bool to_abort)
         : StackWritter(logger, file, line, to_abort ? LogLevel::kFatal : LogLevel::kError, errno) {}
 
-    ~StackWritter()
-    {
-        Finish();
-        logger_.GetOutputer()->Output(log_stream_.GetBuffer());
-        if (level_ == LogLevel::kFatal)
-        {
-            logger_.GetOutputer()->Flush();
-            abort();
-        }
-    }
+    ~StackWritter();
 
     LogStream &GetStream() { return log_stream_; }
 

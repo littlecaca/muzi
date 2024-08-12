@@ -5,6 +5,7 @@
 
 #include <fcntl.h>
 
+#include "current_thread.h"
 #include "logger.h"
 #include "socket.h"
 
@@ -25,11 +26,9 @@ int OpenIdleFile()
 
 }   // internal linkage
 
-Acceptor::Acceptor(EventLoop *loop, const InetAddress &listen_addr, 
-    bool reuse_port, const NewConnectionCallBack &cb)
+Acceptor::Acceptor(EventLoop *loop, const InetAddress &listen_addr, bool reuse_port)
     : loop_(loop),
       accept_socket_(socket::CreateNonBlockingSockOrDie()),
-      cb_(cb),
       chanel_(loop, accept_socket_.GetFd()),
       listening_(false),
       dummy_fd_(OpenIdleFile())
@@ -51,7 +50,7 @@ Acceptor::~Acceptor()
 void Acceptor::Listen()
 {
     loop_->AssertInLoopThread();
-
+    LOG_TRACE << "Start listening in thread " << current_thread::tid();
     listening_ = true;
     accept_socket_.Listen();
     chanel_.EnableReading();

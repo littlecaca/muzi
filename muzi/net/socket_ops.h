@@ -72,6 +72,8 @@ int CreateNonBlockingSockOrDie();
 
 struct sockaddr_in6 GetLocalAddr(int sock_fd);
 
+int GetSocketError(int sock_fd);
+
 }   // namespace socket
 }   // namespace muzi
 

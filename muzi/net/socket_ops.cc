@@ -255,5 +255,17 @@ sockaddr_in6 GetLocalAddr(int sock_fd)
     return addr;
 }
 
+int GetSocketError(int sock_fd)
+{
+    int optval;
+    socklen_t optlen = static_cast<socklen_t>(sizeof optval);
+
+    if (::getsockopt(sock_fd, SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0)
+    {
+        LOG_SYSERR << "::getsockopt() fails";
+    }
+    return optval;
+}
+
 }   // namespace socket
 }   // namespace muzi

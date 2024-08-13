@@ -11,6 +11,7 @@ set(NET_SRCS
     inet_address.cc
     socket_ops.cc
     socket.cc
+    tcp_server.cc
 )
 
 add_library(muzi_net ${NET_SRCS})

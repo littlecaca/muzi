@@ -20,6 +20,7 @@ typedef std::function<void(const TcpConnectionPtr &)> ConnectionCallback;
 typedef std::function<void(const TcpConnectionPtr &)> MessageCallback;
 typedef std::function<void(const TcpConnectionPtr &)> CloseCallback;
 typedef std::function<void(const TcpConnectionPtr &)> ErrorCallback;
+typedef std::function<void(const TcpConnectionPtr &)> WriteCompleteCallback;
 
 
 class TcpConnection : std::enable_shared_from_this<TcpConnection>
@@ -32,9 +33,13 @@ public:
 
     ~TcpConnection();
 
+    /// @attention Not must in loop.
     void SetConnectionCallback(const ConnectionCallback &cb) { connection_callback_ = cb; }
+    /// @attention Not must in loop.
     void SetMessageCallback(const MessageCallback &cb) { message_callback_ = cb; }
+    /// @attention Not must in loop.
     void SetCloseCallback(const CloseCallback &cb) { close_callback_ = cb; }
+    /// @attention Not must in loop.
     void SetErrorCallback(const ErrorCallback &cb) { error_callback_ = cb; }
 
     void ForceClose()
@@ -44,6 +49,8 @@ public:
 
     /// @brief Should only be called once.
     /// After set all the callbacks, the connection is ready to deal with events.
+    /// @attention Because this operation must in loop, so we can not put it in
+    /// ctor.
     void EstablishConnection();
     
     /// @brief Called when the connection be removed from the TcpServer's map,
@@ -52,6 +59,8 @@ public:
     void DestroyConnection();
 
     const std::string GetName() const { return name_; }
+
+    EventLoop *GetLoop() const { return loop_; }
 
 private:
     enum ConnectionState

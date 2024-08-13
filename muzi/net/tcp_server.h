@@ -19,6 +19,8 @@ public:
     TcpServer(EventLoop *loop, const InetAddress &listen_addr, 
         const std::string &name = "TcpServer", bool reuse_port = false);
 
+    ~TcpServer();
+
     /// @attention Thread safe, and can be called multiple times.
     void Start();
 
@@ -38,7 +40,12 @@ private:
     /// @attention In loop.
     void NewConnection(int sock_fd, const InetAddress &peer_addr);
 
+    /// @attention May not in loop, so it will call the "in loop" version. 
     void RemoveConnection(const TcpConnectionPtr &conn);
+
+    /// @attention In loop. Ensure all opetions that access the data members
+    /// be in loop.
+    void RemoveConnectionInLoop(const TcpConnectionPtr &conn);
 
 private:
     typedef std::map<std::string, TcpConnectionPtr> ConnectionMap;

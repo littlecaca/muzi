@@ -37,23 +37,43 @@ void TcpServer::NewConnection(int sock_fd, const InetAddress &peer_addr)
     LOG_INFO << "TcpServer " << name_ << " accept new connection ["
              << conn_name << "] from " << peer_addr.GetIpPortStr();
 
+    // Here we can give it other loops to hand it over.
+    EventLoop *io_loop = loop_;
+
     TcpConnectionPtr conn(std::make_shared<TcpConnection>
-        (conn_name, loop_, sock_fd, peer_addr));
+        (conn_name, io_loop, sock_fd, peer_addr));
     
     connections_[conn_name] = conn;
     conn->SetConnectionCallback(connection_callback_);
     conn->SetMessageCallback(message_callback_);
     conn->SetCloseCallback(std::bind(&TcpServer::RemoveConnection, this, std::placeholders::_1));
-    conn->EstablishConnection();
+
+    io_loop->RunInLoop(std::bind(&TcpConnection::EstablishConnection, conn));
 }
 
 void TcpServer::RemoveConnection(const TcpConnectionPtr &conn)
+{
+    // Due to that RemoveConnection will change TcpServer::connections_,
+    // while this method may be called by other loops' HandleEvent(),
+    // so to ensure thread-safe, we need to execute this opertion in
+    // the TcpServer's loop.
+    loop_->RunInLoop(std::bind(&TcpServer::RemoveConnectionInLoop, this, conn));
+}
+
+void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr &conn)
 {
     loop_->AssertInLoopThread();
     
     size_t n = connections_.erase(conn->GetName());
     assert(n == 1); (void)n;
-    loop_->RunInLoop(std::bind(&TcpConnection::DestroyConnection, conn));
+    // Here if we do not put the DestroyConnection() to io_loop pending functors list
+    // after execution, the connection may be destroyed, and now is actually
+    // in channel_->HandleEvent(), so the connection must not be destroyed here.
+    //
+    // But with channel->Tie(), we have guaranteed that the conn will not be destroyed
+    // afther this. So we can use RunInLoop rather than having to use QueueInLoop.
+    EventLoop *io_loop = conn->GetLoop();
+    io_loop->RunInLoop(std::bind(&TcpConnection::DestroyConnection, conn));
 }
 
 }   // namespace muzi

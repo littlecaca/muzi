@@ -30,9 +30,11 @@ TcpConnection::~TcpConnection()
 
 void TcpConnection::EstablishConnection()
 {
+    loop_->AssertInLoopThread();
+    
     assert(close_callback_);
     assert(connection_callback_);
-
+    assert(state_ == kConnecting);
     SetState(kConnected);
     channel_->Tie(shared_from_this());
     channel_->EnableReading();
@@ -42,12 +44,8 @@ void TcpConnection::EstablishConnection()
 void TcpConnection::DestroyConnection()
 {
     loop_->AssertInLoopThread();
-    if (state_ != kDisConnected)
-    {
-        SetState(kDisConnected);
-        channel_->DisableAll();
-        connection_callback_(shared_from_this());
-    }
+    
+    assert(state_ == kDisConnected);
     channel_->Remove();
 }
 

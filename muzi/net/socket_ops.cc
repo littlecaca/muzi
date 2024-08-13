@@ -243,6 +243,17 @@ int CreateNonBlockingSockOrDie()
     return sock;
 }
 
+sockaddr_in6 GetLocalAddr(int sock_fd)
+{
+    sockaddr_in6 addr;
+    memset(&addr, 0, sizeof addr);
+    socklen_t addr_len = static_cast<socklen_t>(sizeof(sockaddr_in6));
+    if (::getsockname(sock_fd, SockAddrCast(&addr), &addr_len) < 0)
+    {
+        LOG_SYSERR << "::getsockname() fails";
+    }
+    return addr;
+}
 
 }   // namespace socket
 }   // namespace muzi

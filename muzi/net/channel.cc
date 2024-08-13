@@ -4,8 +4,17 @@
 
 namespace muzi
 {
+Channel::~Channel()
+{
+    // race condition!
+    assert(!in_using_);
+    assert(!handling_event_);
+}
+
 void Channel::HandleEvent()
 {
+    handling_event_ = true;
+    
     if (revents_ & POLLNVAL)
     {
         LOG_WARN << "Channel::HandleEvent() POLLNVAL";
@@ -31,6 +40,8 @@ void Channel::HandleEvent()
         LOG_WARN << "Channel::HandleEvent() POLLHUP";
         if (close_callback_) close_callback_();
     }
+
+    handling_event_ = false;
 }
 
 void Channel::Remove()
@@ -40,10 +51,12 @@ void Channel::Remove()
         DisableAll();
     }
     loop_->RemoveChannel(this);
+    in_using_ = false;
 }
 
 void Channel::Update()
 {
+    in_using_ = true;
     loop_->UpdateChannel(this);
 }
 }   // namespace muzi

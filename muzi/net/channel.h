@@ -12,7 +12,7 @@ namespace muzi
 {
 
 /// @brief Channel class is responsible for dipathing IO events to handle funcs.
-/// It must belong to only one thread.
+/// It is not thread safe.
 /// Channel dose not own the file descriptor.
 class Channel : noncopyable
 {
@@ -24,9 +24,15 @@ public:
           fd_(fd), 
           events_(0), 
           revents_(0), 
-          index_(-1)
+          index_(-1),
+          in_using_(false),
+          handling_event_(false)
     {}
 
+    /// @attention There may be a race condition in it.
+    ~Channel();
+
+    /// @attention In loop.
     void HandleEvent();
 
     void SetReadCallback(EventCallback cb)
@@ -46,13 +52,16 @@ public:
 
     int Getfd() const { return fd_; }
 
+    /// @attention Not thread safe
     int GetEvents() const { return events_; }
 
     /// @brief Get the index of the correponding poller's fds
+    /// @attention Not thread safe
     int GetIndex() const { return index_; }
 
     EventLoop *GetOwnerLoop() const { return loop_; }
 
+    /// @attention Not thread safe
     void SetIndex(int index) { index_ = index; }
 
     /// @brief Set active(received) events
@@ -72,7 +81,8 @@ public:
     /// @attention In loop.
     void DisableAll() { events_ = kNoneEvent; Update(); }
 
-    /// @brief Remove this channel from its EventLoop
+    /// @brief Remove this channel from its EventLoop.
+    /// If necessay, it will call DisableAll().
     /// @attention In loop.
     void Remove();
 
@@ -85,6 +95,8 @@ private:
     int events_;    // allowed targeted events
     int revents_;   // received active events
     int index_;     // index in the poller's fds
+    bool in_using_; 
+    bool handling_event_;
 
     EventCallback read_callback_;
     EventCallback write_callback_;

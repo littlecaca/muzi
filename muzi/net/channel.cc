@@ -4,6 +4,18 @@
 
 namespace muzi
 {
+Channel::Channel(EventLoop *loop, int fd)
+    : loop_(loop), 
+      fd_(fd), 
+      events_(0), 
+      revents_(0), 
+      index_(-1),
+      in_using_(false),
+      handling_event_(false),
+      tied_(false)
+{
+}
+
 Channel::~Channel()
 {
     // race condition!
@@ -12,6 +24,22 @@ Channel::~Channel()
 }
 
 void Channel::HandleEvent()
+{
+    if (tied_)
+    {
+        std::shared_ptr<void> tied = tied_object_.lock();
+        if (tied)
+        {
+            HandleEvent();
+        }
+    }
+    else
+    {
+        HandleEvent();
+    }
+}
+
+void Channel::HandleEventWithGuard()
 {
     handling_event_ = true;
     

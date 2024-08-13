@@ -19,21 +19,22 @@ class Channel : noncopyable
 public:
     typedef std::function<void()> EventCallback;
 
-    Channel(EventLoop *loop, int fd) 
-        : loop_(loop), 
-          fd_(fd), 
-          events_(0), 
-          revents_(0), 
-          index_(-1),
-          in_using_(false),
-          handling_event_(false)
-    {}
+    Channel(EventLoop *loop, int fd);
 
     /// @attention There may be a race condition in it.
     ~Channel();
 
     /// @attention In loop.
     void HandleEvent();
+
+    void HandleEventWithGuard();
+
+    /// @brief Keep the tied_object alive when handling event.
+    void Tie(std::shared_ptr<void> object)
+    {
+        tied_object_ = object;
+        tied_ = true;
+    }
 
     void SetReadCallback(EventCallback cb)
     {
@@ -43,6 +44,11 @@ public:
     void SetWriteCallback(EventCallback cb)
     {
         write_callback_ = std::move(cb);
+    }
+
+    void SetCloseCallback(EventCallback cb)
+    {
+        close_callback_ = cb;
     }
 
     void SetErrorCallback(EventCallback cb)
@@ -97,6 +103,8 @@ private:
     int index_;     // index in the poller's fds
     bool in_using_; 
     bool handling_event_;
+    bool tied_;
+    std::weak_ptr<void> tied_object_;
 
     EventCallback read_callback_;
     EventCallback write_callback_;

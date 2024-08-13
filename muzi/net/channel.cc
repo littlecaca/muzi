@@ -74,10 +74,7 @@ void Channel::HandleEventWithGuard()
 
 void Channel::Remove()
 {
-    if (!IsNoneEvent())
-    {
-        DisableAll();
-    }
+    assert(IsNoneEvent());
     loop_->RemoveChannel(this);
     in_using_ = false;
 }

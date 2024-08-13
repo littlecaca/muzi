@@ -88,7 +88,6 @@ public:
     void DisableAll() { events_ = kNoneEvent; Update(); }
 
     /// @brief Remove this channel from its EventLoop.
-    /// If necessay, it will call DisableAll().
     /// @attention In loop.
     void Remove();
 

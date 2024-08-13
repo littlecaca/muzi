@@ -42,6 +42,9 @@ Acceptor::Acceptor(EventLoop *loop, const InetAddress &listen_addr, bool reuse_p
 
 Acceptor::~Acceptor()
 {
+    // Acceptor will work in main loop, as with
+    // the TcpServer. So this will be fine to
+    // call these "in loop" function.
     chanel_.DisableAll();
     chanel_.Remove();
     socket::Close(dummy_fd_);

@@ -4,11 +4,13 @@
 #include <atomic>
 #include <memory>
 
+#include "buffer.h"
 #include "channel.h"
 #include "event_loop.h"
 #include "inet_address.h"
 #include "noncopyable.h"
 #include "socket.h"
+#include "timestamp.h"
 
 
 namespace muzi
@@ -17,7 +19,7 @@ class TcpConnection;
 typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
 // Callbacks related to TcpConnection
 typedef std::function<void(const TcpConnectionPtr &)> ConnectionCallback;
-typedef std::function<void(const TcpConnectionPtr &)> MessageCallback;
+typedef std::function<void(const TcpConnectionPtr &, Buffer *buf, Timestamp time)> MessageCallback;
 typedef std::function<void(const TcpConnectionPtr &)> CloseCallback;
 typedef std::function<void(const TcpConnectionPtr &)> ErrorCallback;
 typedef std::function<void(const TcpConnectionPtr &)> WriteCompleteCallback;
@@ -34,13 +36,13 @@ public:
     ~TcpConnection();
 
     /// @attention Not must in loop.
-    void SetConnectionCallback(const ConnectionCallback &cb) { connection_callback_ = cb; }
+    void SetConnectionCallback(ConnectionCallback cb) { connection_callback_ = std::move(cb); }
     /// @attention Not must in loop.
-    void SetMessageCallback(const MessageCallback &cb) { message_callback_ = cb; }
+    void SetMessageCallback(MessageCallback cb) { message_callback_ = std::move(cb); }
     /// @attention Not must in loop.
-    void SetCloseCallback(const CloseCallback &cb) { close_callback_ = cb; }
+    void SetCloseCallback(CloseCallback cb) { close_callback_ = std::move(cb); }
     /// @attention Not must in loop.
-    void SetErrorCallback(const ErrorCallback &cb) { error_callback_ = cb; }
+    void SetErrorCallback(ErrorCallback cb) { error_callback_ = std::move(cb); }
 
     void ForceClose()
     {
@@ -75,7 +77,7 @@ private:
         state_ = state;
     }
 
-    void HandleRead();
+    void HandleRead(Timestamp received_time);
     void HandleWrite();
     void HandleClose();
     void HandleError();
@@ -89,6 +91,8 @@ private:
     std::unique_ptr<Channel> channel_;
     InetAddress peer_addr_;
 
+    Buffer input_buffer_;
+    
     ConnectionCallback connection_callback_;
     MessageCallback message_callback_;
     CloseCallback close_callback_;

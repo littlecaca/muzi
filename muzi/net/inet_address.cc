@@ -29,7 +29,7 @@ InetAddress::InetAddress(uint16_t port, bool loop_back_only, bool ipv6)
     {
         memset(&addr6_, 0, sizeof addr6_);
         addr6_.sin6_family = AF_INET6;
-        addr6_.sin6_port = static_cast<in_port_t>(endian::HostToNet16(port));
+        addr6_.sin6_port = static_cast<in_port_t>(endian::HostToNet(port));
         struct in6_addr ip = loop_back_only ? in6addr_loopback : in6addr_any;
         addr6_.sin6_addr = ip;
     }
@@ -37,8 +37,8 @@ InetAddress::InetAddress(uint16_t port, bool loop_back_only, bool ipv6)
     {
         memset(&addr_, 0, sizeof addr_);
         addr_.sin_family = AF_INET;
-        addr_.sin_port = static_cast<in_port_t>(endian::HostToNet16(port));
-        uint32_t ip = endian::HostToNet32(loop_back_only ? INADDR_LOOPBACK : INADDR_ANY);
+        addr_.sin_port = static_cast<in_port_t>(endian::HostToNet(port));
+        uint32_t ip = endian::HostToNet(loop_back_only ? INADDR_LOOPBACK : INADDR_ANY);
         addr_.sin_addr.s_addr = static_cast<in_addr_t>(ip);
     }
 }

@@ -26,7 +26,7 @@ void AbortNotInterNet(const sockaddr *addr)
 void FromIpPort(const char *ip, uint16_t port, sockaddr_in *addr)
 {
     addr->sin_family = AF_INET;
-    addr->sin_port = endian::HostToNet16(port);
+    addr->sin_port = endian::HostToNet(port);
     if (::inet_pton(AF_INET, ip, &addr->sin_addr) <= 0)
     {
         LOG_SYSERR << "::inet_pton() fails";
@@ -36,7 +36,7 @@ void FromIpPort(const char *ip, uint16_t port, sockaddr_in *addr)
 void FromIpPort(const char *ip, uint16_t port, sockaddr_in6 *addr6)
 {
     addr6->sin6_family = AF_INET6;
-    addr6->sin6_port = endian::HostToNet16(port);
+    addr6->sin6_port = endian::HostToNet(port);
     if (::inet_pton(AF_INET6, ip, &addr6->sin6_addr) <= 0)
     {
         LOG_SYSERR << "::inet_pton() fails";
@@ -93,7 +93,7 @@ void ToPort(char *buf, int buf_len, const sockaddr *addr)
     {
         port_net = SockAddrIn6Cast(addr)->sin6_port;
     }
-    uint16_t port = endian::NetToHost16(port_net);
+    uint16_t port = endian::NetToHost(port_net);
     snprintf(buf, buf_len, "%hu", port);
 }
 

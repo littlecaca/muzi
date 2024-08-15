@@ -27,9 +27,13 @@ public:
         return static_cast<size_t>(storage_end_ - end() - 1);
     }
     
-    char *end() const { return end_; }
+    char *end() { return end_; }
+
+    const char *end() const { return end_; }
 
     const char *begin() const { return buffer_; }
+
+    char *begin() { return buffer_; }
 
     const char *data() const { return buffer_; }
 
@@ -76,8 +80,6 @@ private:
     char *end_;
     const char *storage_end_;
 };
-
-
 }   // namespace muzi
 
 #endif  // MUZI_BASE_FIXED_BUFFER_H_

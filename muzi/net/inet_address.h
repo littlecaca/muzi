@@ -37,7 +37,7 @@ public:
     /// @brief It is users' responsibility to ensure the ip is indeed ipv4.
     uint32_t GetIpv4NetEndian() const;
 
-    uint16_t GetPort() const { return endian::NetToHost16(addr_.sin_port); }
+    uint16_t GetPort() const { return endian::NetToHost(addr_.sin_port); }
 
     uint16_t GetPortNetEndian() const { return addr_.sin_port; }
 

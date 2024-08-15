@@ -75,12 +75,12 @@ void EventLoop::Loop()
     while (!quit_)
     {
         active_channels_.clear();
-        poller_->Poll(kPollTimeMs, &active_channels_);
+        Timestamp time = poller_->Poll(kPollTimeMs, &active_channels_);
         ++iteration_;
 
         for (Channel *channel : active_channels_)
         {
-            channel->HandleEvent();
+            channel->HandleEvent(time);
         }
 
         ExecuteFunctors();

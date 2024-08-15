@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
     int timer_fd = ::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
     muzi::Channel channel(&loop, timer_fd);
 
-    channel.SetReadCallback(timeout);
+    channel.SetReadCallback(std::bind(&timeout));
     channel.EnableReading();
 
     struct itimerspec howlong;

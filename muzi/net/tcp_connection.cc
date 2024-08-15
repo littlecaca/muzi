@@ -13,7 +13,7 @@ TcpConnection::TcpConnection(std::string name,
       channel_(std::make_unique<Channel>(loop, sock_fd)),
       peer_addr_(peer_addr)
 {
-    channel_->SetReadCallback(std::bind(&TcpConnection::HandleRead, this));
+    channel_->SetReadCallback(std::bind(&TcpConnection::HandleRead, this, std::placeholders::_1));
     channel_->SetWriteCallback(std::bind(&TcpConnection::HandleWrite, this));
     channel_->SetCloseCallback(std::bind(&TcpConnection::HandleClose, this));
     channel_->SetErrorCallback(std::bind(&TcpConnection::HandleError, this));
@@ -44,12 +44,12 @@ void TcpConnection::EstablishConnection()
 void TcpConnection::DestroyConnection()
 {
     loop_->AssertInLoopThread();
-    
+
     assert(state_ == kDisConnected);
     channel_->Remove();
 }
 
-void TcpConnection::HandleRead()
+void TcpConnection::HandleRead(Timestamp received_time)
 {
 }
 

@@ -23,23 +23,23 @@ Channel::~Channel()
     assert(!handling_event_);
 }
 
-void Channel::HandleEvent()
+void Channel::HandleEvent(Timestamp received_time)
 {
     if (tied_)
     {
         std::shared_ptr<void> tied = tied_object_.lock();
         if (tied)
         {
-            HandleEvent();
+            HandleEventWithGuard(received_time);
         }
     }
     else
     {
-        HandleEvent();
+        HandleEventWithGuard(received_time);
     }
 }
 
-void Channel::HandleEventWithGuard()
+void Channel::HandleEventWithGuard(Timestamp received_time)
 {
     handling_event_ = true;
     
@@ -55,7 +55,7 @@ void Channel::HandleEventWithGuard()
 
     if (revents_ & (POLLIN | POLLPRI | POLLRDHUP))
     {
-        if (read_callback_) read_callback_();
+        if (read_callback_) read_callback_(received_time);
     }
 
     if (revents_ & POLLOUT)

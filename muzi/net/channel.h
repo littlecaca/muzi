@@ -18,6 +18,7 @@ class Channel : noncopyable
 {
 public:
     typedef std::function<void()> EventCallback;
+    typedef std::function<void(Timestamp time)> ReadEventCallback;
 
     Channel(EventLoop *loop, int fd);
 
@@ -25,9 +26,10 @@ public:
     ~Channel();
 
     /// @attention In loop.
-    void HandleEvent();
+    /// Tie the object before handling.
+    void HandleEvent(Timestamp received_time);
 
-    void HandleEventWithGuard();
+    void HandleEventWithGuard(Timestamp received_time);
 
     /// @brief Keep the tied_object alive when handling event.
     void Tie(std::shared_ptr<void> object)
@@ -35,26 +37,12 @@ public:
         tied_object_ = object;
         tied_ = true;
     }
-
-    void SetReadCallback(EventCallback cb)
-    {
-        read_callback_ = std::move(cb);
-    }
-
-    void SetWriteCallback(EventCallback cb)
-    {
-        write_callback_ = std::move(cb);
-    }
-
-    void SetCloseCallback(EventCallback cb)
-    {
-        close_callback_ = cb;
-    }
-
-    void SetErrorCallback(EventCallback cb)
-    {
-        error_callback_ = std::move(cb);
-    }
+    
+    // Utilize the copy ellision feature of the compiler
+    void SetReadCallback(ReadEventCallback cb) { read_callback_ = std::move(cb); }
+    void SetWriteCallback(EventCallback cb) { write_callback_ = std::move(cb); }
+    void SetCloseCallback(EventCallback cb) { close_callback_ = std::move(cb); }
+    void SetErrorCallback(EventCallback cb) { error_callback_ = std::move(cb); }
 
     int Getfd() const { return fd_; }
 
@@ -105,7 +93,7 @@ private:
     bool tied_;
     std::weak_ptr<void> tied_object_;
 
-    EventCallback read_callback_;
+    ReadEventCallback read_callback_;
     EventCallback write_callback_;
     EventCallback error_callback_;
     EventCallback close_callback_;

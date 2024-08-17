@@ -123,7 +123,7 @@ public:
             if (cur_ == first_)
             {
                 MoveBuffer(-1);
-                cur_ = last_;
+                cur_ = last_ - 1;
             }
             return *this;
         }
@@ -195,7 +195,7 @@ public:
         pointer GetLast() const { return last_; }
         const BufferIter &GetBufferIter() const { return buffer_it_; }
         size_t GetCurOffset() const { return cur_ - first_; }
-        size_t Writable() const { return  std::max(last_ - cur_ - 1, 0L); }
+        size_t Writable() const { return  last_ - cur_; }
 
         bool IsInSameBuffer(const self &rhs) const
         {
@@ -231,9 +231,9 @@ public:
                     size_t initial_buffer_num = kInitialBufferNum)
         : buffer_list_(initial_buffer_num)
     {
-        // Remove Me
-        LOG_DEBUG << "Buffer()";
-        gDefaultOutputer.Flush();
+        // // Remove Me
+        // LOG_DEBUG << "Buffer()";
+        // gDefaultOutputer.Flush();
         AllocateBuffer(buffer_list_.begin(), buffer_list_.end());
         read_index_ = write_index_ = buffer_list_.begin();
         read_index_ += kCheapPrepend;
@@ -337,9 +337,9 @@ public:
     {
         assert(util <= cend());
         assert(cbegin() <= util);
-        // Remove Me
-        LOG_DEBUG << "RetriveAsString " << util - cbegin();
-        gDefaultOutputer.Flush();
+        // // Remove Me
+        // LOG_DEBUG << "RetriveAsString " << util - cbegin();
+        // gDefaultOutputer.Flush();
 
         std::string output(cbegin(), util);
         Retrive(util - cbegin());
@@ -365,11 +365,11 @@ public:
 
     void EnsureWritableBytes(size_t len)
     {
-        LOG_DEBUG << "EnsureWritbleBytes(" << len << ") Writable: " << WritableBytes();
-        // Remove Me
+        // LOG_DEBUG << "EnsureWritbleBytes(" << len << ") Writable: " << WritableBytes();
+        // // Remove Me
+        // gDefaultOutputer.Flush();
         while (len > WritableBytes())
         {
-            gDefaultOutputer.Flush();
             ExtendSpace(len - WritableBytes());
         }
     }
@@ -433,9 +433,9 @@ public:
 private:
     void ResetIndex()
     {
-        // Remove Me
-        LOG_DEBUG << "ResetIndex()";
-        gDefaultOutputer.Flush();
+        // // Remove Me
+        // LOG_DEBUG << "ResetIndex()";
+        // gDefaultOutputer.Flush();
 
         read_index_ = write_index_ = buffer_list_.begin();
         read_index_ += kCheapPrepend;
@@ -447,15 +447,16 @@ private:
 
     void AllocateBuffer(BufferIter first, BufferIter last)
     {
-        // Remove Me
-        LOG_DEBUG << "AllocateBuffer()";
-        gDefaultOutputer.Flush();
+        // // Remove Me
+        // LOG_DEBUG << "AllocateBuffer()";
+        // gDefaultOutputer.Flush();
 
         while (first != last)
         {
             *first++ = std::make_unique<BufferBlock>();
         }
     }
+
 
 private:
     BufferList buffer_list_;

@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
     "This is not a test!!!This is not a test!!!This is not a test!!!This is not a test!!!This is not a test!!!"
     "This is not a test!!!This is not a test!!!This is not a test!!!This is not a test!!!This is not a test!!!"
     "This is not a test!!!This is not a test!!!This is not a test!!!This is not a test!!!This is not a test!!!"
-    "This is not a test!!!This is not a test!!!";
+    "This is not a test!!!This is not a test!!!END";
 
     
     buf.Append(message, sizeof message);
@@ -52,27 +52,27 @@ int main(int argc, char const *argv[])
 
     assert(buf.ReadableBytes() == 10 * sizeof message);
 
-    LOG_INFO << "After 10 Append 547 bytes WritableBytes() : " << buf.WritableBytes();
+    LOG_INFO << "After 10 Append 547 bytes WritableBytes() : " << buf.WritableBytes()
+             << " ReadableBytes() : " << buf.ReadableBytes();
 
     LOG_INFO <<  buf.RetriveAllAsString();
 
     assert(buf.ReadableBytes() == 0);
     
-
     buf.AppendInt<uint32_t>(12345);
     assert(buf.PeekInt<uint32_t>() == 12345);
     buf.ReadInt<uint32_t>();
     
     buf.Append("this is very good\r\n");
 
-    
     auto end = buf.FindCRLF();
     assert(end != buf.end());
 
     LOG_INFO << buf.RetriveAsString(end);
 
-    buf.Retrive(2);
+    buf.RetriveCRLF();
     assert(buf.ReadableBytes() == 0);
-
+    
+    
     return 0;
 }

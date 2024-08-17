@@ -23,6 +23,7 @@ namespace muzi
 /// to read from system buffer. According to the requirement,
 /// the heap memory can increase. In which case, the buffer
 /// do not need to take up a very large memory in the begining.
+/// @attention Not a thread safe class.
 class Buffer
 {
 public:

@@ -92,6 +92,7 @@ int main(int argc, char const *argv[])
         LOG_SYSERR << "buf.WriteFd()";
     }
     assert(n != 0);
+    assert(buf.ReadableBytes() == 0);
 
     LOG_INFO << "After 10 Append message, WriteFd() : " << n;
     

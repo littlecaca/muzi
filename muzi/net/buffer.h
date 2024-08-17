@@ -423,6 +423,10 @@ public:
     /// @return result of read(2), @c errno is saved.
     ssize_t ReadFd(int fd, int *saved_errno);
 
+    /// @brief Write from buffer to fd directly.
+    /// @return result of write(2), @c errno is saved.
+    ssize_t WriteFd(int fd, int *saved_errno);
+
     const_iterator cbegin() const { return read_index_; }
     const_iterator cend() const { return write_index_; }
     iterator begin() { return read_index_; }

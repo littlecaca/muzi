@@ -72,7 +72,30 @@ int main(int argc, char const *argv[])
 
     buf.RetriveCRLF();
     assert(buf.ReadableBytes() == 0);
+
+    int saved_errno = 0;
+    int n = buf.WriteFd(1, &saved_errno);
+    if (saved_errno < 0)
+    {
+        LOG_SYSERR << "buf.WriteFd()";
+    }
+    assert(n == 0);
+
+    for (int i = 0; i < 10; ++i)
+    {
+        buf.Append(message, sizeof message);
+    }
+
+    n = buf.WriteFd(1, &saved_errno);
+        if (saved_errno < 0)
+    {
+        LOG_SYSERR << "buf.WriteFd()";
+    }
+    assert(n != 0);
+
+    LOG_INFO << "After 10 Append message, WriteFd() : " << n;
     
     
+
     return 0;
 }

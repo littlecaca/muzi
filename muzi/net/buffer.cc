@@ -11,10 +11,10 @@ const char Buffer::kCRLF[] = "\r\n";
 
 ssize_t Buffer::ReadFd(int fd, int *saved_errno)
 {
-    // 创建额外数组
+    // Create an on-stack extra buffer
     char extra_buf[kExtraBufferSize];
 
-    // 创建iovec，并将现有可读缓冲区填充进去
+    // Create iovec and fill it with the buffer blocks
     BufferIter last = buffer_list_.end();
     int len = last - write_index_.GetBufferIter();
     struct iovec vec[len + 1];
@@ -31,10 +31,11 @@ ssize_t Buffer::ReadFd(int fd, int *saved_errno)
         ++index;
     }
     
-    // 保留末尾一个字节
+    // Keep the rail byte
     --vec[index - 1].iov_len;
     --writable;
 
+    // assert the calculation is right
     assert(writable == WritableBytes());
 
     vec[len].iov_base = extra_buf;
@@ -54,6 +55,48 @@ ssize_t Buffer::ReadFd(int fd, int *saved_errno)
     {
         write_index_ += writable;
         Append(extra_buf, n - writable);
+    }
+    return n;
+}
+
+ssize_t Buffer::WriteFd(int fd, int *saved_errno)
+{
+    // Create iovec and fill it with the buffer blocks
+    BufferIter first = read_index_.GetBufferIter(),
+               last =  write_index_.GetBufferIter();
+
+    int len = last - first + 1;
+
+    iovec vec[len];
+    vec[0].iov_base = read_index_.GetCur();
+    if (first == last)
+    {
+        vec[0].iov_len = write_index_ - read_index_;
+    }
+    else
+    {
+        vec[0].iov_len = read_index_.Writable();
+
+        int index = 1;
+        for (BufferIter it = first + 1; it < last; ++it)
+        {
+            vec[index].iov_base = (*it)->begin();
+            vec[index].iov_len = kBufferSize;
+            ++index;
+        }
+        vec[index].iov_base = (*last)->begin();
+        vec[index].iov_len = write_index_.GetCurOffset();
+    }
+
+    ssize_t n = ::writev(fd, vec, len);
+
+    if (n < 0)
+    {
+        *saved_errno = errno;
+    }
+    else
+    {
+        read_index_ += n;
     }
     return n;
 }
@@ -107,4 +150,3 @@ void Buffer::ExtendSpace(size_t len)
 }
 
 }   // namespace muzi
-

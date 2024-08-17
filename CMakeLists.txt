@@ -32,7 +32,7 @@ add_link_options(-rdynamic)
 
 # Setting c++11 standard with the interface libraries
 add_library(muzi_compiler_flags INTERFACE)
-target_compile_features(muzi_compiler_flags INTERFACE cxx_std_14)
+target_compile_features(muzi_compiler_flags INTERFACE cxx_std_17)
 
 add_subdirectory(muzi/base)
 link_libraries(muzi_base)

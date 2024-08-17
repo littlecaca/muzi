@@ -44,6 +44,9 @@ public:
     void SetCloseCallback(EventCallback cb) { close_callback_ = std::move(cb); }
     void SetErrorCallback(EventCallback cb) { error_callback_ = std::move(cb); }
 
+    bool IsWritting() const { return events_ | kWriteEvent; }
+    bool IsReading() const { return events_ | kReadEvent; }
+
     int Getfd() const { return fd_; }
 
     /// @attention Not thread safe
@@ -65,6 +68,9 @@ public:
 
     /// @attention In loop.
     void EnableReading() { events_ |= kReadEvent; Update(); }
+
+    /// @attention In loop.
+    void DisableReading() { events_ &= ~kReadEvent; Update(); }
 
     /// @attention In loop.
     void EnableWritting() { events_ |= kWriteEvent; Update(); }

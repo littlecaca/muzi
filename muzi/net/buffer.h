@@ -349,19 +349,33 @@ public:
 
     void Append(const StringProxy &str)
     {
-        Append(str.begin(), str.size());
+        Append(str.begin(), str.end());
     }
 
-    void Append(const char *first, const char *last)
+    template <typename ForwardIterator>
+    std::enable_if<
+        std::is_base_of_v<
+            std::forward_iterator_tag, 
+            typename std::iterator_traits<ForwardIterator>::iterator_category
+        >,
+        void
+    >
+    Append(const ForwardIterator first, const ForwardIterator last)
     {
-        Append(first, last - first);
+        size_t len = last - first;
+        EnsureWritableBytes(len);
+        std::copy(first, last, end());
+        write_index_ += len;
+    }
+
+    void Append(const Buffer &buffer)
+    {
+        Append(buffer.begin(), buffer.end());
     }
 
     void Append(const void *first, size_t len)
     {
-        EnsureWritableBytes(len);
-        std::copy_n(static_cast<const char *>(first), len, end());
-        write_index_ += len;
+        Append(static_cast<const char *>(first), static_cast<const char *>(first) + len);
     }
 
     void EnsureWritableBytes(size_t len)
@@ -403,6 +417,11 @@ public:
         char buf[sizeof(T) / sizeof(char)];
         std::copy(cbegin(), cbegin() + sizeof(T) / sizeof(char), buf);
         return endian::NetToHost(*reinterpret_cast<T *>(buf));
+    }
+
+    std::string PeekAllAsString() const
+    {
+        return std::string(begin(), end());
     }
 
     void Prepend(const void *first, size_t len)

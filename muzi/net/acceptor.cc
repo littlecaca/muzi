@@ -29,6 +29,7 @@ int OpenIdleFile()
 Acceptor::Acceptor(EventLoop *loop, const InetAddress &listen_addr, bool reuse_port)
     : loop_(loop),
       accept_socket_(socket::CreateNonBlockingSockOrDie()),
+      local_addr_(listen_addr),
       chanel_(loop, accept_socket_.GetFd()),
       listening_(false),
       dummy_fd_(OpenIdleFile())

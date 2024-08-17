@@ -7,16 +7,40 @@
 namespace muzi
 {
 
+namespace
+{
+void DefaultConnectionCallback(const TcpConnectionPtr &conn)
+{
+    LOG_TRACE << conn->GetLocalAddress().GetIpPortStr() << " >> "
+              << conn->GetPeerAddress().GetIpPortStr() << " is "
+              << (conn->IsConnected() ? "UP" : "DOWN");
+}
+
+void DefaultMessageCallback(const TcpConnectionPtr &conn,
+                            Buffer *buf,
+                            Timestamp time)
+{
+    buf->RetriveAll();
+}
+
+}   // internal linkage
+
 TcpServer::TcpServer(EventLoop *loop, const InetAddress &listen_addr, 
     const std::string &name, bool reuse_port)
     : name_(name),
       loop_(loop),
       acceptor_(std::make_unique<Acceptor>(loop, listen_addr, reuse_port)),
       started_(false),
-      conn_sequence_(0)
+      conn_sequence_(0),
+      connection_callback_(&DefaultConnectionCallback),
+      message_callback_(&DefaultMessageCallback)
 {
     acceptor_->SetNewConnectionCallBack(std::bind(&TcpServer::NewConnection, 
         this, std::placeholders::_1, std::placeholders::_2));
+}
+
+TcpServer::~TcpServer()
+{
 }
 
 void TcpServer::Start()
@@ -41,7 +65,7 @@ void TcpServer::NewConnection(int sock_fd, const InetAddress &peer_addr)
     EventLoop *io_loop = loop_;
 
     TcpConnectionPtr conn(std::make_shared<TcpConnection>
-        (conn_name, io_loop, sock_fd, peer_addr));
+        (conn_name, io_loop, sock_fd, peer_addr, acceptor_->GetLocalAddr()));
     
     connections_[conn_name] = conn;
     conn->SetConnectionCallback(connection_callback_);

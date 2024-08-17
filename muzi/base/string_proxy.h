@@ -8,10 +8,10 @@
 
 namespace muzi
 {
-// A simple enclosion for plain c style string
-// It does not affect the life cycle of the string
-// It is suitable to manage on-stack object
-// It acts like a std::string
+// A simple enclosion for plain c style string.
+// It does not affect the life cycle of the string.
+// It is suitable to manage on-stack object.
+// It acts like a std::string.
 class StringProxy
 {
 public:

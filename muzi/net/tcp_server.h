@@ -47,6 +47,7 @@ private:
     /// be in loop.
     void RemoveConnectionInLoop(const TcpConnectionPtr &conn);
 
+
 private:
     typedef std::map<std::string, TcpConnectionPtr> ConnectionMap;
 

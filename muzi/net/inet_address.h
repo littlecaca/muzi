@@ -22,11 +22,11 @@ public:
 
     InetAddress(StringProxy ip, uint16_t port, bool ipv6 = false);
 
-    explicit InetAddress(const struct sockaddr_in &addr)
+    InetAddress(const struct sockaddr_in &addr)
         : addr_(addr)
     { }
 
-    explicit InetAddress(const struct sockaddr_in6 &addr_6)
+    InetAddress(const struct sockaddr_in6 &addr_6)
         : addr6_(addr_6)
     { }
 

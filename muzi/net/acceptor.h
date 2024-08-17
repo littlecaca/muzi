@@ -34,6 +34,8 @@ public:
     /// @attention In loop.
     void Listen();
 
+    const InetAddress &GetLocalAddr() const { return local_addr_; }
+
 private:
     void HandleRead();
 
@@ -41,6 +43,8 @@ private:
     EventLoop *loop_;
     Socket accept_socket_;
     NewConnectionCallBack cb_;
+
+    InetAddress local_addr_;
 
     Channel chanel_;
     bool listening_;

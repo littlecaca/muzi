@@ -3,6 +3,7 @@
 
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
+#include <unistd.h>
 
 
 namespace muzi
@@ -74,7 +75,13 @@ struct sockaddr_in6 GetLocalAddr(int sock_fd);
 
 int GetSocketError(int sock_fd);
 
+ssize_t Write(int sock_fd, const void *buf, size_t len)
+{
+    return ::write(sock_fd, buf, len);
+}
+
 }   // namespace socket
 }   // namespace muzi
+
 
 #endif  // MUZI_NET_SOCKET_OPS_H_

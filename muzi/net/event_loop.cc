@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <sys/eventfd.h>
+#include <sys/signal.h>
 #include <sys/poll.h>
 
 #include "timer_queue.h"
@@ -25,6 +26,22 @@ int CreateEventFd()
     }
     return fd;
 }
+
+/// If the client has closed the connection gracefully (using close() or shutdown()), 
+/// and you try to write to the socket, the server will receive a SIGPIPE signal by default.
+/// The write operation will fail, and write() will return -1 with errno set to EPIPE. 
+/// If the SIGPIPE signal is not handled or ignored, the process will terminate.
+/// So we need to make the program ingnore the SIGPIPE signal.
+class IgnoreSigPipe
+{
+public:
+    IgnoreSigPipe()
+    {
+        ::signal(SIGPIPE, SIG_IGN);
+    }
+};
+
+IgnoreSigPipe ignore;
 
 }   // internal linkage
 

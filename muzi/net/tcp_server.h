@@ -16,6 +16,8 @@ namespace muzi
 class TcpServer : noncopyable
 {
 public:
+    typedef std::function<void(EventLoop *)> ThreadInitCallback;
+
     TcpServer(EventLoop *loop, const InetAddress &listen_addr, 
         const std::string &name = "TcpServer", bool reuse_port = false);
 
@@ -47,7 +49,6 @@ private:
     /// be in loop.
     void RemoveConnectionInLoop(const TcpConnectionPtr &conn);
 
-
 private:
     typedef std::map<std::string, TcpConnectionPtr> ConnectionMap;
 
@@ -59,8 +60,11 @@ private:
 
     ConnectionMap connections_;
 
+    // Callbacks that can be set by the users.
     ConnectionCallback connection_callback_;
     MessageCallback message_callback_;
+    WriteCompleteCallback write_complete_callback_;
+    ThreadInitCallback thread_init_callback_;
 };
 
 }   // namespace muzi

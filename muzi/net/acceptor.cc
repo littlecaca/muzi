@@ -86,7 +86,7 @@ void Acceptor::HandleRead()
         // connections using this solution. (Maybe a mutex_lock can make it thread-safe?)
         if (peer_sock < 0)
         {
-            if (errno == EMFILE || errno == ENFILE)
+            if (errno == EMFILE)
             {
                 socket::Close(dummy_fd_);
                 dummy_fd_ = ::accept(accept_socket_.GetFd(), nullptr, nullptr);

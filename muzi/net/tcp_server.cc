@@ -56,7 +56,7 @@ void TcpServer::Start()
 {
     if (started_.exchange(true) == false)
     {
-        thread_pool_->Start();
+        thread_pool_->Start(thread_init_callback_);
 
         assert(acceptor_->IsListening());
         loop_->RunInLoop(std::bind(&Acceptor::Listen, acceptor_.get()));
@@ -86,6 +86,7 @@ void TcpServer::NewConnection(int sock_fd, const InetAddress &peer_addr)
     connections_[conn_name] = conn;
     conn->SetConnectionCallback(connection_callback_);
     conn->SetMessageCallback(message_callback_);
+    conn->SetWriteCompleteCallback(write_complete_callback_);
     conn->SetCloseCallback(std::bind(&TcpServer::RemoveConnection, this, std::placeholders::_1));
 
     io_loop->RunInLoop(std::bind(&TcpConnection::EstablishConnection, conn));

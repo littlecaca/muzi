@@ -31,14 +31,24 @@ public:
 
     /// @brief Set connection callback.
     /// @attention Not thread safe.
-    void SetConnectionCallback(const ConnectionCallback &cb)
+    void SetConnectionCallback(ConnectionCallback cb)
     {
-        connection_callback_ = cb;
+        connection_callback_ = std::move(cb);
     }
 
-    void SetMessageCallback(const MessageCallback &cb)
+    void SetMessageCallback(MessageCallback cb)
     {
-        message_callback_ = cb;
+        message_callback_ = std::move(cb);
+    }
+    
+    void SetWriteCompleteCallback(WriteCompleteCallback cb)
+    {
+        write_complete_callback_ = std::move(cb);
+    }
+
+    void SetThreadInitCallback(ThreadInitCallback cb)
+    {
+        thread_init_callback_ = std::move(cb);
     }
 
 private:

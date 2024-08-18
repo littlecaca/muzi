@@ -187,11 +187,18 @@ void TcpConnection::EstablishConnection()
     connection_callback_(shared_from_this());
 }
 
+/// @brief This method is for TcpServer to call to
+/// destroy the connection.
 void TcpConnection::DestroyConnection()
 {
     loop_->AssertInLoopThread();
 
-    assert(state_ == kDisConnected);
+    if (state_ != kDisConnected)
+    {
+        SetState(kDisConnected);
+        channel_->DisableAll();
+        connection_callback_(shared_from_this());
+    }
     channel_->Remove();
 }
 

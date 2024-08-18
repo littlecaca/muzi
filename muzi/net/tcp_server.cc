@@ -20,6 +20,7 @@ void DefaultMessageCallback(const TcpConnectionPtr &conn,
                             Buffer *buf,
                             Timestamp time)
 {
+    // Do nothing but clear the input buffer.
     buf->RetriveAll();
 }
 
@@ -41,6 +42,13 @@ TcpServer::TcpServer(EventLoop *loop, const InetAddress &listen_addr,
 
 TcpServer::~TcpServer()
 {
+    loop_->AssertInLoopThread();
+    LOG_TRACE << "TcpServer " << name_ << " is being destructing";
+    for (auto &[name, conn_ptr] : connections_) // C++17
+    {
+        conn_ptr->GetLoop()->RunInLoop(
+            std::bind(&TcpConnection::DestroyConnection, conn_ptr));
+    }
 }
 
 void TcpServer::Start()
@@ -88,6 +96,9 @@ void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr &conn)
 {
     loop_->AssertInLoopThread();
     
+    LOG_TRACE << "TcpServer::RemoveConnectionInLoop() Removing connection "
+              << conn->GetName();
+
     size_t n = connections_.erase(conn->GetName());
     assert(n == 1); (void)n;
     // Here if we do not put the DestroyConnection() to io_loop pending functors list

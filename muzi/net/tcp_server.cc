@@ -33,6 +33,7 @@ TcpServer::TcpServer(EventLoop *loop, const InetAddress &listen_addr,
       acceptor_(std::make_unique<Acceptor>(loop, listen_addr, reuse_port)),
       started_(false),
       conn_sequence_(0),
+      thread_pool_(std::make_unique<EventLoopThreadPool>(loop, name + "EventThread")),
       connection_callback_(&DefaultConnectionCallback),
       message_callback_(&DefaultMessageCallback)
 {
@@ -55,9 +56,16 @@ void TcpServer::Start()
 {
     if (started_.exchange(true) == false)
     {
+        thread_pool_->Start();
+
         assert(acceptor_->IsListening());
         loop_->RunInLoop(std::bind(&Acceptor::Listen, acceptor_.get()));
     }
+}
+
+void TcpServer::SetThreadNum(size_t num) const
+{
+    thread_pool_->SetThreadNum(num);
 }
 
 void TcpServer::NewConnection(int sock_fd, const InetAddress &peer_addr)
@@ -70,7 +78,7 @@ void TcpServer::NewConnection(int sock_fd, const InetAddress &peer_addr)
              << conn_name << "] from " << peer_addr.GetIpPortStr();
 
     // Here we can give it other loops to hand it over.
-    EventLoop *io_loop = loop_;
+    EventLoop *io_loop = thread_pool_->GetNextLoop();
 
     TcpConnectionPtr conn(std::make_shared<TcpConnection>
         (conn_name, io_loop, sock_fd, peer_addr, acceptor_->GetLocalAddr()));

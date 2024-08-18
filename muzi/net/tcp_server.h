@@ -7,6 +7,7 @@
 
 #include "acceptor.h"
 #include "event_loop.h"
+#include "event_loop_thread_pool.h"
 #include "inet_address.h"
 #include "noncopyable.h"
 #include "tcp_connection.h"
@@ -25,6 +26,8 @@ public:
 
     /// @attention Thread safe, and can be called multiple times.
     void Start();
+
+    void SetThreadNum(size_t num) const;
 
     /// @brief Set connection callback.
     /// @attention Not thread safe.
@@ -58,6 +61,7 @@ private:
     std::atomic_bool started_;
     int conn_sequence_;
 
+    std::unique_ptr<EventLoopThreadPool> thread_pool_;
     ConnectionMap connections_;
 
     // Callbacks that can be set by the users.

@@ -26,7 +26,7 @@ public:
 
     ~EventLoopThreadPool();
 
-    void SetThreadNum(int num) { thread_nums_ = num; }
+    void SetThreadNum(size_t num) { thread_nums_ = num; }
 
     void Start(ThreadInitCallback callback = ThreadInitCallback());
 
@@ -43,7 +43,7 @@ public:
 private:
     EventLoop *base_loop_;
     std::string name_;
-    int thread_nums_;
+    size_t thread_nums_;
     int next_;
     bool started_;
 

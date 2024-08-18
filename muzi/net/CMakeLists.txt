@@ -14,6 +14,7 @@ set(NET_SRCS
     tcp_server.cc
     tcp_connection.cc
     buffer.cc
+    event_loop_thread_pool.cc
 )
 
 add_library(muzi_net ${NET_SRCS})

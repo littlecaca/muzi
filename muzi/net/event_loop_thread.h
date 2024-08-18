@@ -17,9 +17,9 @@ namespace muzi
 class EventLoopThread : noncopyable
 {
 public:
-    typedef std::function<void(EventLoop *loop)> ThreadInitCallBack;
+    typedef std::function<void(EventLoop *loop)> ThreadInitCallback;
 
-    EventLoopThread(const ThreadInitCallBack &init_cb, const std::string &name = "EventLoop");
+    EventLoopThread(const ThreadInitCallback &init_cb, const std::string &name = "EventLoop");
 
     EventLoopThread(const std::string &name = "EventLoop")
         : EventLoopThread(nullptr, name)
@@ -47,7 +47,7 @@ private:
     MutexLock lock_;
     Condition cond_ GUARDED_BY(lock_);    
     EventLoop *loop_ GUARDED_BY(lock_);
-    ThreadInitCallBack init_cb_;
+    ThreadInitCallback init_cb_;
 };
 
 }   // namespace muzi

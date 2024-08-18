@@ -2,7 +2,7 @@
 
 namespace muzi
 {
-EventLoopThread::EventLoopThread(const ThreadInitCallBack &init_cb, const std::string &name)
+EventLoopThread::EventLoopThread(const ThreadInitCallback &init_cb, const std::string &name)
     : thread_(std::bind(&EventLoopThread::ThreadFunc, this), name),
       cond_(lock_),
       loop_(nullptr),

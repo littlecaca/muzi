@@ -54,7 +54,13 @@ void Connector::StartInLoop()
 void Connector::StopInLoop()
 {
     loop_->AssertInLoopThread();
-    SetState(kDisConnected);
+    if (!connect_ && state_ == kConnecting)
+    {
+        int sock_fd = RemoveAndResetChannel();
+        // To close fd and SetState to kDisConnected.
+        Retry(sock_fd);
+    }
+    
 }
 
 void Connector::HandleWrite()

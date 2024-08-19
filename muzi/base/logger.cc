@@ -13,12 +13,12 @@ namespace
 {
 thread_local char t_errno_buf[512];
 
+}   // internal linkage
+
 const char *GetError(error_t errcode)
 {
     return strerror_r(errcode, t_errno_buf, sizeof t_errno_buf);
 }
-
-}   // internal linkage
 
 Logger gDefaultLogger;
 Logger gStdioLogger;

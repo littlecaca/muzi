@@ -57,6 +57,7 @@ public:
     /// @brief For syncronization
     /// @attention Can be called in other threads
     void RunInLoop(const Functor &cb);
+    void QueueInLoop(const Functor &cb);
 
 private:
     // Used by friend class Channel
@@ -69,7 +70,6 @@ private:
     /// @brief Make the poller stop waiting
     void WakeUp();
     void HandleWakeupRead();
-    void QueueInLoop(const Functor &cb);
     void ExecuteFunctors();
 
 private:

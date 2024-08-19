@@ -59,7 +59,7 @@ bool BindAddress(int sock_fd, const struct sockaddr *addr);
 
 bool Listen(int sock_fd);
 
-bool Connect(int sock_fd, const struct sockaddr *addr);
+int Connect(int sock_fd, const struct sockaddr *addr);
 
 int Accept(int sock_fd, struct sockaddr *addr);
 
@@ -73,12 +73,16 @@ int CreateNonBlockingSockOrDie();
 
 struct sockaddr_in6 GetLocalAddr(int sock_fd);
 
+struct sockaddr_in6 GetPeerAddr(int sock_fd);
+
 int GetSocketError(int sock_fd);
 
 ssize_t Write(int sock_fd, const void *buf, size_t len)
 {
     return ::write(sock_fd, buf, len);
 }
+
+bool IsSelfConnect(int sock_fd);
 
 }   // namespace socket
 }   // namespace muzi

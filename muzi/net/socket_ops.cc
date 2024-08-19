@@ -162,14 +162,9 @@ bool Listen(int sock_fd)
     return true;
 }
 
-bool Connect(int sock_fd, const sockaddr *addr)
+int Connect(int sock_fd, const sockaddr *addr)
 {
-    if (::connect(sock_fd, addr, sizeof (sockaddr_in6)) < 0)
-    {
-        LOG_SYSERR << "::connect() fails";
-        return false;
-    }
-    return true;
+    return ::connect(sock_fd, addr, sizeof (sockaddr_in6));
 }
 
 int Accept(int sock_fd, sockaddr *addr)
@@ -255,6 +250,18 @@ sockaddr_in6 GetLocalAddr(int sock_fd)
     return addr;
 }
 
+sockaddr_in6 GetPeerAddr(int sock_fd)
+{
+    sockaddr_in6 addr;
+    memset(&addr, 0, sizeof addr);
+    socklen_t addr_len = static_cast<socklen_t>(sizeof(sockaddr_in6));
+    if (::getpeername(sock_fd, SockAddrCast(&addr), &addr_len) < 0)
+    {
+        LOG_SYSERR << "::getpeername() fails";
+    }
+    return addr;
+}
+
 int GetSocketError(int sock_fd)
 {
     int optval;
@@ -265,6 +272,30 @@ int GetSocketError(int sock_fd)
         LOG_SYSERR << "::getsockopt() fails";
     }
     return optval;
+}
+
+bool IsSelfConnect(int sock_fd)
+{
+    sockaddr_in6 local_addr = GetLocalAddr(sock_fd);
+    sockaddr_in6 peer_addr = GetPeerAddr(sock_fd);
+
+    if (local_addr.sin6_family == AF_INET)
+    {
+        sockaddr_in &local_ref = reinterpret_cast<sockaddr_in &>(local_addr);
+        sockaddr_in &peer_ref = reinterpret_cast<sockaddr_in &>(peer_addr);
+        return local_ref.sin_port == peer_ref.sin_port
+            && local_ref.sin_addr.s_addr == peer_ref.sin_addr.s_addr;
+    }
+    else if (local_addr.sin6_family == AF_INET6)
+    {
+        return local_addr.sin6_port == peer_addr.sin6_port
+            && memcpy(&local_addr.sin6_addr, &peer_addr.sin6_addr, 
+            sizeof local_addr.sin6_addr) == 0;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 }   // namespace socket

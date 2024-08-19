@@ -12,6 +12,8 @@
 
 namespace muzi
 {
+const char *GetError(error_t errcode);
+
 enum LogLevel
 {
     kTrace,

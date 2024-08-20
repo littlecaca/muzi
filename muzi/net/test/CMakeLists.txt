@@ -11,3 +11,5 @@ do_test(muzi_net event_loop_thread_test "")
 do_test(muzi_net acceptor_test "")
 
 do_test(muzi_net buffer_test "")
+
+do_test(muzi_net tcp_client_test1 "")

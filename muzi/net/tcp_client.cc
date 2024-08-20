@@ -41,7 +41,7 @@ TcpClient::~TcpClient()
     {
         MutexLockGuard guard(lock_);
         conn = std::move(connection_);
-    }    
+    }
 
     if (conn)
     {

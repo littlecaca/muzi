@@ -39,15 +39,15 @@ TcpConnection::~TcpConnection()
     }
 }
 
-void TcpConnection::SetCloseCallbackInLoop(CloseCallback cb, Condition *cond)
+void TcpConnection::SetCloseCallbackInLoop(CloseCallback cb, CountdownLatch *latch)
 {
     loop_->AssertInLoopThread();
 
     close_callback_ = std::move(cb);
-    cond->Notify();
+    latch->CountDown();
 }
 
-void TcpConnection::SetCloseCallbackAndWait(CloseCallback cb, Condition *cond)
+void TcpConnection::SetCloseCallbackAndWait(CloseCallback cb)
 {
     if (loop_->IsInLoopThread())
     {
@@ -55,10 +55,11 @@ void TcpConnection::SetCloseCallbackAndWait(CloseCallback cb, Condition *cond)
     }
     else
     {
-        void (TcpConnection::*fp)(CloseCallback, Condition *) 
+        CountdownLatch latch(1);
+        void (TcpConnection::*fp)(CloseCallback, CountdownLatch *) 
             = &TcpConnection::SetCloseCallbackInLoop;
-        loop_->QueueInLoop(std::bind(fp, shared_from_this(), std::move(cb), cond));
-        cond->Wait();
+        loop_->QueueInLoop(std::bind(fp, this, std::move(cb), &latch));
+        latch.Wait();
     }
 }
 

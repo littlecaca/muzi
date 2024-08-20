@@ -35,12 +35,12 @@ public:
         write_complete_callback_ = std::move(cb);
     }
     
-    /// @attention Must in loop.
     void Connect();
-    /// @attention Must in loop.
     void DisConnect();
-    /// @attention Must in loop.
     void Stop();
+
+    /// @brief Just make to_connect_ be false in loop_, and wait if necessaey.
+    void DisableConnectAndWait();
 
     const TcpConnectionPtr &GetConnection() const
     { 
@@ -59,6 +59,8 @@ public:
 private:
     void NewConnection(int sock_fd);
     void RemoveConnection(const TcpConnectionPtr &conn);
+
+    void DisableConnectInLoop();
 
 private:
     EventLoop *loop_;

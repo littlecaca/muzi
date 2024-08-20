@@ -1,6 +1,7 @@
 #include "tcp_client.h"
 
 #include "logger.h"
+#include "countdown_latch.h"
 
 namespace muzi
 {
@@ -32,23 +33,19 @@ TcpClient::TcpClient(EventLoop *loop,
 TcpClient::~TcpClient()
 {
     LOG_TRACE << name_ << " destroying connection and connector";
-    to_connect_ = false;
 
-    // release connection_
+    DisableConnectAndWait();
+    connector_->StopAndWait();
+
     TcpConnectionPtr conn;
-    
     {
         MutexLockGuard guard(lock_);
         conn = std::move(connection_);
-    }
+    }    
 
     if (conn)
     {
-        conn->SetCloseCallbackAndWait(&DetachedRemoveConnection, &condition_);
-    }
-    else
-    {
-        connector_->StopAndWait();
+        conn->SetCloseCallbackAndWait(&DetachedRemoveConnection);
     }
 }
 
@@ -76,34 +73,45 @@ void TcpClient::Stop()
     connector_->Stop();
 }
 
+void TcpClient::DisableConnectAndWait()
+{
+    if (loop_->IsInLoopThread())
+    {
+        DisableConnectInLoop();
+    }
+    else
+    {
+        MutexLockGuard guard(lock_);
+        loop_->QueueInLoop(std::bind(&TcpClient::DisableConnectInLoop, this));
+        condition_.Wait();
+    }
+}
+
 /// @brief Called by connector_.
 void TcpClient::NewConnection(int sock_fd)
 {
     loop_->AssertInLoopThread();
 
-    if (to_connect_)
+    std::string conn_name = name_ + "#" + std::to_string(sequence_++);
+
+    TcpConnectionPtr conn = std::make_shared<TcpConnection>(conn_name,
+        loop_, sock_fd, server_addr_, socket::GetLocalAddr(sock_fd));
+
+    conn->SetConnectionCallback(connection_callback_);
+    conn->SetMessageCallback(message_callback_);
+    conn->SetWriteCompleteCallback(write_complete_callback_);
+    conn->SetCloseCallback(std::bind(&TcpClient::RemoveConnection,
+        this, std::placeholders::_1));
+
+    LOG_TRACE << "New connection " << conn_name << " to " << server_addr_.GetIpPortStr()
+            << " is establishing.";
+
     {
-        std::string conn_name = name_ + "#" + std::to_string(sequence_++);
-
-        TcpConnectionPtr conn = std::make_shared<TcpConnection>(conn_name,
-            loop_, sock_fd, server_addr_, socket::GetLocalAddr(sock_fd));
-
-        conn->SetConnectionCallback(connection_callback_);
-        conn->SetMessageCallback(message_callback_);
-        conn->SetWriteCompleteCallback(write_complete_callback_);
-        conn->SetCloseCallback(std::bind(&TcpClient::RemoveConnection,
-            this, std::placeholders::_1));
-
-        LOG_TRACE << "New connection " << conn_name << " to " << server_addr_.GetIpPortStr()
-                << " is establishing.";
-
-        {
-            MutexLockGuard guard(lock_);
-            connection_ = std::move(conn);
-        }
-
-        connection_->EstablishConnection();
+        MutexLockGuard guard(lock_);
+        connection_ = std::move(conn);
     }
+
+    connection_->EstablishConnection();
 }
 
 /// @brief Called by connection_.
@@ -128,6 +136,13 @@ void TcpClient::RemoveConnection(const TcpConnectionPtr &conn)
         LOG_TRACE << "Reconnecting to " << server_addr_.GetIpPortStr();
         connector_->ReStartInLoop();
     }
+}
+
+void TcpClient::DisableConnectInLoop()
+{
+    loop_->AssertInLoopThread();
+    to_connect_ = false;
+    condition_.Notify();
 }
 
 }   // namespace muzi

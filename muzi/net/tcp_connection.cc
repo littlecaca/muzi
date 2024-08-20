@@ -33,7 +33,33 @@ TcpConnection::TcpConnection(std::string name,
 TcpConnection::~TcpConnection()
 {
     LOG_TRACE << "Connection destroyed: " << name_;
-    assert(state_ == kDisConnected);
+    if (state_ != kDisConnected)
+    {
+        ForceClose();
+    }
+}
+
+void TcpConnection::SetCloseCallbackInLoop(CloseCallback cb, Condition *cond)
+{
+    loop_->AssertInLoopThread();
+
+    close_callback_ = std::move(cb);
+    cond->Notify();
+}
+
+void TcpConnection::SetCloseCallbackAndWait(CloseCallback cb, Condition *cond)
+{
+    if (loop_->IsInLoopThread())
+    {
+        SetCloseCallback(cb);
+    }
+    else
+    {
+        void (TcpConnection::*fp)(CloseCallback, Condition *) 
+            = &TcpConnection::SetCloseCallbackInLoop;
+        loop_->QueueInLoop(std::bind(fp, shared_from_this(), std::move(cb), cond));
+        cond->Wait();
+    }
 }
 
 void TcpConnection::ForceCloseInLoop()

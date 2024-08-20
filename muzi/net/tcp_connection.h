@@ -8,6 +8,7 @@
 #include <string>
 
 #include "buffer.h"
+#include "condition.h"
 #include "channel.h"
 #include "event_loop.h"
 #include "inet_address.h"
@@ -48,6 +49,10 @@ public:
     void SetMessageCallback(MessageCallback cb) { message_callback_ = std::move(cb); }
     /// @attention Not thread safe.
     void SetCloseCallback(CloseCallback cb) { close_callback_ = std::move(cb); }
+    void SetCloseCallbackInLoop(CloseCallback cb, Condition *cond);
+    /// @brief Thread safe version of SetCloseCallback()
+    void SetCloseCallbackAndWait(CloseCallback cb, Condition *cond);
+
     /// @attention Not thread safe.
     void SetHighWaterCallback(HighWaterCallback cb) { high_water_callback_ = std::move(cb); }
     /// @attention Not thread safe.
@@ -150,7 +155,7 @@ private:
 
     Buffer input_buffer_;
     Buffer ouput_buffer_;
-    
+
     ConnectionCallback connection_callback_;
     MessageCallback message_callback_;
     CloseCallback close_callback_;

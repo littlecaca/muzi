@@ -4,6 +4,7 @@
 #include <atomic>
 
 #include "channel.h"
+#include "countdown_latch.h"
 #include "event_loop.h"
 #include "inet_address.h"
 #include "noncopyable.h"
@@ -25,6 +26,9 @@ public:
 
     void Start();
     void Stop();
+    
+    /// @brief Synchronously stop the connector, wait if necessary.
+    void StopAndWait();
     void ReStartInLoop();
 
     /// @attention Not thread safe.
@@ -67,6 +71,8 @@ private:
     State state_;
     size_t retry_delay_;
     TimerId timer_id_;
+    MutexLock lock_;
+    Condition condition_ GUARDED_BY(lock_);
     
     NewConnectionCallback new_connection_callback_;
 };

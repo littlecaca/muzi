@@ -47,6 +47,7 @@ TcpServer::~TcpServer()
     LOG_TRACE << "TcpServer " << name_ << " is being destructing";
     for (auto &[name, conn_ptr] : connections_) // C++17
     {
+        // FIXME unsafe
         conn_ptr->GetLoop()->RunInLoop(
             std::bind(&TcpConnection::DestroyConnection, conn_ptr));
     }

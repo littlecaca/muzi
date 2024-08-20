@@ -12,7 +12,8 @@ Connector::Connector(EventLoop *loop, const InetAddress &server_addr)
       connect_(false),
       state_(kDisConnected),
       retry_delay_(kInitRetryDelayMs),
-      timer_id_(-1)
+      timer_id_(-1),
+      condition_(lock_)
 {
 }
 
@@ -32,6 +33,21 @@ void Connector::Stop()
 {
     connect_ = false;
     loop_->RunInLoop(std::bind(&Connector::StopInLoop, shared_from_this()));
+}
+
+void Connector::StopAndWait()
+{
+    connect_ = false;
+    if (loop_->IsInLoopThread())
+    {
+        StopInLoop();
+    }
+    else
+    {
+        MutexLockGuard guard(lock_);
+        loop_->QueueInLoop(std::bind(&Connector::StopInLoop, this));
+        condition_.Wait();
+    }
 }
 
 void Connector::ReStartInLoop()
@@ -67,7 +83,7 @@ void Connector::StopInLoop()
         // To close fd and SetState to kDisConnected.
         Retry(sock_fd);
     }
-    
+    condition_.Notify();
 }
 
 void Connector::HandleWrite()

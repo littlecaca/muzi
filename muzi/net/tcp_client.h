@@ -69,6 +69,7 @@ private:
     bool to_connect_;           // atomic for internal
     std::atomic_bool is_retry;  // atomic
     mutable MutexLock lock_;
+    Condition condition_;
     TcpConnectionPtr connection_ GUARDED_BY(lock_);
 
     ConnectionCallback connection_callback_;

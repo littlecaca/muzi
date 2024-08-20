@@ -59,6 +59,9 @@ public:
     void RunInLoop(const Functor &cb);
     void QueueInLoop(const Functor &cb);
 
+    /// @attention Can be called in other threads
+    void CancelTimer(TimerId id);
+
 private:
     // Used by friend class Channel
     

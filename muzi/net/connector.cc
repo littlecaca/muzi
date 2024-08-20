@@ -11,12 +11,14 @@ Connector::Connector(EventLoop *loop, const InetAddress &server_addr)
       server_addr_(server_addr),
       connect_(false),
       state_(kDisConnected),
-      retry_delay_(kInitRetryDelayMs)
+      retry_delay_(kInitRetryDelayMs),
+      timer_id_(-1)
 {
 }
 
 Connector::~Connector()
 {
+    Stop();
     assert(!channel_);
 }
 
@@ -54,12 +56,18 @@ void Connector::StartInLoop()
 void Connector::StopInLoop()
 {
     loop_->AssertInLoopThread();
+    if (timer_id_ != -1)
+    {
+        loop_->CancelTimer(timer_id_);
+    }
+    
     if (!connect_ && state_ == kConnecting)
     {
         int sock_fd = RemoveAndResetChannel();
         // To close fd and SetState to kDisConnected.
         Retry(sock_fd);
     }
+    
 }
 
 void Connector::HandleWrite()
@@ -172,7 +180,7 @@ void Connector::Retry(int sock_fd)
     SetState(kDisConnected);
     if (connect_)
     {
-        loop_->RunAfter(retry_delay_ / 1000.0, std::bind(&Connector::StartInLoop, shared_from_this()));
+        timer_id_ = loop_->RunAfter(retry_delay_ / 1000.0, std::bind(&Connector::StartInLoop, shared_from_this()));
         retry_delay_ = std::min(retry_delay_ * 2, kMaxRetryDelayMs);
     }
     else

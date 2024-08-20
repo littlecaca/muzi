@@ -166,6 +166,11 @@ void EventLoop::QueueInLoop(const Functor &cb)
     }
 }
 
+void EventLoop::CancelTimer(TimerId id)
+{
+    timer_queue_->Cancel(id);
+}
+
 // Guaranteed in loop thread
 // Only be called in Loop()
 void EventLoop::ExecuteFunctors()

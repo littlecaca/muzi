@@ -66,6 +66,7 @@ private:
     // Not revealed to users.
     State state_;
     size_t retry_delay_;
+    TimerId timer_id_;
     
     NewConnectionCallback new_connection_callback_;
 };

@@ -60,7 +60,6 @@ void Connector::StopInLoop()
         // To close fd and SetState to kDisConnected.
         Retry(sock_fd);
     }
-    
 }
 
 void Connector::HandleWrite()

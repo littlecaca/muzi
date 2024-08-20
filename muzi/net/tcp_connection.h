@@ -19,7 +19,7 @@
 namespace muzi
 {
 class TcpConnection;
-typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
+typedef std::shared_ptr<TcpConnection>  TcpConnectionPtr;
 // Callbacks related to TcpConnection
 typedef std::function<void(const TcpConnectionPtr &)> ConnectionCallback;
 typedef std::function<void(const TcpConnectionPtr &, Buffer *buf, Timestamp time)> MessageCallback;

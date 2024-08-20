@@ -105,7 +105,7 @@ void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr &conn)
 {
     loop_->AssertInLoopThread();
     
-    LOG_TRACE << "TcpServer::RemoveConnectionInLoop() Removing connection "
+    LOG_TRACE << "Removing connection "
               << conn->GetName();
 
     size_t n = connections_.erase(conn->GetName());

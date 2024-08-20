@@ -353,14 +353,14 @@ public:
     }
 
     template <typename ForwardIterator>
-    std::enable_if<
+    typename std::enable_if<
         std::is_base_of_v<
             std::forward_iterator_tag, 
             typename std::iterator_traits<ForwardIterator>::iterator_category
         >,
         void
-    >
-    Append(const ForwardIterator first, const ForwardIterator last)
+    >::type
+    Append(const ForwardIterator &first, const ForwardIterator &last)
     {
         size_t len = last - first;
         EnsureWritableBytes(len);

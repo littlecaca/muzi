@@ -11,6 +11,8 @@ const char Buffer::kCRLF[] = "\r\n";
 
 ssize_t Buffer::ReadFd(int fd, int *saved_errno)
 {
+    DEBUGINFO("Buffer::ReadFd()");
+
     // Create an on-stack extra buffer
     char extra_buf[kExtraBufferSize];
 
@@ -22,6 +24,7 @@ ssize_t Buffer::ReadFd(int fd, int *saved_errno)
 
     vec[0].iov_base = write_index_.GetCur();
     vec[0].iov_len = write_index_.Writable();
+    writable += vec[0].iov_len;
 
     int index = 1;
     for (BufferIter it = write_index_.GetBufferIter() + 1; it < last; ++it)
@@ -30,7 +33,8 @@ ssize_t Buffer::ReadFd(int fd, int *saved_errno)
         vec[index].iov_len = kBufferSize;
         ++index;
     }
-    
+    writable += (index - 1) * kBufferSize;
+
     // Keep the rail byte
     --vec[index - 1].iov_len;
     --writable;
@@ -61,6 +65,7 @@ ssize_t Buffer::ReadFd(int fd, int *saved_errno)
 
 ssize_t Buffer::WriteFd(int fd, int *saved_errno)
 {
+    DEBUGINFO("Buffer::WriteFd()");
     // Create iovec and fill it with the buffer blocks
     BufferIter first = read_index_.GetBufferIter(),
                last =  write_index_.GetBufferIter();

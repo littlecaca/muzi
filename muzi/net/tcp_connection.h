@@ -31,7 +31,7 @@ typedef std::function<void(const TcpConnectionPtr &)> WriteCompleteCallback;
 typedef std::function<void(const TcpConnectionPtr &, size_t)> HighWaterCallback;
 
 
-class TcpConnection : std::enable_shared_from_this<TcpConnection>
+class TcpConnection : public std::enable_shared_from_this<TcpConnection>
 {
 public:
     static constexpr size_t kHighWaterMark = 64 * 1024 * 1024;

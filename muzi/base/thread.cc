@@ -9,6 +9,7 @@
 
 #include "current_thread.h"
 #include "logger.h"
+#include "traced_exception.h"
 
 namespace muzi
 {
@@ -36,7 +37,7 @@ void Thread::SetDefaultName()
 void Thread::Join()
 {
     assert(started_ && !joined_);
-    pthread_join(pthread_id_, NULL);
+    ::pthread_join(pthread_id_, NULL);
     joined_ = true;
 }
 
@@ -53,11 +54,19 @@ void *RunThread(void *args)
     {
         data->func_();
     }
+    catch (Exception &e)
+    {
+        // Here we dont use the logger module, because the error may come from the
+        // asyncr_outputer module.
+        std::cerr << "muzi Exception caught in thread: " << data->name_ << "\n";
+        std::cerr << e.GetStackTrace() << std::flush;
+        ::abort();
+    }
     catch (std::exception &e)
     {
         std::cerr << "Exception caught in thread: " << data->name_ << "\n";
         std::cerr << "Reason: " << e.what() << std::endl;
-        abort();
+        ::abort();
     }
     catch (...)
     {

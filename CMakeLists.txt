@@ -20,8 +20,14 @@ function(do_bad_test lib target arg)
 endfunction(do_bad_test)
 
 option(MUZI_BUILD_TEST "build test program" ON)
+option(MUZI_BUILD_EXAMPLE "build example program" ON)
+option(MUZI_DEBUG "Debug mode" on)
 
 # Set compiler flag
+
+if (MUZI_DEBUG)
+    add_compile_definitions(_DEBUG)
+endif()
 
 # By default, only symbols that are used within the executable itself are included 
 # in its symbol table, while other symbols are not.
@@ -34,10 +40,18 @@ add_link_options(-rdynamic)
 add_library(muzi_compiler_flags INTERFACE)
 target_compile_features(muzi_compiler_flags INTERFACE cxx_std_17)
 
+
+# Set install root path
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_subdirectory(muzi/base)
 link_libraries(muzi_base)
 add_subdirectory(muzi/net)
 link_libraries(muzi_net)
+
+if (MUZI_BUILD_EXAMPLE)
+    add_subdirectory(muzi/examples)
+endif()
 
 
 add_executable(${PROJECT_NAME} main.cc)

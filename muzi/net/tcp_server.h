@@ -27,6 +27,7 @@ public:
     /// @attention Thread safe, and can be called multiple times.
     void Start();
 
+    /// @attention Should be called before Start().
     void SetThreadNum(size_t num) const;
 
     /// @brief Set connection callback.

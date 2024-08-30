@@ -138,6 +138,13 @@ using Writter = StackWritter;
 #define LOG_SYSERR  LOG_SYSERR_U(muzi::gDefaultLogger)
 #define LOG_SYSFAT  LOG_SYSFAT_U(muzi::gDefaultLogger)
 
+#ifdef _DEBUG
+    #define DEBUGINFO(message) \
+        LOG_DEBUG_U(muzi::gStdioLogger) << message
+#else
+    #define DEBUGINFO(message)
+#endif
+
 // Template implementation
 
 template <int N>

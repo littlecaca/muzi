@@ -15,7 +15,7 @@ public:
     // Logfile path
     static const char *kLogPath;
     // Roll size
-    static const off_t kRollSize = 32;
+    static const off_t kRollSize = 32;    // 32MB
 
 public:
     config();

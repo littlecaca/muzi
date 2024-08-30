@@ -19,10 +19,7 @@ public:
 
     ~UnlockedWriteFile()
     {
-        if (fclose(fp) == EOF)
-        {
-            LOG_ERROR_U(gStderrLogger) << "Can not close the file";
-        }
+        Close();
     }
 
     void Append(const char *msg, size_t len)
@@ -37,6 +34,10 @@ public:
 
     void Reset(const std::string &file_name)
     {
+        if (fp != NULL)
+        {
+            Close();
+        }
         fp = fopen(file_name.data(), "w");
         if (!fp)
             LOG_SYSFAT_U(gStderrLogger) << "Can not open the file";
@@ -45,6 +46,14 @@ public:
     bool IsOpen() const 
     {
         return fp == NULL;
+    }
+
+    void Close()
+    {
+        if (::fclose(fp) == EOF)
+        {
+            LOG_ERROR_U(gStderrLogger) << "Can not close the file";
+        }
     }
     
 private:

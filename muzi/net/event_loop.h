@@ -62,6 +62,9 @@ public:
     /// @attention Can be called in other threads
     void CancelTimer(TimerId id);
 
+    /// @brief Make the poller stop waiting
+    void WakeUp();
+    
 private:
     // Used by friend class Channel
     
@@ -70,8 +73,6 @@ private:
 
 private:
     void AbortNotInLoopThread();
-    /// @brief Make the poller stop waiting
-    void WakeUp();
     void HandleWakeupRead();
     void ExecuteFunctors();
 

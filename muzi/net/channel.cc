@@ -79,6 +79,17 @@ void Channel::Remove()
     in_using_ = false;
 }
 
+const char *Channel::ToEventStr(int events)
+{
+    if (events == kNoneEvent)
+        return "None";
+    if (events | kReadEvent)
+        return "Read";
+    if (events | kWriteEvent)
+        return "Write";
+    return "Unknown";
+}
+
 void Channel::Update()
 {
     in_using_ = true;

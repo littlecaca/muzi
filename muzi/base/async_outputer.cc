@@ -16,7 +16,6 @@ AsyncOutputer::AsyncOutputer(const std::string &base_name)
       latch_(1), thread_(std::bind(&AsyncOutputer::Run, this), "logging"), 
       current_buffer_(new LargeBuffer), next_buffer_(new LargeBuffer)
 {
-
 }
 
 void AsyncOutputer::Start()
@@ -31,6 +30,17 @@ void AsyncOutputer::Stop()
     running_ = false;
     cond_.Notify();
     thread_.Join();
+}
+
+void AsyncOutputer::Flush()
+{
+    MutexLockGuard guard(mutex_);
+    buffers_.push_back(std::move(current_buffer_));
+    if (next_buffer_)
+        current_buffer_ = std::move(next_buffer_);
+    else
+        current_buffer_.reset(new LargeBuffer);
+    cond_.Notify();
 }
 
 void AsyncOutputer::Output(const Outputer::Buffer &buffer)
@@ -113,15 +123,14 @@ void AsyncOutputer::Run()
 
 namespace
 {
-std::string GetLogFileName(const std::string &base_name, time_t *now)
+std::string GetLogFileName(const std::string &base_name, time_t now)
 {
     std::string file_name;
     file_name.reserve(base_name.size() + 64);
     file_name += base_name;
 
-    *now = time(NULL);
     struct tm time_buf;
-    localtime_r(now, &time_buf);
+    localtime_r(&now, &time_buf);
     char buf[32];
     strftime(buf, 32, ".%Y%m%d-%H%M%S.", &time_buf);
     file_name += buf;
@@ -146,7 +155,7 @@ void AsyncOutputer::LogFile::Append(const char *msg, size_t len)
 {
     file_.Append(msg, len);
     written_bytes_ += len;
-    if (written_bytes_ >= config::kRollSize)
+    if (written_bytes_ >= kRollSize)
     {
         written_bytes_ = 0;
         RollFile();
@@ -176,19 +185,16 @@ void AsyncOutputer::LogFile::Flush()
     file_.Flush();
 }
 
-bool AsyncOutputer::LogFile::RollFile()
+void AsyncOutputer::LogFile::RollFile()
 {
-    time_t now = 0;
-    std::string file_name = GetLogFileName(base_name_, &now);
-
-    if (now > last_roll_)
-    {
-        last_flush_ = now;
-        last_roll_ = now;
-        file_.Reset(file_name);
-        return true;
-    }
-    return false;
+    LOG_DEBUG_U(gStdioLogger) << "RollFile()";
+    time_t now = ::time(NULL);
+    std::string file_name = GetLogFileName(base_name_, now);
+    Flush();
+    last_roll_ = now;
+    last_flush_ = now;
+    
+    file_.Reset(file_name);
 }
 
 } // namespace muzi

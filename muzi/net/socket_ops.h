@@ -5,6 +5,8 @@
 #include <netinet/tcp.h>
 #include <unistd.h>
 
+// REMOVE ME
+#include "logger.h"
 
 namespace muzi
 {
@@ -79,6 +81,8 @@ int GetSocketError(int sock_fd);
 
 inline ssize_t Write(int sock_fd, const void *buf, size_t len)
 {
+    // REMOVE ME
+    LOG_DEBUG_U(gStdioLogger) << (const char *)buf;
     return ::write(sock_fd, buf, len);
 }
 

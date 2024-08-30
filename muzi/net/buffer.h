@@ -481,7 +481,6 @@ private:
         }
     }
 
-
 private:
     BufferList buffer_list_;
     iterator read_index_;

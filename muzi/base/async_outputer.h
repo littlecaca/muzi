@@ -34,6 +34,8 @@ public:
 
     void Stop();
 
+    void Flush() override;
+
     ~AsyncOutputer() override
     {
         if (running_)
@@ -60,7 +62,7 @@ private:
         void Append(const char *msg, size_t len);
         // Unlocked flushing
         void Flush();
-        bool RollFile();
+        void RollFile();
 
     private:
         void SetBaseName(const std::string &base_name);

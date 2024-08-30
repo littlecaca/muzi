@@ -1,7 +1,6 @@
 #ifndef MUZI_BASE_WEAK_CALLBACK_H_
 #define MUZI_BASE_WEAK_CALLBACK_H_
 
-
 #include <functional>
 #include <memory>
 

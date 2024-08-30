@@ -50,6 +50,7 @@ TcpServer::~TcpServer()
         // FIXME unsafe
         conn_ptr->GetLoop()->RunInLoop(
             std::bind(&TcpConnection::DestroyConnection, conn_ptr));
+        conn_ptr->GetLoop()->WakeUp();
     }
 }
 
@@ -59,7 +60,7 @@ void TcpServer::Start()
     {
         thread_pool_->Start(thread_init_callback_);
 
-        assert(acceptor_->IsListening());
+        assert(!acceptor_->IsListening());
         loop_->RunInLoop(std::bind(&Acceptor::Listen, acceptor_.get()));
     }
 }

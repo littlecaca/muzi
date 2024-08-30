@@ -22,6 +22,7 @@ TcpClient::TcpClient(EventLoop *loop,
       connector_(std::make_shared<Connector>(loop, server_addr)),
       server_addr_(server_addr),
       name_(name),
+      sequence_(0),
       to_connect_(false),
       is_retry(false),
       condition_(lock_)
@@ -105,6 +106,9 @@ void TcpClient::NewConnection(int sock_fd)
 
     LOG_TRACE << "New connection " << conn_name << " to " << server_addr_.GetIpPortStr()
             << " is establishing.";
+    
+    // Remove me
+    gDefaultOutputer.Flush();
 
     {
         MutexLockGuard guard(lock_);

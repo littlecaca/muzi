@@ -74,7 +74,6 @@ EpollPoller::~EpollPoller()
 Timestamp EpollPoller::Poll(int timeout_ms, ChannelList *active_channels)
 {
     AssertInLoopThread();
-
     int event_num = ::epoll_wait(epfd_, ep_events_.data(), 
         static_cast<int>(ep_events_.size()), timeout_ms);
 
@@ -114,7 +113,7 @@ void EpollPoller::UpdateChannel(Channel *channel)
     auto it = channels_.find(fd);   
 
     LOG_TRACE << ToStatusStr(index) << " fd " << fd << " in EpollPoller " << epfd_
-              << " with events " << channel->GetEvents();
+              << " with events " << Channel::ToEventStr(channel->GetEvents());
 
     if (index == kNew || index == kDeleted)
     {
@@ -198,11 +197,10 @@ void EpollPoller::FillActiveChannels(int event_num, ChannelList *active_channels
 
 void EpollPoller::Update(int operation, Channel *channel)
 {   
-    memset(&event_, 0, sizeof event_);
+    ::memset(&event_, 0, sizeof event_);
     event_.events = static_cast<uint32_t>(channel->GetEvents());
     int fd = channel->Getfd();
     event_.data.ptr = static_cast<void *>(channel);
-
     if (::epoll_ctl(epfd_, operation, fd, &event_) < 0)
     {
         LOG_SYSFAT << "epoll op " << ToOperationStr(operation) 

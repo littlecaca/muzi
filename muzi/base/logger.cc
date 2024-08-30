@@ -58,6 +58,11 @@ StackWritter::~StackWritter()
         log_stream_ << StackTrace();
     }
     logger_.GetOutputer()->Output(log_stream_.GetBuffer());
+
+#ifdef _DEBUG
+    logger_.GetOutputer()->Flush();
+#endif
+
     if (level_ == LogLevel::kFatal)
     {
         logger_.GetOutputer()->Flush();

@@ -29,3 +29,11 @@ target_link_libraries(muzi_net muzi_compiler_flags)
 if (MUZI_BUILD_TEST)
     add_subdirectory(test)
 endif()
+
+install(TARGETS muzi_net
+        ARCHIVE DESTINATION lib        
+)
+
+install(DIRECTORY ./ DESTINATION include
+        FILES_MATCHING PATTERN "*.h"    
+)

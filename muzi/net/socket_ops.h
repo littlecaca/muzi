@@ -13,7 +13,6 @@ namespace muzi
 namespace socket
 {
 // Very low level operations used by the implementations of other modules
-
 inline const struct sockaddr *SockAddrCast(const struct sockaddr_in6 *addr6)
 {
     return reinterpret_cast<const struct sockaddr *>(addr6);

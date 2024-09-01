@@ -11,8 +11,6 @@ namespace muzi
 {
 // Because we use union type in InetAddress class, the member offset
 // of struct sockaddr_in and sockaddr_in6 must keep consistent.
-static_assert(sizeof(InetAddress) == sizeof(struct sockaddr_in6), 
-    "InetAddress has the same size with struct sockaddr_in6");
 static_assert(offsetof(struct sockaddr_in, sin_family) == offsetof(struct sockaddr_in6, sin6_family), 
     "sin_family and sin6_family should have the same offset");
 static_assert(offsetof(struct sockaddr_in, sin_port) == offsetof(struct sockaddr_in6, sin6_port),

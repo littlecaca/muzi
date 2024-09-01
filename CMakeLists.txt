@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-
-project(muzi_go)
+project(muzi)
 
 enable_testing()
 set(TEST_SCRIPT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/scripts/test)
@@ -21,7 +20,7 @@ endfunction(do_bad_test)
 
 option(MUZI_BUILD_TEST "build test program" ON)
 option(MUZI_BUILD_EXAMPLE "build example program" ON)
-option(MUZI_DEBUG "Debug mode" on)
+option(MUZI_DEBUG "Debug mode" ON)
 
 # Set compiler flag
 
@@ -52,6 +51,3 @@ link_libraries(muzi_net)
 if (MUZI_BUILD_EXAMPLE)
     add_subdirectory(muzi/examples)
 endif()
-
-
-add_executable(${PROJECT_NAME} main.cc)

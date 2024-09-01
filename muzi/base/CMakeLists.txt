@@ -28,3 +28,11 @@ target_link_libraries(muzi_base pthread rt)
 if (MUZI_BUILD_TEST)
     add_subdirectory(test)
 endif()
+
+install(TARGETS muzi_base
+        ARCHIVE DESTINATION lib        
+)
+
+install(DIRECTORY ./ DESTINATION include
+        FILES_MATCHING PATTERN "*.h"    
+)

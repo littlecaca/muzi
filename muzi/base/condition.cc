@@ -7,7 +7,7 @@
 
 namespace muzi
 {
-bool Condition::WaitForSeconds(double seconds)
+bool Condition::WaitForSeconds(double seconds) const
 {
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);

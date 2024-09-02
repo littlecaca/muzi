@@ -71,9 +71,12 @@ void AsyncOutputer::Run()
     buffers_to_write.reserve(16);
 
     latch_.CountDown();
+    bool last_write = true;
     
-    while (running_)
+    while (running_ || last_write)
     {
+        last_write = running_;
+        
         // The extended double buffering technique
         {   
             // scoped

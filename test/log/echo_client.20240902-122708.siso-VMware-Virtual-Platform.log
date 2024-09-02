@@ -1,0 +1,67 @@
+[20240902 04:27:08.923179 207306 Trace] UpdateChannel: NEW fd 7 in EpollPoller 6 with events Read /epoll_poller.cc : 115
+[20240902 04:27:08.923253 207306 Trace] EventLoop: Created EventLoop 0x329CA in thread 207306 /event_loop.cc : 59
+[20240902 04:27:08.923312 207306 Trace] UpdateChannel: NEW fd 5 in EpollPoller 6 with events Read /epoll_poller.cc : 115
+[20240902 04:27:08.923425 207306 Trace] Loop: EventLoop 0x1000329CA start looping /event_loop.cc : 90
+[20240902 04:27:08.923508 207304 Trace] StartLoop: Start loop EventLoop /event_loop_thread.cc : 45
+[20240902 04:27:08.923728 207304 Debug] GetConnection: GetConnection() begin /tcp_client.cc : 93
+[20240902 04:27:08.923815 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:08.924337 207306 Trace] StartInLoop: Start connecting to 127.0.0.1:2555 /connector.cc : 67
+[20240902 04:27:08.924599 207306 Trace] UpdateChannel: NEW fd 8 in EpollPoller 6 with events Read /epoll_poller.cc : 115
+[20240902 04:27:08.924650 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:08.924677 207306 Trace] HandleWrite: Connection establishing. /connector.cc : 91
+[20240902 04:27:08.924702 207306 Trace] UpdateChannel: Added fd 8 in EpollPoller 6 with events None /epoll_poller.cc : 115
+[20240902 04:27:08.924733 207306 Trace] RemoveChannel: Remove fd 8 from EpollPoller 6 /epoll_poller.cc : 163
+[20240902 04:27:08.925277 207306 Trace] TcpConnection: Connectoin established: EchoClient#0 with socket fd 8 /tcp_connection.cc : 28
+[20240902 04:27:08.925311 207306 Trace] NewConnection: New connection EchoClient#0 to 127.0.0.1:2555 is establishing. /tcp_client.cc : 119
+[20240902 04:27:08.925379 207306 Debug] Tie: in Tie /channel.h : 38
+[20240902 04:27:08.925401 207306 Trace] UpdateChannel: NEW fd 8 in EpollPoller 6 with events Read /epoll_poller.cc : 115
+[20240902 04:27:08.925429 207306 Info ] Connect successfully /echo_client.cc : 16
+[20240902 04:27:08.925504 207304 Debug] GetConnection: GetConnection() end /tcp_client.cc : 99
+[20240902 04:27:10.732014 207304 Info ] Get input: ss /echo_client.cc : 51
+[20240902 04:27:10.732775 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:10.733019 207306 Debug] SendInLoop: TcpConnection::SendInLoop() write directly: ss /tcp_connection.cc : 137
+[20240902 04:27:10.734241 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:10.734375 207306 Debug] ReadFd: Buffer::ReadFd() /buffer.cc : 14
+[20240902 04:27:10.734435 207306 Debug] HandleRead: TcpConnection::HandleRead() read to buffer: ss /tcp_connection.cc : 348
+[20240902 04:27:10.734448 207306 Debug] RetriveAsString: RetriveAsString(): ss /buffer.h : 346
+[20240902 04:27:12.181162 207304 Info ] Get input: dsa /echo_client.cc : 51
+[20240902 04:27:12.181412 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:12.182088 207306 Debug] SendInLoop: TcpConnection::SendInLoop() write directly: dsa /tcp_connection.cc : 137
+[20240902 04:27:12.182780 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:12.182802 207306 Debug] ReadFd: Buffer::ReadFd() /buffer.cc : 14
+[20240902 04:27:12.182919 207306 Debug] HandleRead: TcpConnection::HandleRead() read to buffer: dsa /tcp_connection.cc : 348
+[20240902 04:27:12.182935 207306 Debug] RetriveAsString: RetriveAsString(): dsa /buffer.h : 346
+[20240902 04:27:14.311216 207304 Info ] Get input: dsad /echo_client.cc : 51
+[20240902 04:27:14.311351 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:14.312010 207306 Debug] SendInLoop: TcpConnection::SendInLoop() write directly: dsad /tcp_connection.cc : 137
+[20240902 04:27:14.312046 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:14.312061 207306 Debug] ReadFd: Buffer::ReadFd() /buffer.cc : 14
+[20240902 04:27:14.312076 207306 Debug] HandleRead: TcpConnection::HandleRead() read to buffer: dsad /tcp_connection.cc : 348
+[20240902 04:27:14.312086 207306 Debug] RetriveAsString: RetriveAsString(): dsad /buffer.h : 346
+[20240902 04:27:17.346741 207304 Info ] Get input: you /echo_client.cc : 51
+[20240902 04:27:17.346957 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:17.347062 207306 Debug] SendInLoop: TcpConnection::SendInLoop() write directly: you /tcp_connection.cc : 137
+[20240902 04:27:17.348467 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:17.348494 207306 Debug] ReadFd: Buffer::ReadFd() /buffer.cc : 14
+[20240902 04:27:17.348513 207306 Debug] HandleRead: TcpConnection::HandleRead() read to buffer: you /tcp_connection.cc : 348
+[20240902 04:27:17.348618 207306 Debug] RetriveAsString: RetriveAsString(): you /buffer.h : 346
+[20240902 04:27:19.499514 207304 Info ] Get input: hhahaha /echo_client.cc : 51
+[20240902 04:27:19.499825 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:19.499910 207306 Debug] SendInLoop: TcpConnection::SendInLoop() write directly: hhahaha /tcp_connection.cc : 137
+[20240902 04:27:19.500459 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:27:19.500489 207306 Debug] ReadFd: Buffer::ReadFd() /buffer.cc : 14
+[20240902 04:27:19.500524 207306 Debug] HandleRead: TcpConnection::HandleRead() read to buffer: hhahaha /tcp_connection.cc : 348
+[20240902 04:27:19.500548 207306 Debug] RetriveAsString: RetriveAsString(): hhahaha /buffer.h : 346
+[20240902 04:27:29.508426 207306 Trace] Poll: No event happened /epoll_poller.cc : 96
+[20240902 04:27:39.516257 207306 Trace] Poll: No event happened /epoll_poller.cc : 96
+[20240902 04:27:49.526886 207306 Trace] Poll: No event happened /epoll_poller.cc : 96
+[20240902 04:27:59.529824 207306 Trace] Poll: No event happened /epoll_poller.cc : 96
+[20240902 04:28:09.540608 207306 Trace] Poll: No event happened /epoll_poller.cc : 96
+[20240902 04:28:19.555435 207306 Trace] Poll: No event happened /epoll_poller.cc : 96
+[20240902 04:28:25.049400 207306 Trace] Poll: 1 events happened /epoll_poller.cc : 85
+[20240902 04:28:25.049936 207306 Debug] ReadFd: Buffer::ReadFd() /buffer.cc : 14
+[20240902 04:28:25.050034 207306 Trace] HandleClose: TcpConnection::HandleClose(): EchoClient#0 /tcp_connection.cc : 395
+[20240902 04:28:25.050046 207306 Trace] UpdateChannel: Added fd 8 in EpollPoller 6 with events None /epoll_poller.cc : 115
+[20240902 04:28:25.050064 207306 Info ] Connection close /echo_client.cc : 20
+[20240902 04:28:25.050070 207306 Trace] RemoveConnection: Removing connection EchoClient#0 /tcp_client.cc : 139
+[20240902 04:28:25.050101 207306 Trace] RemoveChannel: Remove fd 8 from EpollPoller 6 /epoll_poller.cc : 163

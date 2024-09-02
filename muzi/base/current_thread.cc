@@ -16,14 +16,11 @@ thread_local std::string t_tid_string;
 thread_local int t_tid_length;
 thread_local const char *t_thread_name = "default";
 
-void CachedTid()
+void ResetTid()
 {
-    if (t_tid == 0)
-    {
-        t_tid = thread::GetTid();
-        t_tid_string = std::to_string(t_tid);
-        t_tid_length = t_tid_string.size();
-    }
+    t_tid = thread::GetTid();
+    t_tid_string = std::to_string(t_tid);
+    t_tid_length = t_tid_string.size();
 }; 
 
 // if pid_t is not integral, then probably it cannot be converted to string

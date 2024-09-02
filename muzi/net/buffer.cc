@@ -11,7 +11,7 @@ const char Buffer::kCRLF[] = "\r\n";
 
 ssize_t Buffer::ReadFd(int fd, int *saved_errno)
 {
-    DEBUGINFO("Buffer::ReadFd()");
+    DEBUGINFO << "Buffer::ReadFd()";
 
     // Create an on-stack extra buffer
     char extra_buf[kExtraBufferSize];
@@ -65,7 +65,7 @@ ssize_t Buffer::ReadFd(int fd, int *saved_errno)
 
 ssize_t Buffer::WriteFd(int fd, int *saved_errno)
 {
-    DEBUGINFO("Buffer::WriteFd()");
+    DEBUGINFO << "Buffer::WriteFd()";
     // Create iovec and fill it with the buffer blocks
     BufferIter first = read_index_.GetBufferIter(),
                last =  write_index_.GetBufferIter();

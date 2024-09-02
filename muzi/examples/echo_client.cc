@@ -1,5 +1,11 @@
 #include "tcp_client.h"
+
+#include <iostream>
+#include <string>
+
 #include "logger.h"
+#include "async_outputer.h"
+#include "event_loop_thread_pool.h"
 
 using namespace muzi;
 
@@ -8,8 +14,6 @@ void OnConnection(const TcpConnectionPtr &conn)
     if (conn->IsConnected())
     {
         LOG_INFO << "Connect successfully";
-        conn->Send("How are you?");
-        conn->Send("Who are you?");
     }
     else
     {
@@ -19,27 +23,37 @@ void OnConnection(const TcpConnectionPtr &conn)
 
 void OnMessage(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp time)
 {
-    LOG_INFO << "Message from server:\n"
-             << buffer->PeekAllAsString();
+    std::cout << "Message from server:\n" + buffer->RetriveAllAsString() + "\n";
 }
 
 
 int main(int argc, char const *argv[])
 {
-    EventLoop loop;
-    TcpClient client(&loop, InetAddress("127.0.0.1", 2555), "EchoClient");
-    gDefaultOutputer.Flush();
+    AsyncOutputer outputer("echo_client");
+    gDefaultLogger.SetOutputer(&outputer);
+    outputer.Start();
+
+    EventLoopThread loop_thread;
+    
+    EventLoop *loop = loop_thread.StartLoop();
+    TcpClient client(loop, InetAddress("127.0.0.1", 2555), "EchoClient");
 
     client.SetConnectionCallback(OnConnection);
-    gDefaultOutputer.Flush();
-
     client.SetMessageCallback(OnMessage);
-    gDefaultOutputer.Flush();
-
     client.Connect();
-    gDefaultOutputer.Flush();
 
-    loop.Loop();
+    TcpConnectionPtr conn = client.GetConnection();
+
+    std::string line;
+    std::cout << "Msg: " << std::flush;
+    while ((std::getline(std::cin, line)))
+    {
+        LOG_INFO << "Get input: " << line;
+        if (line == "Q" || line == "q")
+            break;
+        conn->Send(line);
+        std::cout << "Msg: " << std::flush;
+    }
 
     return 0;
 }

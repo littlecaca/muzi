@@ -25,18 +25,18 @@ public:
     std::string GetTcpInfo();
 
     /// @brief A wrapper of ::bind().
-    void BindAddress(const InetAddress &addr);
+    void BindAddress(const Address &addr);
 
     /// @brief A wrapper of ::listen().
     void Listen();
 
     /// @brief A wrapper of ::connect().
-    void Connect(const InetAddress &addr);
+    void Connect(const Address &addr);
 
     /// @brief A wrapper of ::accept().
     /// @attention The new socket will be set NONBLOCK and CLOEXEC
     /// @return sock_fd for new connection if success, -1 otherwise.
-    int Accept(InetAddress &client_addr);
+    int Accept(Address &client_addr);
 
     /// @brief A wrapper of ::shutdown(), half-close the output stream.
     void ShutDownOnWrite();

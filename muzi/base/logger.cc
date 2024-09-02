@@ -37,10 +37,9 @@ const char * const kLogLevelName[LogLevel::kLogLevelNum] =
 StackWritter::StackWritter(const Logger &logger, const SourceFile &file, int line,
     LogLevel level, error_t errcode) : logger_(logger), level_(level), file_(file), line_(line)
 {
-    current_thread::CachedTid();
     log_stream_ << "[";
     log_stream_ << Timestamp().ToFormatString() << " ";
-    log_stream_ << current_thread::t_tid_string << " ";
+    log_stream_ << current_thread::tid_string() << " ";
     log_stream_ << StringProxy(kLogLevelName[level_], 5);
 
     if (errcode != 0)

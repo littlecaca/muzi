@@ -88,6 +88,18 @@ void TcpClient::DisableConnectAndWait()
     }
 }
 
+const TcpConnectionPtr &TcpClient::GetConnection() const
+{
+    LOG_DEBUG << "GetConnection() begin";
+    MutexLockGuard guard(lock_);
+    while (!connection_)
+    {
+        condition_.Wait();
+    }
+    LOG_DEBUG << "GetConnection() end";
+    return connection_; 
+}
+
 /// @brief Called by connector_.
 void TcpClient::NewConnection(int sock_fd)
 {
@@ -113,6 +125,7 @@ void TcpClient::NewConnection(int sock_fd)
     {
         MutexLockGuard guard(lock_);
         connection_ = std::move(conn);
+        condition_.Notify();
     }
 
     connection_->EstablishConnection();

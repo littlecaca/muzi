@@ -42,11 +42,7 @@ public:
     /// @brief Just make to_connect_ be false in loop_, and wait if necessaey.
     void DisableConnectAndWait();
 
-    const TcpConnectionPtr &GetConnection() const
-    { 
-        MutexLockGuard guard(lock_);
-        return connection_; 
-    }
+    const TcpConnectionPtr &GetConnection() const;
 
     EventLoop *GetLoop() const { return loop_; }
 
@@ -54,7 +50,6 @@ public:
     
     /// @attention May have race condition.
     void EnableRetry() { is_retry = true; }
-
 
 private:
     void NewConnection(int sock_fd);

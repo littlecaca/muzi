@@ -14,37 +14,29 @@ namespace current_thread
 {
 
 // thread local storage
+void ResetTid();
 extern thread_local pid_t t_tid;
 extern thread_local std::string t_tid_string;
-extern thread_local int t_tid_length;
-extern thread_local const char *t_thread_name;
 
-void CachedTid();
 bool IsMainThread();
 void SleepUsec(int64_t usec);
 
 inline pid_t tid()
 {
-    if (LIKELY(t_tid == 0))
+    if (UNLIKELY(t_tid == 0))
     {
-        CachedTid();
+        ResetTid();
     }
     return t_tid;
 }
 
 inline const std::string &tid_string()
 {
+    if (UNLIKELY(t_tid == 0))
+    {
+        ResetTid();
+    }
     return t_tid_string;
-}
-
-inline int tid_length()
-{
-    return t_tid_length;
-}
-
-inline const char *thread_name()
-{
-    return t_thread_name;
 }
 
 }   // namespace current_thread

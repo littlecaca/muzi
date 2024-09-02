@@ -88,8 +88,6 @@ void TcpConnection::SendInLoop(const StringProxy &str)
 
 void TcpConnection::SendInLoop(const Buffer &buf)
 {
-    DEBUGINFO("TcpConnection::SendInLoop()");
-
     loop_->AssertInLoopThread();
     if (state_ == kDisConnected)
     {
@@ -108,6 +106,8 @@ void TcpConnection::SendInLoop(const Buffer &buf)
         /// @attention Do need to put this to loop's functors quque?
         high_water_callback_(shared_from_this(), old_len + new_len);
     }
+    DEBUGINFO << "TcpConnection::SendInLoop() write to output_buffer: " 
+              << buf.PeekAllAsString();
 
     ouput_buffer_.Append(buf);
     if (!channel_->IsWritting())
@@ -118,7 +118,6 @@ void TcpConnection::SendInLoop(const Buffer &buf)
 
 void TcpConnection::SendInLoop(const void *first, size_t len)
 {
-    DEBUGINFO("TcpConnection::SendInLoop()");
     loop_->AssertInLoopThread();
 
     ssize_t written = 0;
@@ -132,10 +131,12 @@ void TcpConnection::SendInLoop(const void *first, size_t len)
     // If no thing in output queue, try writting directly.
     if (!channel_->IsWritting() && ouput_buffer_.ReadableBytes() == 0)
     {
-        DEBUGINFO("TcpConnection::SendInLoop() write directly");
         written = socket::Write(channel_->Getfd(), first, len);
         if (written > 0)
         {
+            DEBUGINFO << "TcpConnection::SendInLoop() write directly: " 
+                      << StringProxy(reinterpret_cast<const char *>(first), len);
+
             remaining -= written;
             if (len == 0 && write_complete_callback_)
             {
@@ -166,6 +167,9 @@ void TcpConnection::SendInLoop(const void *first, size_t len)
             /// @attention Do need to put this to loop's functors quque?
             high_water_callback_(shared_from_this(), old_len + remaining);
         }
+
+        DEBUGINFO << "TcpConnection::SendInLoop() write to output_buffer: " 
+                  << StringProxy(reinterpret_cast<const char *>(first) + written, len);
 
         ouput_buffer_.Append(static_cast<const char *>(first) + written, len);
         if (!channel_->IsWritting())
@@ -306,7 +310,7 @@ void TcpConnection::Send(StringProxy str)
 
 void TcpConnection::Send(Buffer &buf)
 {
-    DEBUGINFO("TcpConnection::Send()");
+    DEBUGINFO << "TcpConnection::Send()";
     if (state_ == kConnected)
     {
         if (loop_->IsInLoopThread())
@@ -340,6 +344,8 @@ void TcpConnection::HandleRead(Timestamp received_time)
     }
     else
     {
+        DEBUGINFO << "TcpConnection::HandleRead() read to buffer: " 
+                  << input_buffer_.PeekAllAsString();
         if (message_callback_)
             message_callback_(shared_from_this(), &input_buffer_, received_time);
     }
@@ -352,6 +358,8 @@ void TcpConnection::HandleWrite()
     if (channel_->IsWritting())
     {
         int saved_errno = 0;
+        DEBUGINFO << "TcpConnection::HandleWrite() write to fd: " 
+                  << ouput_buffer_.PeekAllAsString();
         ssize_t n = ouput_buffer_.WriteFd(channel_->Getfd(), &saved_errno);
         if (n < 0)
         {

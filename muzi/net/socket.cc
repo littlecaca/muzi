@@ -18,7 +18,7 @@ std::string Socket::GetTcpInfo()
     }
 }
 
-void Socket::BindAddress(const InetAddress &addr)
+void Socket::BindAddress(const Address &addr)
 {
     if (!socket::BindAddress(sock_fd_, addr.GetAddr()))
     {
@@ -34,7 +34,7 @@ void Socket::Listen()
     }
 }
 
-void Socket::Connect(const InetAddress &addr)
+void Socket::Connect(const Address &addr)
 {
     if (!socket::Connect(sock_fd_, addr.GetAddr()))
     {
@@ -42,7 +42,7 @@ void Socket::Connect(const InetAddress &addr)
     }
 }
 
-int Socket::Accept(InetAddress &client_addr)
+int Socket::Accept(Address &client_addr)
 {
     return socket::Accept(sock_fd_, client_addr.GetAddr());
 }

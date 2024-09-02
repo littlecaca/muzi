@@ -139,10 +139,11 @@ using Writter = StackWritter;
 #define LOG_SYSFAT  LOG_SYSFAT_U(muzi::gDefaultLogger)
 
 #ifdef _DEBUG
-    #define DEBUGINFO(message) \
-        LOG_DEBUG_U(muzi::gStdioLogger) << message
+    #define DEBUGINFO \
+        LOG_DEBUG
 #else
-    #define DEBUGINFO(message)
+    #define DEBUGINFO \
+        if (false) LOG_DEBUG
 #endif
 
 // Template implementation

@@ -22,27 +22,27 @@ public:
         ISZERO(pthread_cond_destroy(&cond_));
     }
 
-    void Wait()
+    void Wait() const
     {
         MutexLock::HolderGuard hg(lock_);
         ISZERO(pthread_cond_wait(&cond_, lock_.GetPthreadMutex()));
     }
 
-    void Notify()
+    void Notify() const
     {
         ISZERO(pthread_cond_signal(&cond_));
     }
 
-    void NotifyAll()
+    void NotifyAll() const
     {
         ISZERO(pthread_cond_broadcast(&cond_));
     }
 
-    bool WaitForSeconds(double seconds);
+    bool WaitForSeconds(double seconds) const;
 
 private:
     MutexLock &lock_;
-    pthread_cond_t cond_;
+    mutable pthread_cond_t cond_;
 };
 }   // namespace muzi
 

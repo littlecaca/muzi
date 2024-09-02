@@ -14,6 +14,7 @@ public:
     virtual struct sockaddr *GetAddr() = 0;
     virtual std::string GetAddrStr() const  = 0;
     virtual sa_family_t GetFamily() const = 0;
+
 };
 
 }   // namespace muzi

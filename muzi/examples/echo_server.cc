@@ -53,7 +53,7 @@ void EchoServer::OnConnection(const TcpConnectionPtr &conn)
 
 void EchoServer::OnMessage(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp time)
 {
-    DEBUGINFO("EchoServer::OnMessage()");
+    DEBUGINFO << "EchoServer::OnMessage(): " << buffer->PeekAllAsString();
     conn->Send(*buffer);
     buffer->RetriveAll();
 }

@@ -6,7 +6,7 @@
 
 namespace muzi
 {
-Connector::Connector(EventLoop *loop, const InetAddress &server_addr)
+Connector::Connector(EventLoop *loop, const AddressPtr &server_addr)
     : loop_(loop),
       server_addr_(server_addr),
       connect_(false),
@@ -64,7 +64,7 @@ void Connector::StartInLoop()
     loop_->AssertInLoopThread();
     if (connect_ && state_ == kDisConnected)
     {
-        LOG_TRACE << "Start connecting to " << server_addr_.GetIpPortStr();
+        LOG_TRACE << "Start connecting to " << server_addr_->GetAddrStr();
         Connect();
     }
 }
@@ -143,7 +143,7 @@ void Connector::Connect()
     assert(state_ == kDisConnected);
 
     int sock_fd = socket::CreateNonBlockingSockOrDie();
-    int res = socket::Connect(sock_fd, server_addr_.GetAddr());
+    int res = socket::Connect(sock_fd, server_addr_->GetAddr());
     int saved_errno = res == 0 ? 0 : errno;
     switch (saved_errno)
     {
@@ -169,7 +169,7 @@ void Connector::Connect()
     case EBADF:
     case EFAULT:
     case ENOTSOCK:
-        LOG_SYSERR << "Connector::Connect() fails to connect to " << server_addr_.GetIpPortStr();
+        LOG_SYSERR << "Connector::Connect() fails to connect to " << server_addr_->GetAddrStr();
         socket::Close(sock_fd);
         break;
 

@@ -43,10 +43,10 @@ int main(int argc, char const *argv[])
     client.Connect();
 
     TcpConnectionPtr conn = client.GetConnection();
-
+    
     std::string line;
     std::cout << "Msg: " << std::flush;
-    while ((std::getline(std::cin, line)))
+    while ((std::getline(std::cin, line)) && conn->IsConnected())
     {
         LOG_INFO << "Get input: " << line;
         if (line == "Q" || line == "q")
@@ -54,6 +54,5 @@ int main(int argc, char const *argv[])
         conn->Send(line);
         std::cout << "Msg: " << std::flush;
     }
-
     return 0;
 }

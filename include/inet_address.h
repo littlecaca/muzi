@@ -36,6 +36,27 @@ public:
     struct sockaddr *GetAddr() override { return socket::SockAddrCast(&addr6_); }
     sa_family_t GetFamily() const override { return addr_.sin_family; }
     std::string GetAddrStr() const override { return GetIpPortStr(); }
+    AddressPtr Copy() const override { return std::make_shared<InetAddress>(*this); }
+
+    void SetAddr(const sockaddr &addr) override
+    {
+        if (addr.sa_family != addr_.sin_family)
+        {
+            LOG_ERROR << "Different sa_family, can not set";
+            return;
+        }
+
+        if (addr.sa_family == AF_INET)
+        {
+            auto &addr_ref = reinterpret_cast<const sockaddr_in &>(addr);
+            addr_ = addr_ref;
+        }
+        else
+        {
+            auto &addr_ref = reinterpret_cast<const sockaddr_in6 &>(addr);
+            addr6_ = addr_ref;
+        }
+    }
 
 public:
     std::string GetIpStr() const;

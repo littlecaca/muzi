@@ -16,7 +16,7 @@ class TcpClient : noncopyable
 {
 public:
     TcpClient(EventLoop *loop, 
-              const InetAddress &server_addr,
+              const Address &server_addr,
               const std::string &name);
     ~TcpClient();
 
@@ -59,8 +59,8 @@ private:
 
 private:
     EventLoop *loop_;
+    AddressPtr server_addr_;
     std::shared_ptr<Connector> connector_;
-    InetAddress server_addr_;
     std::string name_;
     std::atomic<int64_t> sequence_;
     bool to_connect_;           // atomic for internal

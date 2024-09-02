@@ -19,7 +19,7 @@ class TcpServer : noncopyable
 public:
     typedef std::function<void(EventLoop *)> ThreadInitCallback;
 
-    TcpServer(EventLoop *loop, const InetAddress &listen_addr, 
+    TcpServer(EventLoop *loop, const Address &listen_addr, 
         const std::string &name = "TcpServer", bool reuse_port = false);
 
     ~TcpServer();
@@ -54,7 +54,7 @@ public:
 
 private:
     /// @attention In loop.
-    void NewConnection(int sock_fd, const InetAddress &peer_addr);
+    void NewConnection(int sock_fd, const AddressPtr &peer_addr);
 
     /// @attention May not in loop, so it will call the "in loop" version. 
     void RemoveConnection(const TcpConnectionPtr &conn);

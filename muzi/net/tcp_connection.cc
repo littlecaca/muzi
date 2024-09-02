@@ -9,8 +9,8 @@ namespace muzi
 TcpConnection::TcpConnection(std::string name, 
                             EventLoop *loop, 
                             int sock_fd, 
-                            const InetAddress &peer_addr,
-                            const InetAddress &local_addr)
+                            const AddressPtr &peer_addr,
+                            const AddressPtr &local_addr)
     : name_(name),
       loop_(loop),
       state_(kConnecting),

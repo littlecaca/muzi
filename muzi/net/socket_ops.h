@@ -72,9 +72,9 @@ int CreateBlockingSockOrDie();
 
 int CreateNonBlockingSockOrDie();
 
-struct sockaddr_in6 GetLocalAddr(int sock_fd);
+struct sockaddr GetLocalAddr(int sock_fd);
 
-struct sockaddr_in6 GetPeerAddr(int sock_fd);
+struct sockaddr GetPeerAddr(int sock_fd);
 
 int GetSocketError(int sock_fd);
 

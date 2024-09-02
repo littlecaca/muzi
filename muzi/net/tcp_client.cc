@@ -16,11 +16,11 @@ void DetachedRemoveConnection(const TcpConnectionPtr &conn)
 }   // internal linkage
 
 TcpClient::TcpClient(EventLoop *loop, 
-                     const InetAddress &server_addr, 
+                     const Address &server_addr, 
                      const std::string &name)
     : loop_(loop),
-      connector_(std::make_shared<Connector>(loop, server_addr)),
-      server_addr_(server_addr),
+      server_addr_(server_addr.Copy()),
+      connector_(std::make_shared<Connector>(loop, server_addr_)),
       name_(name),
       sequence_(0),
       to_connect_(false),
@@ -107,8 +107,10 @@ void TcpClient::NewConnection(int sock_fd)
 
     std::string conn_name = name_ + "#" + std::to_string(sequence_++);
 
+    AddressPtr peer_addr = server_addr_->Copy();
+    peer_addr->SetAddr(socket::GetLocalAddr(sock_fd));
     TcpConnectionPtr conn = std::make_shared<TcpConnection>(conn_name,
-        loop_, sock_fd, server_addr_, socket::GetLocalAddr(sock_fd));
+        loop_, sock_fd, server_addr_, peer_addr);
 
     conn->SetConnectionCallback(connection_callback_);
     conn->SetMessageCallback(message_callback_);
@@ -116,7 +118,7 @@ void TcpClient::NewConnection(int sock_fd)
     conn->SetCloseCallback(std::bind(&TcpClient::RemoveConnection,
         this, std::placeholders::_1));
 
-    LOG_TRACE << "New connection " << conn_name << " to " << server_addr_.GetIpPortStr()
+    LOG_TRACE << "New connection " << conn_name << " to " << server_addr_->GetAddrStr()
             << " is establishing.";
     
     // Remove me
@@ -150,7 +152,7 @@ void TcpClient::RemoveConnection(const TcpConnectionPtr &conn)
 
     if (to_connect_ && is_retry)
     {
-        LOG_TRACE << "Reconnecting to " << server_addr_.GetIpPortStr();
+        LOG_TRACE << "Reconnecting to " << server_addr_->GetAddrStr();
         connector_->ReStartInLoop();
     }
 }

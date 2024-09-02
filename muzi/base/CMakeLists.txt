@@ -13,6 +13,7 @@ set(BASE_SRCS
     countdown_latch.cc
     process_info.cc
     stacktrace.cc
+    log_file.cc
 )
 
 add_library(muzi_base ${BASE_SRCS})

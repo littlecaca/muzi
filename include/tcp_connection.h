@@ -39,8 +39,8 @@ public:
     TcpConnection(std::string name,
                   EventLoop *loop,
                   int sock_fd,
-                  const InetAddress &peer_addr,
-                  const InetAddress &local_addr);
+                  const AddressPtr &peer_addr,
+                  const AddressPtr &local_addr);
 
     ~TcpConnection();
 
@@ -99,8 +99,8 @@ public:
 
     EventLoop *GetLoop() const { return loop_; }
 
-    const InetAddress &GetLocalAddress() const { return local_addr_; }
-    const InetAddress &GetPeerAddress() const { return peer_addr_; }
+    const AddressPtr &GetLocalAddress() const { return local_addr_; }
+    const AddressPtr &GetPeerAddress() const { return peer_addr_; }
 
     bool IsConnected() const { return state_ == kConnected; }
     bool IsDisConnected() const { return state_ == kDisConnected; }
@@ -148,8 +148,8 @@ private:
     
     std::unique_ptr<Socket> socket_;
     std::unique_ptr<Channel> channel_;
-    InetAddress peer_addr_;
-    InetAddress local_addr_;
+    AddressPtr peer_addr_;
+    AddressPtr local_addr_;
 
     size_t high_water_mark_;
     bool is_reading;

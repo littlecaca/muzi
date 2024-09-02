@@ -43,7 +43,7 @@ void EchoServer::OnConnection(const TcpConnectionPtr &conn)
     if (conn->IsConnected())
     {
         LOG_INFO << "Accept new connection " << conn->GetName()
-                 << " from " << conn->GetPeerAddress().GetIpPortStr();
+                 << " from " << conn->GetPeerAddress()->GetAddrStr();
     }
     else
     {

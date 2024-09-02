@@ -11,8 +11,8 @@ namespace
 {
 void DefaultConnectionCallback(const TcpConnectionPtr &conn)
 {
-    LOG_TRACE << conn->GetLocalAddress().GetIpPortStr() << " >> "
-              << conn->GetPeerAddress().GetIpPortStr() << " is "
+    LOG_TRACE << conn->GetLocalAddress()->GetAddrStr() << " >> "
+              << conn->GetPeerAddress()->GetAddrStr() << " is "
               << (conn->IsConnected() ? "UP" : "DOWN");
 }
 
@@ -26,11 +26,11 @@ void DefaultMessageCallback(const TcpConnectionPtr &conn,
 
 }   // internal linkage
 
-TcpServer::TcpServer(EventLoop *loop, const InetAddress &listen_addr, 
+TcpServer::TcpServer(EventLoop *loop, const Address &listen_addr, 
     const std::string &name, bool reuse_port)
     : name_(name),
       loop_(loop),
-      acceptor_(std::make_unique<Acceptor>(loop, listen_addr, reuse_port)),
+      acceptor_(std::make_unique<Acceptor>(loop, listen_addr.Copy(), reuse_port)),
       started_(false),
       conn_sequence_(0),
       thread_pool_(std::make_unique<EventLoopThreadPool>(loop, name + "EventThread")),
@@ -70,14 +70,14 @@ void TcpServer::SetThreadNum(size_t num) const
     thread_pool_->SetThreadNum(num);
 }
 
-void TcpServer::NewConnection(int sock_fd, const InetAddress &peer_addr)
+void TcpServer::NewConnection(int sock_fd, const AddressPtr &peer_addr)
 {
     loop_->AssertInLoopThread();
 
     std::string conn_name = name_ + "#" + std::to_string(conn_sequence_++);
 
     LOG_INFO << "TcpServer " << name_ << " accept new connection ["
-             << conn_name << "] from " << peer_addr.GetIpPortStr();
+             << conn_name << "] from " << peer_addr->GetAddrStr();
 
     // Here we can give it other loops to hand it over.
     EventLoop *io_loop = thread_pool_->GetNextLoop();

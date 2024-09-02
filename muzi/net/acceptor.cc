@@ -26,7 +26,7 @@ int OpenIdleFile()
 
 }   // internal linkage
 
-Acceptor::Acceptor(EventLoop *loop, const InetAddress &listen_addr, bool reuse_port)
+Acceptor::Acceptor(EventLoop *loop, const AddressPtr &listen_addr, bool reuse_port)
     : loop_(loop),
       accept_socket_(socket::CreateNonBlockingSockOrDie()),
       local_addr_(listen_addr),
@@ -37,7 +37,7 @@ Acceptor::Acceptor(EventLoop *loop, const InetAddress &listen_addr, bool reuse_p
     accept_socket_.SetReuseAddr(true);
     if (reuse_port)
         accept_socket_.SetReusePort(true);
-    accept_socket_.BindAddress(listen_addr);
+    accept_socket_.BindAddress(*listen_addr);
     chanel_.SetReadCallback(std::bind(&Acceptor::HandleRead, this));
 }
 
@@ -65,9 +65,9 @@ void Acceptor::HandleRead()
     loop_->AssertInLoopThread();
 
     int peer_sock;
-    InetAddress peer_addr;
+    AddressPtr peer_addr(local_addr_->Copy());
 
-    while ((peer_sock = socket::Accept(accept_socket_.GetFd(), peer_addr.GetAddr())))
+    while ((peer_sock = socket::Accept(accept_socket_.GetFd(), peer_addr->GetAddr())))
     {
         // The special problem of accept()ing when you can't
         // Refer to this:

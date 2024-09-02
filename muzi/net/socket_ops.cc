@@ -238,24 +238,24 @@ int CreateNonBlockingSockOrDie()
     return sock;
 }
 
-sockaddr_in6 GetLocalAddr(int sock_fd)
+sockaddr GetLocalAddr(int sock_fd)
 {
-    sockaddr_in6 addr;
+    sockaddr addr;
     memset(&addr, 0, sizeof addr);
-    socklen_t addr_len = static_cast<socklen_t>(sizeof(sockaddr_in6));
-    if (::getsockname(sock_fd, SockAddrCast(&addr), &addr_len) < 0)
+    socklen_t addr_len = static_cast<socklen_t>(sizeof(sockaddr));
+    if (::getsockname(sock_fd, &addr, &addr_len) < 0)
     {
         LOG_SYSERR << "::getsockname() fails";
     }
     return addr;
 }
 
-sockaddr_in6 GetPeerAddr(int sock_fd)
+sockaddr GetPeerAddr(int sock_fd)
 {
-    sockaddr_in6 addr;
+    sockaddr addr;
     memset(&addr, 0, sizeof addr);
-    socklen_t addr_len = static_cast<socklen_t>(sizeof(sockaddr_in6));
-    if (::getpeername(sock_fd, SockAddrCast(&addr), &addr_len) < 0)
+    socklen_t addr_len = static_cast<socklen_t>(sizeof(sockaddr));
+    if (::getpeername(sock_fd, &addr, &addr_len) < 0)
     {
         LOG_SYSERR << "::getpeername() fails";
     }
@@ -276,23 +276,25 @@ int GetSocketError(int sock_fd)
 
 bool IsSelfConnect(int sock_fd)
 {
-    sockaddr_in6 local_addr = GetLocalAddr(sock_fd);
-    sockaddr_in6 peer_addr = GetPeerAddr(sock_fd);
+    sockaddr local_addr = GetLocalAddr(sock_fd);
+    sockaddr peer_addr = GetPeerAddr(sock_fd);
 
-    if (local_addr.sin6_family == AF_INET)
+    if (local_addr.sa_family == AF_INET)
     {
         sockaddr_in &local_ref = reinterpret_cast<sockaddr_in &>(local_addr);
         sockaddr_in &peer_ref = reinterpret_cast<sockaddr_in &>(peer_addr);
         return local_ref.sin_port == peer_ref.sin_port
             && local_ref.sin_addr.s_addr == peer_ref.sin_addr.s_addr;
     }
-    else if (local_addr.sin6_family == AF_INET6)
+    else if (local_addr.sa_family == AF_INET6)
     {
-        return local_addr.sin6_port == peer_addr.sin6_port
-            && memcpy(&local_addr.sin6_addr, &peer_addr.sin6_addr, 
-            sizeof local_addr.sin6_addr) == 0;
+        sockaddr_in6 &local_ref = reinterpret_cast<sockaddr_in6 &>(local_addr);
+        sockaddr_in6 &peer_ref = reinterpret_cast<sockaddr_in6 &>(peer_addr);
+        return local_ref.sin6_port == peer_ref.sin6_port
+            && memcpy(&local_ref.sin6_addr, &peer_ref.sin6_addr, 
+            sizeof local_ref.sin6_addr) == 0;
     }
-    else
+    else 
     {
         return false;
     }

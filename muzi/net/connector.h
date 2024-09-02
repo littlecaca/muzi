@@ -20,7 +20,7 @@ public:
     static constexpr size_t kInitRetryDelayMs = 500;
     static constexpr size_t kMaxRetryDelayMs = 30 * 1000;
 
-    Connector(EventLoop *loop, const InetAddress &server_addr);
+    Connector(EventLoop *loop, const AddressPtr &server_addr);
 
     ~Connector();
 
@@ -63,7 +63,7 @@ private:
 
 private:
     EventLoop *loop_;
-    InetAddress server_addr_;
+    AddressPtr server_addr_;
 
     std::atomic_bool connect_;
     std::unique_ptr<Channel> channel_;

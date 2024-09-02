@@ -16,9 +16,9 @@ class Acceptor : noncopyable
 {
 public:
     typedef std::function<void(int sock_fd, 
-        const InetAddress &addr)> NewConnectionCallBack;
+        const AddressPtr &addr)> NewConnectionCallBack;
     
-    Acceptor(EventLoop *loop, const InetAddress &listen_addr, 
+    Acceptor(EventLoop *loop, const AddressPtr &listen_addr, 
         bool reuse_port = false);
 
     /// @attention In loop.
@@ -34,7 +34,7 @@ public:
     /// @attention In loop.
     void Listen();
 
-    const InetAddress &GetLocalAddr() const { return local_addr_; }
+    const AddressPtr &GetLocalAddr() const { return local_addr_; }
 
 private:
     void HandleRead();
@@ -44,7 +44,7 @@ private:
     Socket accept_socket_;
     NewConnectionCallBack cb_;
 
-    InetAddress local_addr_;
+    AddressPtr local_addr_;
 
     Channel chanel_;
     bool listening_;

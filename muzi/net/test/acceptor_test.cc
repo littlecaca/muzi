@@ -6,9 +6,9 @@
 #include "event_loop_thread.h"
 #include "logger.h"
 
-void NewConnection(int sock_fd, const muzi::InetAddress &peer_addr)
+void NewConnection(int sock_fd, const muzi::AddressPtr &peer_addr)
 {
-    LOG_INFO << "Accept new connection from " << peer_addr.GetIpPortStr();
+    LOG_INFO << "Accept new connection from " << peer_addr->GetAddrStr();
     char buf[] = "Hello, how are you doing?";
     ::write(sock_fd, buf, sizeof buf);
     muzi::socket::Close(sock_fd);
@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
 
 
     muzi::InetAddress listen_addr(9981);
-    muzi::Acceptor *acceptor = new muzi::Acceptor(loop, listen_addr);
+    muzi::Acceptor *acceptor = new muzi::Acceptor(loop, listen_addr.Copy());
     acceptor->SetNewConnectionCallBack(&NewConnection);
 
     loop->RunInLoop([&acceptor]() { acceptor->Listen(); });

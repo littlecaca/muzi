@@ -4,6 +4,7 @@
 #include <string>
 
 #include "noncopyable.h"
+#include "string_proxy.h"
 #include "file_utils.h"
 
 namespace muzi
@@ -23,6 +24,10 @@ public:
 
     // Unlocked writting
     void Append(const char *msg, size_t len);
+    void Append(const StringProxy &str)
+    {
+        Append(str.data(), str.size());
+    }
     // Unlocked flushing
     void Flush();
     void RollFile();

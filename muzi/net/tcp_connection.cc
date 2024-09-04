@@ -33,9 +33,11 @@ TcpConnection::TcpConnection(std::string name,
 TcpConnection::~TcpConnection()
 {
     LOG_TRACE << "Connection destroyed: " << name_;
+    // Unsafe
+    // Must guarantee that the EventLoop is alive now
     if (state_ != kDisConnected)
     {
-        ForceClose();
+        loop_->RunAndWait(std::bind(&TcpConnection::DestroyConnection, this));
     }
 }
 

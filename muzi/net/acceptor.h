@@ -17,6 +17,8 @@ class Acceptor : noncopyable
 public:
     typedef std::function<void(int sock_fd, 
         const AddressPtr &addr)> NewConnectionCallBack;
+
+    typedef std::function<void(const Socket &listen_sock)> StartListenCallback;
     
     Acceptor(EventLoop *loop, const AddressPtr &listen_addr, 
         bool reuse_port = false);
@@ -24,9 +26,14 @@ public:
     /// @attention In loop.
     ~Acceptor();
 
-    void SetNewConnectionCallBack(const NewConnectionCallBack &cb)
+    void SetNewConnectionCallBack(NewConnectionCallBack cb)
     {
-        cb_ = cb;
+        cb_ = std::move(cb);
+    }
+
+    void SetStartListenCallback(StartListenCallback cb)
+    {
+        start_listen_cb_ = std::move(cb);
     }
 
     bool IsListening() const { return listening_; }
@@ -34,15 +41,19 @@ public:
     /// @attention In loop.
     void Listen();
 
+    /// @brief 
+
     const AddressPtr &GetLocalAddr() const { return local_addr_; }
 
 private:
     void HandleRead();
+    void StopInLoop();
 
 private:
     EventLoop *loop_;
     Socket accept_socket_;
     NewConnectionCallBack cb_;
+    StartListenCallback start_listen_cb_;
 
     AddressPtr local_addr_;
 

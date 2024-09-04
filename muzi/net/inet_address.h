@@ -37,6 +37,23 @@ public:
     sa_family_t GetFamily() const override { return addr_.sin_family; }
     std::string GetAddrStr() const override { return GetIpPortStr(); }
     AddressPtr Copy() const override { return std::make_shared<InetAddress>(*this); }
+    int GetProtoFamily() const override
+    {
+        if (GetFamily() == AF_INET) return PF_INET;
+        else return PF_INET6;
+    }
+
+    size_t GetAddrSize() const override
+    {
+        if (GetFamily() == AF_INET)
+        {
+            return sizeof(sockaddr_in);
+        }
+        else
+        {
+            return sizeof(sockaddr_in6);
+        }
+    }
 
     void SetAddr(const sockaddr &addr) override
     {

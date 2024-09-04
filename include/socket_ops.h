@@ -56,11 +56,11 @@ bool GetTcpInfo(int sock_fd, tcp_info *info);
 
 bool GetTcpInfoString(int sock_fd, char *buf, int len);
 
-bool BindAddress(int sock_fd, const struct sockaddr *addr);
+bool BindAddress(int sock_fd, const sockaddr *addr, size_t addr_len);
 
 bool Listen(int sock_fd);
 
-int Connect(int sock_fd, const struct sockaddr *addr);
+int Connect(int sock_fd, const sockaddr *addr, size_t len = sizeof(sockaddr_in6));
 
 int Accept(int sock_fd, struct sockaddr *addr);
 
@@ -68,9 +68,9 @@ bool ShutDownOnWrite(int sock_fd);
 
 bool SetSockOpt(int sock_fd, int level, int opt, bool on);
 
-int CreateBlockingSockOrDie();
+int CreateBlockingSockOrDie(int pf = PF_INET);
 
-int CreateNonBlockingSockOrDie();
+int CreateNonBlockingSockOrDie(int pf = PF_INET);
 
 struct sockaddr GetLocalAddr(int sock_fd);
 
@@ -78,10 +78,9 @@ struct sockaddr GetPeerAddr(int sock_fd);
 
 int GetSocketError(int sock_fd);
 
-inline ssize_t Write(int sock_fd, const void *buf, size_t len)
-{
-    return ::write(sock_fd, buf, len);
-}
+ssize_t Write(int sock_fd, const void *buf, size_t len);
+
+ssize_t Read(int sock_fd, void *buf, size_t len);
 
 bool IsSelfConnect(int sock_fd);
 

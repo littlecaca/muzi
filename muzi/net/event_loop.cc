@@ -8,6 +8,7 @@
 #include "timer_queue.h"
 #include "poller.h"
 #include "logger.h"
+#include "countdown_latch.h"
 
 namespace muzi
 {
@@ -43,6 +44,13 @@ public:
 
 IgnoreSigPipe ignore;
 
+
+void RunAndNotify(const EventLoop::Functor &func, CountdownLatch *latch)
+{
+    func();
+    latch->CountDown();
+}
+
 }   // internal linkage
 
 EventLoop::EventLoop() 
@@ -54,7 +62,8 @@ EventLoop::EventLoop()
       calling_functors_(false),
       wakeup_channel_(new Channel(this, wakeup_fd_)),
       poller_(Poller::NewDefaultPoller(this)),
-      timer_queue_(new TimerQueue(this))
+      timer_queue_(new TimerQueue(this)),
+      cond_(lock_)
 {
     LOG_TRACE << "Created EventLoop " << this << " in thread " << tid_;
     if (t_loop_in_this_thread)
@@ -73,6 +82,7 @@ EventLoop::EventLoop()
 
 EventLoop::~EventLoop()
 {
+    AssertInLoopThread();
     assert(!looping_);
     wakeup_channel_->DisableAll();
     wakeup_channel_->Remove();
@@ -105,14 +115,24 @@ void EventLoop::Loop()
 
     LOG_TRACE << "EventLoop " << this << " stop looping";
     looping_ = false;
+    cond_.Notify();
 }
 
 void EventLoop::Quit()
 {
-    quit_ = true;
-    if (!IsInLoopThread())
+    if (!looping_) return;
+    bool expeced = false;
+    if (quit_.compare_exchange_strong(expeced, true))
     {
-        WakeUp();
+        if (!IsInLoopThread())
+        {
+            WakeUp();
+        }
+        MutexLockGuard guard(lock_);
+        while (looping_)
+        {
+            cond_.Wait();
+        }
     }
 }
 
@@ -164,6 +184,13 @@ void EventLoop::QueueInLoop(const Functor &cb)
     {
         WakeUp();
     }
+}
+
+void EventLoop::RunAndWait(const Functor &cb)
+{
+    CountdownLatch latch(1);
+    RunInLoop(std::bind(&RunAndNotify, cb, &latch));
+    latch.Wait();
 }
 
 void EventLoop::CancelTimer(TimerId id)

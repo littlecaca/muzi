@@ -43,7 +43,7 @@ void AsyncOutputer::Flush()
     cond_.Notify();
 }
 
-void AsyncOutputer::Output(const Outputer::Buffer &buffer)
+void AsyncOutputer::Output(const Outputer::SmallBuffer &buffer)
 {
     MutexLockGuard guard(mutex_);
 

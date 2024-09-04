@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <vector>
 
+#include "condition.h"
 #include "current_thread.h"
 #include "mutex.h"
 #include "noncopyable.h"
@@ -58,6 +59,7 @@ public:
     /// @attention Can be called in other threads
     void RunInLoop(const Functor &cb);
     void QueueInLoop(const Functor &cb);
+    void RunAndWait(const Functor &cb);
 
     /// @attention Can be called in other threads
     void CancelTimer(TimerId id);
@@ -92,6 +94,7 @@ private:
     std::unique_ptr<TimerQueue> timer_queue_;
 
     MutexLock lock_;
+    Condition cond_ GUARDED_BY(lock_);
     
     // Used by RunInLoop and QueueInLoop to store tasks
     FunctorList functors_ GUARDED_BY(lock_);

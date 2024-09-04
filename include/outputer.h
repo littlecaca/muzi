@@ -13,9 +13,9 @@ namespace muzi
 class Outputer : noncopyable
 {
 public:
-    typedef FixedBuffer<config::kSmallBuffSize> Buffer;
+    typedef FixedBuffer<config::kSmallBuffSize> SmallBuffer;
 
-    virtual void Output(const Buffer &buf)
+    virtual void Output(const SmallBuffer &buf)
     {
         fwrite(buf.data(), 1, buf.size(), stdout);
     }
@@ -34,7 +34,7 @@ public:
 class StderrOuputer : public Outputer
 {
 public:
-    void Output(const Buffer &buf) override
+    void Output(const SmallBuffer &buf) override
     {
         fwrite(buf.data(), 1, buf.size(), stderr);
     }
@@ -47,6 +47,25 @@ public:
     virtual ~StderrOuputer()
     {
         fflush(stderr);
+    }
+};
+
+class ClosedOuputer : public Outputer
+{
+public:
+    void Output(const SmallBuffer &buf) override
+    {
+        // Do nothing
+    }
+
+    virtual void Flush()
+    {
+        // Do nothing
+    }
+
+    virtual ~ClosedOuputer()
+    {
+        // Do nothing
     }
 };
 

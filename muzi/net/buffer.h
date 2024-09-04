@@ -343,7 +343,6 @@ public:
         // gDefaultOutputer.Flush();
 
         std::string output(cbegin(), util);
-        DEBUGINFO << "RetriveAsString(): " << output;
         RetriveUtil(util);
         return output;
     }

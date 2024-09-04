@@ -35,3 +35,4 @@ target_link_libraries(thread_test PRIVATE muzi_base)
 add_test(NAME thread_test COMMAND thread_test)
 
 do_test(muzi_base stacktrace_test "")
+do_test(muzi_base thread_pool_test "")

@@ -7,6 +7,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/un.h>
 
 #include "endian_transform.h"
 #include "logger.h"
@@ -142,9 +143,9 @@ bool GetTcpInfoString(int sock_fd, char *buf, int len)
     return true;
 }
 
-bool BindAddress(int sock_fd, const sockaddr *addr)
+bool BindAddress(int sock_fd, const sockaddr *addr, size_t addr_len)
 {
-    if (::bind(sock_fd, addr, static_cast<socklen_t>(sizeof (sockaddr_in6))) < 0)
+    if (::bind(sock_fd, addr, static_cast<socklen_t>(addr_len)) < 0)
     {
         LOG_SYSERR << "::bind() fails";
         return false;
@@ -162,9 +163,14 @@ bool Listen(int sock_fd)
     return true;
 }
 
-int Connect(int sock_fd, const sockaddr *addr)
+int Connect(int sock_fd, const sockaddr *addr, size_t len)
 {
-    return ::connect(sock_fd, addr, sizeof (sockaddr_in6));
+    int ret = ::connect(sock_fd, addr, static_cast<socklen_t>(len));
+    if (ret < 0)
+    {
+        LOG_SYSERR << "::connect() fails";
+    }
+    return ret;
 }
 
 int Accept(int sock_fd, sockaddr *addr)
@@ -218,9 +224,9 @@ bool SetSockOpt(int sock_fd, int level, int opt, bool on)
     return true;
 }
 
-int CreateBlockingSockOrDie()
+int CreateBlockingSockOrDie(int pf)
 {
-    int sock = ::socket(PF_INET, SOCK_STREAM | O_CLOEXEC, 0);
+    int sock = ::socket(pf, SOCK_STREAM | O_CLOEXEC, 0);
     if (sock < 0)
     {
         LOG_SYSFAT << "::socket() fails";
@@ -228,9 +234,9 @@ int CreateBlockingSockOrDie()
     return sock;
 }
 
-int CreateNonBlockingSockOrDie()
+int CreateNonBlockingSockOrDie(int pf)
 {
-    int sock = ::socket(PF_INET, SOCK_STREAM | O_CLOEXEC | O_NONBLOCK, 0);
+    int sock = ::socket(pf, SOCK_STREAM | O_CLOEXEC | O_NONBLOCK, 0);
     if (sock < 0)
     {
         LOG_SYSFAT << "::socket() fails";
@@ -298,6 +304,26 @@ bool IsSelfConnect(int sock_fd)
     {
         return false;
     }
+}
+
+ssize_t Write(int sock_fd, const void *buf, size_t len)
+{
+    int ret = ::write(sock_fd, buf, len);
+    if (ret < 0)
+    {
+        LOG_SYSERR << "::write() fails";
+    }
+    return ret;
+}
+
+ssize_t Read(int sock_fd, void *buf, size_t len)
+{
+    int ret = ::read(sock_fd, buf, len);
+    if (ret < 0)
+    {
+        LOG_SYSERR << "::read() fails";
+    }
+    return ret;
 }
 
 }   // namespace socket

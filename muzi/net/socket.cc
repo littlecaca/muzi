@@ -20,7 +20,7 @@ std::string Socket::GetTcpInfo()
 
 void Socket::BindAddress(const Address &addr)
 {
-    if (!socket::BindAddress(sock_fd_, addr.GetAddr()))
+    if (!socket::BindAddress(sock_fd_, addr.GetAddr(), addr.GetAddrSize()))
     {
         LOG_FATAL << "socket::BindAddress() fails";
     }
@@ -34,17 +34,52 @@ void Socket::Listen()
     }
 }
 
-void Socket::Connect(const Address &addr)
+int Socket::Connect(const Address &addr)
 {
-    if (!socket::Connect(sock_fd_, addr.GetAddr()))
+    int cur_time = 0;
+    int ret;
+    while ((ret = socket::Connect(sock_fd_, addr.GetAddr(), addr.GetAddrSize())) < 0)
     {
-        LOG_FATAL << "socket::Connect() fails";
+        if (cur_time < kMaxConnectWaitSecond)
+        {
+            ::sleep(1);
+            ++cur_time;
+        }
+        else
+        {
+            LOG_ERROR << "socket::Connect() fails";
+            return ret;
+        }
     }
+    return 0;
 }
 
 int Socket::Accept(Address &client_addr)
 {
     return socket::Accept(sock_fd_, client_addr.GetAddr());
+}
+
+ssize_t Socket::Send(const char *buffer, size_t len)
+{
+    ssize_t ret;
+    while (true)
+    {
+        ret = socket::Write(sock_fd_, buffer, len);
+        if (ret < 0)
+        {
+            if (errno == EAGAIN || errno == EINTR)
+                continue;   // retry
+
+            LOG_ERROR << "socket::Write() fails";
+        }
+        break;
+    }
+    return ret;
+}
+
+ssize_t Socket::Recv(char *buffer, size_t len)
+{
+    return socket::Read(sock_fd_, buffer, len);
 }
 
 void Socket::ShutDownOnWrite()

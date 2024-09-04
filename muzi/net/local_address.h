@@ -13,6 +13,17 @@ namespace muzi
 class LocalAddress : public Address
 {
 public:
+    LocalAddress(const char *path)
+    {
+        addr_.sun_family = AF_LOCAL;
+        ::strncpy(addr_.sun_path, path, sizeof addr_.sun_path - 1);
+    }
+
+    /// @attention LocalAddress can not own the local sock file
+    ~LocalAddress()
+    {
+    }
+
     const struct sockaddr *GetAddr() const override
     {
         return reinterpret_cast<const sockaddr *>(&addr_);
@@ -28,9 +39,19 @@ public:
         return addr_.sun_path;
     }
 
+    size_t GetAddrSize() const override
+    {
+        return sizeof(sockaddr_un);
+    }
+
     sa_family_t GetFamily() const override
     {
         return addr_.sun_family;
+    }
+
+    int GetProtoFamily() const override
+    {
+        return PF_LOCAL;
     }
 
     AddressPtr Copy() const override

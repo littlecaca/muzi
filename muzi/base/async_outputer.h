@@ -14,7 +14,6 @@
 #include "condition.h"
 #include "config.h"
 #include "countdown_latch.h"
-#include "file_utils.h"
 #include "fixed_buffer.h"
 #include "mutex.h"
 #include "noncopyable.h"
@@ -29,7 +28,7 @@ class AsyncOutputer : public Outputer
 public:
     AsyncOutputer(const std::string &base_name);
 
-    void Output(const Outputer::Buffer &buffer) override;
+    void Output(const Outputer::SmallBuffer &buffer) override;
 
     void Start();
 

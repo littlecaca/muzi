@@ -4,13 +4,19 @@ namespace muzi
 {
 EventLoopThreadPool::~EventLoopThreadPool()
 {
+    if (started_)
+    {
+        for (int i = 0; i < event_loops_.size(); ++i)
+        {
+            event_loops_[i]->Quit();
+            delete event_loops_[i];
+        }
+    }
 }
 
 void EventLoopThreadPool::Start(ThreadInitCallback callback)
 {
-    base_loop_->AssertInLoopThread();
     assert(!started_);
-    
     for (int i = 0; i < thread_nums_; ++i)
     {
         threads_.push_back(std::make_unique<EventLoopThread>

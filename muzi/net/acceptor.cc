@@ -28,7 +28,7 @@ int OpenIdleFile()
 
 Acceptor::Acceptor(EventLoop *loop, const AddressPtr &listen_addr, bool reuse_port)
     : loop_(loop),
-      accept_socket_(socket::CreateNonBlockingSockOrDie()),
+      accept_socket_(socket::CreateNonBlockingSockOrDie(listen_addr->GetProtoFamily())),
       local_addr_(listen_addr),
       chanel_(loop, accept_socket_.GetFd()),
       listening_(false),
@@ -43,11 +43,11 @@ Acceptor::Acceptor(EventLoop *loop, const AddressPtr &listen_addr, bool reuse_po
 
 Acceptor::~Acceptor()
 {
-    // Acceptor will work in main loop, as with
-    // the TcpServer. So this will be fine to
-    // call these "in loop" function.
-    chanel_.DisableAll();
-    chanel_.Remove();
+    if (listening_)
+    {
+        loop_->RunAndWait(std::bind(&Acceptor::StopInLoop, this));
+    }
+    listening_ = false;
     socket::Close(dummy_fd_);
 }
 
@@ -58,6 +58,18 @@ void Acceptor::Listen()
     listening_ = true;
     accept_socket_.Listen();
     chanel_.EnableReading();
+
+    if (start_listen_cb_)
+    {
+        start_listen_cb_(accept_socket_);
+    }
+}
+
+void Acceptor::StopInLoop()
+{
+    loop_->AssertInLoopThread();
+    chanel_.DisableAll();
+    chanel_.Remove();
 }
 
 void Acceptor::HandleRead()

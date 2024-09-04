@@ -52,6 +52,11 @@ public:
         thread_init_callback_ = std::move(cb);
     }
 
+    void SetStartListenCallback(Acceptor::StartListenCallback cb)
+    {
+        acceptor_->SetStartListenCallback(std::move(cb));
+    }
+
 private:
     /// @attention In loop.
     void NewConnection(int sock_fd, const AddressPtr &peer_addr);

@@ -43,11 +43,11 @@ TcpServer::TcpServer(EventLoop *loop, const Address &listen_addr,
 
 TcpServer::~TcpServer()
 {
-    loop_->AssertInLoopThread();
     LOG_TRACE << "TcpServer " << name_ << " is being destructing";
     for (auto &[name, conn_ptr] : connections_) // C++17
     {
-        // FIXME unsafe
+        // Unsafe
+        // Must keep ~TcpServer is called before the ~EventLoop
         conn_ptr->GetLoop()->RunInLoop(
             std::bind(&TcpConnection::DestroyConnection, conn_ptr));
         conn_ptr->GetLoop()->WakeUp();
@@ -59,7 +59,6 @@ void TcpServer::Start()
     if (started_.exchange(true) == false)
     {
         thread_pool_->Start(thread_init_callback_);
-
         assert(!acceptor_->IsListening());
         loop_->RunInLoop(std::bind(&Acceptor::Listen, acceptor_.get()));
     }

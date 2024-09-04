@@ -14,6 +14,7 @@ set(BASE_SRCS
     process_info.cc
     stacktrace.cc
     log_file.cc
+    thread_pool.cc
 )
 
 add_library(muzi_base ${BASE_SRCS})

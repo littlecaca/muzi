@@ -28,6 +28,7 @@ void FromIpPort(const char *ip, uint16_t port, sockaddr_in *addr)
 {
     addr->sin_family = AF_INET;
     addr->sin_port = endian::HostToNet(port);
+    
     if (::inet_pton(AF_INET, ip, &addr->sin_addr) <= 0)
     {
         LOG_SYSERR << "::inet_pton() fails";

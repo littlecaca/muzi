@@ -20,7 +20,7 @@ set(BASE_SRCS
 add_library(muzi_base ${BASE_SRCS})
 
 target_include_directories(muzi_base
-                        INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+                        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # add the interface compiler flags
 target_link_libraries(muzi_base muzi_compiler_flags)

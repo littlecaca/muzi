@@ -17,7 +17,6 @@ public:
     {
         addr_.sun_family = AF_LOCAL;
         ::strncpy(addr_.sun_path, path, sizeof addr_.sun_path - 1);
-        DEBUGINFO << addr_.sun_path;
     }
 
     /// @attention LocalAddress can not own the local sock file

@@ -346,8 +346,8 @@ void TcpConnection::HandleRead(Timestamp received_time)
     }
     else
     {
-        DEBUGINFO << "TcpConnection::HandleRead() read to buffer: " 
-                  << input_buffer_.PeekAllAsString();
+        // DEBUGINFO << "TcpConnection::HandleRead() read to buffer: " 
+        //           << input_buffer_.PeekAllAsString();
         if (message_callback_)
             message_callback_(shared_from_this(), &input_buffer_, received_time);
     }

@@ -3,6 +3,7 @@
 
 #include <endian.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 #include <stdint.h>
 
 namespace muzi
@@ -12,7 +13,8 @@ namespace endian
 template <typename T>
 inline T HostToNet(T host)
 {
-    static_assert(false, "Only accept uint64,32,16,8_t");
+    return htonl(host);
+
 }
 
 template<>
@@ -42,7 +44,7 @@ inline uint64_t HostToNet(uint64_t host64)
 template <typename T>
 inline T NetToHost(T net)
 {
-    static_assert(false, "Only accept uint64,32,16,8_t");
+    return ntohl(net);
 }
 
 template<>

@@ -24,7 +24,8 @@ option(MUZI_DEBUG "Debug mode" ON)
 
 # Set compiler flag
 
-if (MUZI_DEBUG)
+if (${MUZI_DEBUG})
+    message(STATUS "* Start debug mode.")
     add_compile_definitions(_DEBUG)
 endif()
 
@@ -48,6 +49,7 @@ link_libraries(muzi_base)
 add_subdirectory(muzi/net)
 link_libraries(muzi_net)
 
-if (MUZI_BUILD_EXAMPLE)
+if (${MUZI_BUILD_EXAMPLE})
+    message(STATUS "* Compile examples.")
     add_subdirectory(muzi/examples)
 endif()

@@ -32,9 +32,10 @@ if (MUZI_BUILD_TEST)
 endif()
 
 install(TARGETS muzi_base
-        ARCHIVE DESTINATION lib        
+        LIBRARY DESTINATION ${MUZI_LIB_PATH}
+        ARCHIVE DESTINATION ${MUZI_LIB_PATH}        
 )
 
-install(DIRECTORY ./ DESTINATION include
+install(DIRECTORY ./ DESTINATION ${MUZI_INCLUDE_PATH}
         FILES_MATCHING PATTERN "*.h"    
 )

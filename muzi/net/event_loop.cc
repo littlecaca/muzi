@@ -16,7 +16,7 @@ namespace
 {
 thread_local EventLoop *t_loop_in_this_thread = nullptr;
 
-const int kPollTimeMs = 10000;
+const int kPollTimeMs = 10001;
 
 int CreateEventFd()
 {

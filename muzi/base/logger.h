@@ -2,12 +2,10 @@
 #define MUZI_BASE_LOGGER_H_
 
 #include <errno.h>
-#include <string.h>
 #include <utility>
 
 #include "log_stream.h"
 #include "noncopyable.h"
-#include "timestamp.h"
 #include "outputer.h"
 
 namespace muzi

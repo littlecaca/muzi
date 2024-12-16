@@ -8,12 +8,9 @@
 #include <string>
 
 #include "buffer.h"
-#include "condition.h"
 #include "countdown_latch.h"
 #include "channel.h"
 #include "event_loop.h"
-#include "inet_address.h"
-#include "noncopyable.h"
 #include "socket.h"
 #include "timestamp.h"
 
@@ -112,6 +109,7 @@ public:
     /// @attention This will retrive all data in buf.
     void Send(Buffer &buf);
 
+    int GetSocketFd() const { return socket_->GetFd(); }
 
 private:
     enum ConnectionState

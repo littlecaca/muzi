@@ -1,7 +1,6 @@
 #ifndef MUZI_BASE_OUTPUTER_H_
 #define MUZI_BASE_OUTPUTER_H_
 
-#include <iostream>
 #include <stdio.h>
 
 #include "noncopyable.h"
@@ -39,7 +38,7 @@ public:
         fwrite(buf.data(), 1, buf.size(), stderr);
     }
 
-    virtual void Flush()
+    virtual void Flush() override
     {
         fflush(stderr);
     }
@@ -58,7 +57,7 @@ public:
         // Do nothing
     }
 
-    virtual void Flush()
+    virtual void Flush() override
     {
         // Do nothing
     }

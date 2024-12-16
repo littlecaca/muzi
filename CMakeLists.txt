@@ -40,9 +40,13 @@ add_link_options(-rdynamic)
 add_library(muzi_compiler_flags INTERFACE)
 target_compile_features(muzi_compiler_flags INTERFACE cxx_std_17)
 
-
 # Set install root path
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
+# set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
+set(CMAKE_INSTALL_PREFIX "/usr/local/")
+set(MUZI_LIB_PATH ${CMAKE_INSTALL_PREFIX}/lib)
+set(MUZI_INCLUDE_PATH ${CMAKE_INSTALL_PREFIX}/include/muzi)
+set(MUZI_EXE_PATH ${CMAKE_INSTALL_PREFIX}/bin)
+set(MUZI_TEST_PATH ${CMAKE_BINARY_DIR}/test)
 
 add_subdirectory(muzi/base)
 link_libraries(muzi_base)

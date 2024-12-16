@@ -8,7 +8,6 @@
 #include "acceptor.h"
 #include "event_loop.h"
 #include "event_loop_thread_pool.h"
-#include "inet_address.h"
 #include "noncopyable.h"
 #include "tcp_connection.h"
 

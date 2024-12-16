@@ -1,10 +1,10 @@
 #include "logger.h"
 
-#include "errno.h"
 
 #include "current_thread.h"
 #include "stacktrace.h"
 #include "string_proxy.h"
+#include "timestamp.h"
 
 namespace muzi
 {

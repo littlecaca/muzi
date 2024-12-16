@@ -2,8 +2,6 @@
 
 #include <functional>
 
-#include "socket.h"
-
 namespace muzi
 {
 

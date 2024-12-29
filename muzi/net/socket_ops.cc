@@ -167,10 +167,7 @@ bool Listen(int sock_fd)
 int Connect(int sock_fd, const sockaddr *addr, size_t len)
 {
     int ret = ::connect(sock_fd, addr, static_cast<socklen_t>(len));
-    if (ret < 0)
-    {
-        LOG_SYSERR << "::connect() fails";
-    }
+
     return ret;
 }
 

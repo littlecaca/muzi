@@ -82,7 +82,8 @@ EventLoop::EventLoop()
 
 EventLoop::~EventLoop()
 {
-    AssertInLoopThread();
+    LOG_DEBUG << "Destroying eventloop" << this;
+    AssertInLoopThread(); 
     assert(!looping_);
     wakeup_channel_->DisableAll();
     wakeup_channel_->Remove();
@@ -115,7 +116,7 @@ void EventLoop::Loop()
 
     LOG_TRACE << "EventLoop " << this << " stop looping";
     looping_ = false;
-    cond_.Notify();
+    cond_.NotifyAll();
 }
 
 void EventLoop::Quit()
@@ -127,11 +128,11 @@ void EventLoop::Quit()
         if (!IsInLoopThread())
         {
             WakeUp();
-        }
-        MutexLockGuard guard(lock_);
-        while (looping_)
-        {
-            cond_.Wait();
+            MutexLockGuard guard(lock_);
+            while (looping_)
+            {
+                cond_.Wait();
+            }
         }
     }
 }

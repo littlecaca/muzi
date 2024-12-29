@@ -32,7 +32,7 @@ void Connector::Start()
 void Connector::Stop()
 {
     connect_ = false;
-    loop_->RunInLoop(std::bind(&Connector::StopInLoop, shared_from_this()));
+    loop_->RunAndWait(std::bind(&Connector::StopInLoop, this));
 }
 
 void Connector::StopAndWait()

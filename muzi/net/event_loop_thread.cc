@@ -1,4 +1,5 @@
 #include "event_loop_thread.h"
+#include "logger.h"
 
 namespace muzi
 {
@@ -11,6 +12,12 @@ EventLoopThread::EventLoopThread(const ThreadInitCallback &init_cb, const std::s
 }
 
 EventLoopThread::~EventLoopThread()
+{
+    LOG_DEBUG << "EventLoopThread::~EventLoopThread()";
+    Stop();
+}
+
+void EventLoopThread::Stop()
 {
     MutexLockGuard guard(lock_);
     if (loop_ != nullptr)
@@ -69,11 +76,11 @@ void EventLoopThread::ThreadFunc()
     }
 
     loop.Loop();
-
+    LOG_INFO << "Thread " << thread_.GetName() << " exit";
     {
         MutexLockGuard guard(lock_);
         loop_ = nullptr;
-        cond_.Notify();
+        cond_.NotifyAll();
     }
 }
 

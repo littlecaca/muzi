@@ -20,13 +20,18 @@ endfunction(do_bad_test)
 
 option(MUZI_BUILD_TEST "build test program" ON)
 option(MUZI_BUILD_EXAMPLE "build example program" ON)
-option(MUZI_DEBUG "Debug mode" ON)
+option(MUZI_DEBUG_MODE "Debug mode" OFF)
 
 # Set compiler flag
-
-if (${MUZI_DEBUG})
+if (MUZI_DEBUG_MODE)
     message(STATUS "* Start debug mode.")
     add_compile_definitions(_DEBUG)
+    set(CMAKE_BUILD_TYPE Debug)
+else()
+    message(STATUS "* Start release mode.")
+    add_compile_definitions(NDEBUG)
+    add_compile_options(-O2)
+    set(CMAKE_BUILD_TYPE Release)
 endif()
 
 # By default, only symbols that are used within the executable itself are included 
@@ -42,11 +47,13 @@ target_compile_features(muzi_compiler_flags INTERFACE cxx_std_17)
 
 # Set install root path
 # set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
-set(CMAKE_INSTALL_PREFIX "/usr/local/")
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
+# set(CMAKE_INSTALL_PREFIX "/usr/local/")
 set(MUZI_LIB_PATH ${CMAKE_INSTALL_PREFIX}/lib)
 set(MUZI_INCLUDE_PATH ${CMAKE_INSTALL_PREFIX}/include/muzi)
 set(MUZI_EXE_PATH ${CMAKE_INSTALL_PREFIX}/bin)
 set(MUZI_TEST_PATH ${CMAKE_BINARY_DIR}/test)
+set(MUZI_EXAMPLE_PATH ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(muzi/base)
 link_libraries(muzi_base)
@@ -56,4 +63,5 @@ link_libraries(muzi_net)
 if (${MUZI_BUILD_EXAMPLE})
     message(STATUS "* Compile examples.")
     add_subdirectory(muzi/examples)
+    add_subdirectory(examples)
 endif()

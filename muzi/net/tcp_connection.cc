@@ -1,6 +1,8 @@
 #include "tcp_connection.h"
 
+#include "logger.h"
 #include "weak_callback.h"
+#include <memory>
 
 namespace muzi
 {
@@ -32,13 +34,14 @@ TcpConnection::TcpConnection(std::string name,
 
 TcpConnection::~TcpConnection()
 {
-    LOG_TRACE << "Connection destroyed: " << name_;
+    LOG_DEBUG << "Destroying Connection: " << name_;
     // Unsafe
     // Must guarantee that the EventLoop is alive now
     if (state_ != kDisConnected)
     {
         loop_->RunAndWait(std::bind(&TcpConnection::DestroyConnection, this));
     }
+    LOG_DEBUG << "Connection destroyed: " << name_;
 }
 
 void TcpConnection::SetCloseCallbackInLoop(CloseCallback cb, CountdownLatch *latch)
@@ -239,7 +242,6 @@ void TcpConnection::DestroyConnection()
     {
         SetState(kDisConnected);
         channel_->DisableAll();
-        connection_callback_(shared_from_this());
     }
     channel_->Remove();
 }
@@ -310,6 +312,7 @@ void TcpConnection::Send(StringProxy str)
     }
 }
 
+// This function do not retrive the data in buf automatically
 void TcpConnection::Send(Buffer &buf)
 {
     DEBUGINFO << "TcpConnection::Send()";

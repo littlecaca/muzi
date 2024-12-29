@@ -355,7 +355,7 @@ public:
     template <typename ForwardIterator>
     typename std::enable_if<
         std::is_base_of_v<
-            std::forward_iterator_tag, 
+            std::forward_iterator_tag,
             typename std::iterator_traits<ForwardIterator>::iterator_category
         >,
         void

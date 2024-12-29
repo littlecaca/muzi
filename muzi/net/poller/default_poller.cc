@@ -17,6 +17,7 @@ Poller *Poller::NewDefaultPoller(EventLoop *loop)
     {
         return new EpollPoller(loop);
     }
+    return nullptr;
 }
 
 }   // namespace muzi

@@ -52,7 +52,7 @@ StackWritter::StackWritter(const Logger &logger, const SourceFile &file, int lin
 StackWritter::~StackWritter()
 {
     Finish();
-    if (level_ == kFatal)
+    if (level_ >= kError)
     {
         log_stream_ << StackTrace();
     }

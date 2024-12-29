@@ -28,6 +28,8 @@ public:
 
     ~EventLoopThread();
 
+    void Stop();
+
     /// @brief Create a thread to run an EventLoop.
     /// It does not own the EventLoop. The EventLoop will be a
     /// stack object in the thread. But when it is destroyed it

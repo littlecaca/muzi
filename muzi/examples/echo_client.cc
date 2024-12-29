@@ -29,9 +29,9 @@ void OnMessage(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp time)
 
 int main(int argc, char const *argv[])
 {
-    AsyncOutputer outputer("echo_client");
-    gDefaultLogger.SetOutputer(&outputer);
-    outputer.Start();
+    // AsyncOutputer outputer("echo_client");
+    // gDefaultLogger.SetOutputer(&outputer);
+    // outputer.Start();
 
     EventLoopThread loop_thread;
     
@@ -54,5 +54,6 @@ int main(int argc, char const *argv[])
         conn->Send(line);
         std::cout << "Msg: " << std::flush;
     }
+    LOG_INFO << "program exit";
     return 0;
 }

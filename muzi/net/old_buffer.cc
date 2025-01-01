@@ -1,4 +1,4 @@
-#include "buffer.h"
+#include "old_buffer.h"
 
 #include <errno.h>
 #include <sys/uio.h>
@@ -46,6 +46,7 @@ ssize_t Buffer::ReadFd(int fd, int *saved_errno)
     vec[len].iov_len = sizeof extra_buf;
 
     const ssize_t n = ::readv(fd, vec, len + 1);
+    LOG_DEBUG << "readv() return " << n;
 
     if (n < 0)
     {
@@ -93,7 +94,7 @@ ssize_t Buffer::WriteFd(int fd, int *saved_errno)
         vec[index].iov_len = write_index_.GetCurOffset();
     }
 
-    ssize_t n = ::writev(fd, vec, len);
+    const ssize_t n = ::writev(fd, vec, len);
 
     if (n < 0)
     {

@@ -1,23 +1,5 @@
-set(NET_SRCS
-    event_loop.cc
-    channel.cc
-    poller.cc
-    poller/default_poller.cc
-    poller/epoll_poller.cc
-    timer_queue.cc
-    timer.cc
-    event_loop_thread.cc
-    acceptor.cc
-    inet_address.cc
-    socket_ops.cc
-    socket.cc
-    tcp_server.cc
-    tcp_connection.cc
-    buffer.cc
-    event_loop_thread_pool.cc
-    connector.cc
-    tcp_client.cc
-)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} NET_SRCS)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/poller NET_SRCS)
 
 add_library(muzi_net ${NET_SRCS})
 

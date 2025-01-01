@@ -1,21 +1,4 @@
-set(BASE_SRCS
-    mutex.cc
-    thread.cc
-    current_thread.cc
-    condition.cc
-    log_stream.cc
-    logger.cc
-    timezone.cc
-    timestamp.cc
-    config.cc
-    outputer.cc
-    async_outputer.cc
-    countdown_latch.cc
-    process_info.cc
-    stacktrace.cc
-    log_file.cc
-    thread_pool.cc
-)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} BASE_SRCS)
 
 add_library(muzi_base ${BASE_SRCS})
 

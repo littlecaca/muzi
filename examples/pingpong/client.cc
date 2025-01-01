@@ -1,3 +1,4 @@
+#include "outputer.h"
 #include "tcp_client.h"
 
 #include "logger.h"
@@ -7,6 +8,7 @@
 
 #include <atomic>
 
+#include <cstdint>
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
@@ -16,7 +18,7 @@ using std::string;
 using namespace std::placeholders;
 
 class Client;
-
+static int block_size;
 class Session : noncopyable
 {
  public:
@@ -28,7 +30,8 @@ class Session : noncopyable
       owner_(owner),
       bytesRead_(0),
       bytesWritten_(0),
-      messagesRead_(0)
+      messagesRead_(0),
+      messageWrittten_(0)
   {
     client_.SetConnectionCallback(
         std::bind(&Session::onConnection, this, _1));
@@ -48,12 +51,22 @@ class Session : noncopyable
 
   int64_t bytesRead() const
   {
-     return bytesRead_;
+    return bytesRead_;
+  }
+
+  int64_t bytesWritten() const
+  {
+    return bytesWritten_;
   }
 
   int64_t messagesRead() const
   {
-     return messagesRead_;
+    return messagesRead_;
+  }
+
+  int64_t messageWrittten() const
+  {
+    return messageWrittten_;
   }
 
  private:
@@ -63,9 +76,17 @@ class Session : noncopyable
   void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp)
   {
     ++messagesRead_;
+    ++messageWrittten_;
     bytesRead_ += buf->ReadableBytes();
-    bytesWritten_ += buf->ReadableBytes();
+    // LOG_WARN << "read " << buf->ReadableBytes() << " bytes";
+    // if (buf->ReadableBytes() > block_size)
+    // {
+    //   // LOG_WARN << "To big!!! " << buf->ReadableBytes();
+    //   LOG_WARN << buf->PeekAllAsString();
+    //   conn->ShutDown();
+    // }
     conn->Send(*buf);
+    // LOG_WARN << "Output buffer has " << conn->GetOutputBuffer().ReadableBytes() << " bytes";
     buf->RetriveAll();
   }
 
@@ -74,6 +95,7 @@ class Session : noncopyable
   int64_t bytesRead_;
   int64_t bytesWritten_;
   int64_t messagesRead_;
+  int64_t messageWrittten_;
 };
 
 class Client : noncopyable
@@ -134,17 +156,22 @@ class Client : noncopyable
 
       int64_t totalBytesRead = 0;
       int64_t totalMessagesRead = 0;
+      int64_t totalBytesWrite = 0;
+      int64_t totalMessagesWrite = 0;
       for (const auto& session : sessions_)
       {
         totalBytesRead += session->bytesRead();
         totalMessagesRead += session->messagesRead();
       }
+      
       LOG_WARN << totalBytesRead << " total bytes read";
       LOG_WARN << totalMessagesRead << " total messages read";
       LOG_WARN << static_cast<double>(totalBytesRead) / static_cast<double>(totalMessagesRead)
                << " average message size";
       LOG_WARN << static_cast<double>(totalBytesRead) / (timeout_ * 1024 * 1024)
                << " MiB/s throughput";
+
+      muzi::gDefaultOutputer.Flush();
       conn->GetLoop()->QueueInLoop(std::bind(&Client::quit, this));
     }
 
@@ -207,6 +234,7 @@ int main(int argc, char* argv[])
     uint16_t port = static_cast<uint16_t>(atoi(argv[2]));
     int threadCount = atoi(argv[3]);
     int blockSize = atoi(argv[4]);
+    block_size = blockSize;
     int sessionCount = atoi(argv[5]);
     int timeout = atoi(argv[6]);
 

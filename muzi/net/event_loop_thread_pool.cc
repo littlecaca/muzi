@@ -39,9 +39,8 @@ EventLoop *EventLoopThreadPool::GetNextLoop()
     EventLoop *loop = base_loop_;
     if (!event_loops_.empty())
     {
-        if (next_ < thread_nums_)
-            loop = event_loops_[next_];
-        next_ = (next_ + 1) % (thread_nums_ + 1);
+        loop = event_loops_[next_];
+        next_ = (next_ + 1) % thread_nums_;
     }
     return loop;
 }

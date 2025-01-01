@@ -2,6 +2,8 @@
 
 #include "logger.h"
 #include "weak_callback.h"
+#include <cerrno>
+#include <cstring>
 #include <memory>
 
 namespace muzi
@@ -99,7 +101,7 @@ void TcpConnection::SendInLoop(const Buffer &buf)
         LOG_WARN << "Disconnected, give up writting";
         return;
     }
-
+    
     // If the data in output buffer will reach high water mark,
     // try calling the high water callback.
     size_t old_len = ouput_buffer_.ReadableBytes();
@@ -143,7 +145,7 @@ void TcpConnection::SendInLoop(const void *first, size_t len)
                       << StringProxy(reinterpret_cast<const char *>(first), len);
 
             remaining -= written;
-            if (len == 0 && write_complete_callback_)
+            if (remaining == 0 && write_complete_callback_)
             {
                 /// @attention Do need to put this to loop's functors quque?
                 write_complete_callback_(shared_from_this());
@@ -412,7 +414,7 @@ void TcpConnection::HandleError()
 {
     int savederr = errno;
     errno = socket::GetSocketError(socket_->GetFd());
-    LOG_ERROR << "TcpConnection::HandleError(): " << name_;
+    LOG_ERROR << "TcpConnection::HandleError(): " << name_ << " " << strerror(errno);
     errno = savederr;
 }
 

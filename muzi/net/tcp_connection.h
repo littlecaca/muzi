@@ -99,8 +99,8 @@ public:
     const AddressPtr &GetLocalAddress() const { return local_addr_; }
     const AddressPtr &GetPeerAddress() const { return peer_addr_; }
 
-    bool IsConnected() const { return state_ == kConnected; }
-    bool IsDisConnected() const { return state_ == kDisConnected; }
+    bool IsConnected() const { return state_.load(std::memory_order_acquire) == kConnected; }
+    bool IsDisConnected() const { return state_.load(std::memory_order_acquire) == kDisConnected; }
     bool GetTcpInfo(struct tcp_info *) const;
     std::string GetTcpInfoString() const;
 

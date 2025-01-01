@@ -13,3 +13,5 @@ do_test(muzi_net acceptor_test "")
 do_test(muzi_net buffer_test "")
 
 do_test(muzi_net tcp_client_test1 "")
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/text_input.txt ${CMAKE_CURRENT_BINARY_DIR}/ COPYONLY)

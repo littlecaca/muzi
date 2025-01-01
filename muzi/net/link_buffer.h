@@ -1,4 +1,0 @@
-#ifndef MUZI_NET_LINK_BUFFER_H_
-#define MUZI_NET_LINK_BUFFER_H_
-
-#endif  // MUZI_NET_LINK_BUFFER_H_

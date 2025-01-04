@@ -9,7 +9,7 @@ EventLoopThreadPool::~EventLoopThreadPool()
         for (int i = 0; i < event_loops_.size(); ++i)
         {
             event_loops_[i]->Quit();
-            delete event_loops_[i];
+            // Do not delete event_loop_ here, it is a stack object
         }
     }
 }

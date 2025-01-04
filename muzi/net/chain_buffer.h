@@ -19,7 +19,7 @@ class ChainBuffer : muzi::noncopyable
 {
 public:
     static constexpr size_t kInitialBufferNum = 1;
-    static constexpr size_t kBufferSize = 2048;
+    static constexpr size_t kBufferSize = 4096;
 
 public:
     ChainBuffer() : buffers_(1),

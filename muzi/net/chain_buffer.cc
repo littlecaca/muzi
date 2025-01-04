@@ -8,7 +8,7 @@
 namespace muzi
 {
 #define ExtraSpace 65536
-#define MaxVecSize 32
+#define MaxVecSize 16
 
 ssize_t ChainBuffer::ReadFd(int fd, int *saved_errno)
 {
